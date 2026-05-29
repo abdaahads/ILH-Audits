@@ -10,17 +10,21 @@ import { createBrowserClient } from '@supabase/ssr';
 import { mockSupabase } from './mockClient';
 
 export function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co";
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
-  const client = createBrowserClient(url, key);
+  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   const isMock = 
-    !process.env.NEXT_PUBLIC_SUPABASE_URL || 
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
-    url.includes("YOUR_PROJECT_URL") || 
-    key.includes("YOUR_PUBLISHABLE_KEY") || 
-    url.includes("your_project_url_here") || 
-    url.includes("placeholder-project");
+    !rawUrl || 
+    !rawKey || 
+    rawUrl.includes("YOUR_PROJECT_URL") || 
+    rawKey.includes("YOUR_PUBLISHABLE_KEY") || 
+    rawUrl.includes("your_project_url_here") || 
+    rawUrl.includes("placeholder-project") ||
+    !rawUrl.startsWith("http");
+
+  const url = isMock ? "https://placeholder-project.supabase.co" : rawUrl;
+  const key = isMock ? "placeholder-key" : rawKey;
+  const client = createBrowserClient(url, key);
 
   if (isMock) {
     return new Proxy(client, {
