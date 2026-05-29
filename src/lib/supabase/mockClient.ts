@@ -354,12 +354,15 @@ class MockQueryBuilder {
     const list = this.getData();
     let resultData: any = null;
     let error: any = null;
+    let rawCount = 0;
 
     // Apply filters
     let filteredList = [...list];
     this.filters.forEach((filter) => {
       filteredList = filteredList.filter(filter);
     });
+
+    rawCount = filteredList.length;
 
     if (this.op === 'select') {
       if (this.orderCol) {
@@ -372,7 +375,6 @@ class MockQueryBuilder {
         });
       }
       
-      const rawCount = filteredList.length;
       if (this.limitCount !== null) {
         filteredList = filteredList.slice(0, this.limitCount);
       }
@@ -465,7 +467,8 @@ class MockQueryBuilder {
 
     resolve({
       data: resultData,
-      error
+      error,
+      count: rawCount
     });
   }
 
