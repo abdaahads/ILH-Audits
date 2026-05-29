@@ -77,6 +77,22 @@ const MOCK_QUESTIONS = [
 function initializeLocalStorageDB() {
   if (typeof window === "undefined") return;
 
+  const currentVersion = "2.0";
+  const storedVersion = localStorage.getItem("ilh_seeder_version");
+
+  if (storedVersion !== currentVersion) {
+    // Clear all previous mock tables to force reload the upgraded, premium dataset
+    localStorage.removeItem("ilh_profiles");
+    localStorage.removeItem("ilh_properties");
+    localStorage.removeItem("ilh_audit_templates");
+    localStorage.removeItem("ilh_audit_categories");
+    localStorage.removeItem("ilh_audit_questions");
+    localStorage.removeItem("ilh_audits");
+    localStorage.removeItem("ilh_audit_responses");
+    localStorage.removeItem("ilh_corrective_actions");
+    localStorage.setItem("ilh_seeder_version", currentVersion);
+  }
+
   if (!localStorage.getItem("ilh_profiles")) {
     localStorage.setItem("ilh_profiles", JSON.stringify(MOCK_PROFILES));
   }
@@ -93,7 +109,7 @@ function initializeLocalStorageDB() {
     localStorage.setItem("ilh_audit_questions", JSON.stringify(MOCK_QUESTIONS));
   }
 
-  // Pre-seed some mock historical audits & corrective actions to make the charts/sparklines beautiful!
+  // Pre-seed mock historical audits & corrective actions to make the charts/sparklines gorgeous!
   if (!localStorage.getItem("ilh_audits")) {
     const audits: any[] = [];
     const responses: any[] = [];
@@ -102,9 +118,8 @@ function initializeLocalStorageDB() {
     const auditorId = MOCK_PROFILES[0].id;
     const templateId = MOCK_TEMPLATES[0].id;
 
-    // Seed 3 historic audits per property (differing dates and scores)
+    // Seed 3 historic audits per property (differing dates, scores, and departments)
     MOCK_PROPERTIES.forEach((prop, propIdx) => {
-      // Historical audits
       const count = 3;
       for (let i = 1; i <= count; i++) {
         const auditId = `audit-${prop.id.substring(2, 6)}-${i}`;
@@ -112,27 +127,109 @@ function initializeLocalStorageDB() {
         const date = new Date();
         date.setDate(date.getDate() - daysAgo);
 
-        // Generate semi-random high-quality scores (75 - 95%) with a few low items to seed the CAP board
         let totalPoints = 0;
         let maxPoints = 100;
 
         MOCK_QUESTIONS.forEach((q) => {
-          // Generate a score: Pune and Mumbai are high excellence (4 or 5), others slightly lower
+          // Default: standard good score
           let score = 4;
-          const rand = Math.random();
-          if (rand > 0.7) score = 5;
-          else if (rand < 0.15) score = 3;
+          let notes = "Maintained as per operational standards.";
+          let imageUrl = null;
 
-          // Occasionally inject failure scores (<= 2) in i=1 (first audit) to populate CAP tasks
-          if (i === count && q.id === "q9" && propIdx % 2 === 0) {
-            score = 2; // Electrical issue
+          if (propIdx === 0) { // Pune (Climbing: 90.0% -> 92.5% -> 96.0%) - Operational Excellence
+            if (i === 1) {
+              score = q.id === "q9" ? 2 : (q.id === "q3" || q.id === "q15" ? 5 : 4);
+              if (q.id === "q9") notes = "Minor electrical fluctuation in lobby main distributor box joint.";
+            } else if (i === 2) {
+              score = q.id === "q1" || q.id === "q5" || q.id === "q17" ? 5 : 4;
+            } else {
+              score = q.id === "q12" ? 4 : 5;
+            }
           }
-          if (i === count && q.id === "q2" && propIdx % 3 === 0) {
-            score = 1; // Sanitation issue
+          else if (propIdx === 1) { // Mumbai (Stable high: 84.5% -> 86.0% -> 88.5%) - Operational Excellence
+            if (i === 1) {
+              score = q.id === "q1" || q.id === "q13" ? 5 : 4;
+            } else if (i === 2) {
+              score = q.id === "q5" || q.id === "q9" || q.id === "q17" ? 5 : 4;
+            } else {
+              score = q.id === "q12" || q.id === "q20" ? 4 : 5;
+            }
+          }
+          else if (propIdx === 5) { // Bengaluru (Recovering: 66.0% -> 74.0% -> 84.5%) - Operational Excellence
+            if (i === 1) {
+              score = q.id === "q14" ? 2 : (q.id === "q3" || q.id === "q7" ? 4 : 3);
+              if (q.id === "q14") notes = "Fire exit sign illumination bulb in Block-C lobby is fused.";
+            } else if (i === 2) {
+              score = q.id === "q1" || q.id === "q9" || q.id === "q13" ? 4 : 3;
+            } else {
+              score = q.id === "q12" ? 4 : 5;
+            }
+          }
+          else if (propIdx === 2) { // Delhi (Warning/Satisfactory: 76.5% -> 70.0% -> 73.5%) - Warning
+            if (i === 1) {
+              score = q.id === "q3" || q.id === "q11" ? 4 : 3;
+            } else if (i === 2) {
+              score = 3;
+            } else {
+              score = q.id === "q10" ? 2 : 4;
+              if (q.id === "q10") {
+                notes = "Plumbing check: Restroom B-Block has an active slow drip leak under the main washing basin.";
+                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
+              }
+            }
+          }
+          else if (propIdx === 3) { // Dehradun (Stable warning: 72.0% -> 66.5% -> 68.0%) - Warning
+            if (i === 1) {
+              score = q.id === "q15" || q.id === "q19" ? 4 : 3;
+            } else if (i === 2) {
+              score = 3;
+            } else {
+              score = q.id === "q5" ? 2 : 3;
+              if (q.id === "q5") {
+                notes = "Pest Control warning: Minor signs of pest evidence spotted near dry storage racks.";
+                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
+              }
+            }
+          }
+          else if (propIdx === 7) { // Vizag (Stable: 64.0% -> 68.0% -> 65.5%) - Warning
+            score = q.id === "q1" || q.id === "q7" ? 4 : 3;
+          }
+          else if (propIdx === 6) { // Hyderabad (Risk/Dropping: 66.5% -> 60.0% -> 58.0%) - Failing / Risk
+            if (i === 1) {
+              score = q.id === "q3" || q.id === "q15" ? 4 : 3;
+            } else if (i === 2) {
+              score = 3;
+            } else {
+              score = q.id === "q13" ? 2 : (q.id === "q14" ? 1 : 3);
+              if (q.id === "q13") {
+                notes = "Two CCTV cameras in the main lobby and rear parking exit are completely inactive.";
+                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
+              }
+              if (q.id === "q14") {
+                notes = "Urgent: 3 fire extinguishers located on the 2nd and 3rd floors are past their annual service inspection dates by 4 months.";
+              }
+            }
+          }
+          else if (propIdx === 4) { // Durgapur (Risk/Crash: 68.0% -> 58.0% -> 54.0%) - Failing / Risk
+            if (i === 1) {
+              score = q.id === "q3" || q.id === "q11" ? 4 : 3;
+            } else if (i === 2) {
+              score = q.id === "q8" ? 2 : 3;
+            } else {
+              score = 3;
+              if (q.id === "q8") {
+                score = 1;
+                notes = "Food Safety Failure: Kitchen chef was found cooking without hairnet or gloves. Prep counters had visible grease buildup.";
+                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
+              }
+              if (q.id === "q2") {
+                score = 2;
+                notes = "Housekeeping failure: Common toilets sanitization sheet was blank, soap dispensers were empty and there was a heavy odor.";
+              }
+            }
           }
 
-          // Calculate weighted scoring Contribution
-          const cat = MOCK_CATEGORIES.find(c => c.id === q.category_id);
+          const cat = MOCK_CATEGORIES.find((c) => c.id === q.category_id);
           const weight = cat ? cat.weight_percentage : 20;
           const weightedPts = (score / q.max_points) * (weight / 4);
           totalPoints += weightedPts;
@@ -142,24 +239,40 @@ function initializeLocalStorageDB() {
             audit_id: auditId,
             question_id: q.id,
             score_awarded: score,
-            notes: score <= 2 ? "Inspection flagged: minor compliance concern needing immediate attention." : "Maintained as per operational standards.",
-            image_url: score <= 2 ? "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400" : null,
-            created_at: date.toISOString()
+            notes,
+            image_url: imageUrl,
+            created_at: date.toISOString(),
           });
 
-          // Seed corrective actions
-          if (score <= 2 && i === count) {
+          if (score <= 2) {
+            let capStatus = "open";
+            let remediationNotes = "";
+
+            if (propIdx === 0 && i === 1) {
+              capStatus = "resolved";
+              remediationNotes = "Maintenance electrician dispatched. Replaced faulty distributor breaker. Checked main line current, load balanced successfully.";
+            } else if (propIdx === 5 && i === 1) {
+              capStatus = "resolved";
+              remediationNotes = "Standard sign bulb replaced with high-durability LED indicator. Tested and operational.";
+            } else if (propIdx === 2 && i === 3) {
+              capStatus = "in_progress";
+              remediationNotes = "Plumbing agency contracted. Replacement washer and brass valve gaskets ordered, repair scheduled for tomorrow.";
+            } else if (propIdx === 4 && i === 3 && q.id === "q8") {
+              capStatus = "in_progress";
+              remediationNotes = "Kitchen manager issued a formal warning letter. Kitchen closed for deep sanitation for 4 hours. Chef retrained on safety clothing compliance.";
+            }
+
             correctiveActions.push({
               id: `cap-${auditId}-${q.id}`,
               audit_id: auditId,
               property_id: prop.id,
               question_id: q.id,
-              issue_description: `${cat?.name || "General"} Compliance: ${q.question_text} (Inspector Score: ${score}/5)`,
-              status: Math.random() > 0.4 ? "open" : "in_progress",
+              issue_description: `${cat?.name || "General"} Department: ${q.question_text} (Inspector Score: ${score}/5)`,
+              status: capStatus,
               assigned_to: auditorId,
-              remediation_notes: "",
+              remediation_notes: remediationNotes,
               created_at: date.toISOString(),
-              updated_at: date.toISOString()
+              updated_at: date.toISOString(),
             });
           }
         });
@@ -174,7 +287,7 @@ function initializeLocalStorageDB() {
           max_possible_score: maxPoints,
           conducted_at: date.toISOString(),
           completed_at: date.toISOString(),
-          created_at: date.toISOString()
+          created_at: date.toISOString(),
         });
       }
     });
