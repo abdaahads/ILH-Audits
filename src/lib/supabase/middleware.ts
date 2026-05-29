@@ -32,8 +32,7 @@ export async function updateSession(request: NextRequest) {
     ) {
       return NextResponse.next();
     }
-    const setupUrl = request.nextUrl.clone();
-    setupUrl.pathname = "/setup";
+    const setupUrl = new URL('/setup', request.url);
     return NextResponse.redirect(setupUrl);
   }
 
@@ -73,9 +72,8 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/auth') &&
     request.nextUrl.pathname !== '/'
   ) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
+    const loginUrl = new URL('/login', request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
   return supabaseResponse;
