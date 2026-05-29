@@ -38,46 +38,59 @@ const MOCK_TEMPLATES = [
 ];
 
 const MOCK_CATEGORIES = [
-  { id: "cat1", template_id: "a0000000-0000-0000-0000-000000000001", name: "Housekeeping", weight_percentage: 25, sort_order: 1 },
-  { id: "cat2", template_id: "a0000000-0000-0000-0000-000000000001", name: "Food & Dining", weight_percentage: 20, sort_order: 2 },
-  { id: "cat3", template_id: "a0000000-0000-0000-0000-000000000001", name: "Maintenance", weight_percentage: 25, sort_order: 3 },
-  { id: "cat4", template_id: "a0000000-0000-0000-0000-000000000001", name: "Safety & Security", weight_percentage: 15, sort_order: 4 },
-  { id: "cat5", template_id: "a0000000-0000-0000-0000-000000000001", name: "Community & Wellbeing", weight_percentage: 15, sort_order: 5 }
+  { id: "c0000000-0000-0000-0000-000000000001", template_id: "a0000000-0000-0000-0000-000000000001", name: "Housekeeping & Hygiene", weight_percentage: 20, sort_order: 1 },
+  { id: "c0000000-0000-0000-0000-000000000002", template_id: "a0000000-0000-0000-0000-000000000001", name: "Food & Kitchen Operations", weight_percentage: 20, sort_order: 2 },
+  { id: "c0000000-0000-0000-0000-000000000003", template_id: "a0000000-0000-0000-0000-000000000001", name: "Maintenance & Infrastructure", weight_percentage: 15, sort_order: 3 },
+  { id: "c0000000-0000-0000-0000-000000000004", template_id: "a0000000-0000-0000-0000-000000000001", name: "Safety, Security & Compliance", weight_percentage: 15, sort_order: 4 },
+  { id: "c0000000-0000-0000-0000-000000000005", template_id: "a0000000-0000-0000-0000-000000000001", name: "Community & Resident Experience", weight_percentage: 10, sort_order: 5 },
+  { id: "c0000000-0000-0000-0000-000000000006", template_id: "a0000000-0000-0000-0000-000000000001", name: "Resident Feedback Proxy", weight_percentage: 20, sort_order: 6 }
 ];
 
 const MOCK_QUESTIONS = [
-  // Housekeeping
-  { id: "q1", category_id: "cat1", question_text: "Are all common areas (lobbies, corridors, staircases) clean and well-maintained?", max_points: 5, sort_order: 1 },
-  { id: "q2", category_id: "cat1", question_text: "Are washrooms sanitized with adequate supplies (soap, tissues, bins)?", max_points: 5, sort_order: 2 },
-  { id: "q3", category_id: "cat1", question_text: "Are resident rooms dusted, mopped, and beds made as per schedule?", max_points: 5, sort_order: 3 },
-  { id: "q4", category_id: "cat1", question_text: "Is waste segregation and disposal being handled properly and on time?", max_points: 5, sort_order: 4 },
-  // Food & Dining
-  { id: "q5", category_id: "cat2", question_text: "Is the kitchen area clean, organized, and free of pests?", max_points: 5, sort_order: 1 },
-  { id: "q6", category_id: "cat2", question_text: "Are meals served on time and as per the published weekly menu?", max_points: 5, sort_order: 2 },
-  { id: "q7", category_id: "cat2", question_text: "Is food quality satisfactory (taste, freshness, temperature)?", max_points: 5, sort_order: 3 },
-  { id: "q8", category_id: "cat2", question_text: "Are food safety and hygiene standards maintained (gloves, hairnets, storage)?", max_points: 5, sort_order: 4 },
-  // Maintenance
-  { id: "q9", category_id: "cat3", question_text: "Are all electrical fittings (lights, fans, switches, sockets) functional?", max_points: 5, sort_order: 1 },
-  { id: "q10", category_id: "cat3", question_text: "Is plumbing in proper working order (no leaks, drains clear, hot water functional)?", max_points: 5, sort_order: 2 },
-  { id: "q11", category_id: "cat3", question_text: "Are furniture and fixtures in good condition (beds, desks, wardrobes, doors)?", max_points: 5, sort_order: 3 },
-  { id: "q12", category_id: "cat3", question_text: "Is the Wi-Fi network stable and providing adequate speed across the property?", max_points: 5, sort_order: 4 },
-  // Safety
-  { id: "q13", category_id: "cat4", question_text: "Are CCTV cameras operational and covering all critical areas?", max_points: 5, sort_order: 1 },
-  { id: "q14", category_id: "cat4", question_text: "Are fire extinguishers present, accessible, and within service date?", max_points: 5, sort_order: 2 },
-  { id: "q15", category_id: "cat4", question_text: "Is the entry/exit register being maintained with visitor logs?", max_points: 5, sort_order: 3 },
-  { id: "q16", category_id: "cat4", question_text: "Are emergency exits clearly marked and unobstructed?", max_points: 5, sort_order: 4 },
-  // Community
-  { id: "q17", category_id: "cat5", question_text: "Are common recreational areas (lounge, gym, study room) well-maintained?", max_points: 5, sort_order: 1 },
-  { id: "q18", category_id: "cat5", question_text: "Is the staff courteous, responsive, and available during hours?", max_points: 5, sort_order: 2 },
-  { id: "q19", category_id: "cat5", question_text: "Are notice boards updated with emergency contacts?", max_points: 5, sort_order: 3 },
-  { id: "q20", category_id: "cat5", question_text: "Are community events or engagement activities being organized?", max_points: 5, sort_order: 4 }
+  // Housekeeping & Hygiene (20%)
+  { id: "e0000000-0000-0000-0000-000000000001", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Room Turn-Down Quality: Are scheduled room cleaning SOPs followed with zero visible dust/grime on surfaces and fixtures?", max_points: 5, sort_order: 1 },
+  { id: "e0000000-0000-0000-0000-000000000002", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Common Area Cleanliness: Are lobbies, study zones, and corridors free of debris, with floors visibly mopped and vacuumed?", max_points: 5, sort_order: 2 },
+  { id: "e0000000-0000-0000-0000-000000000003", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Washroom Sanitation: Are all communal and en-suite washrooms sanitized, odor-free, and fully stocked with consumables?", max_points: 5, sort_order: 3 },
+  { id: "e0000000-0000-0000-0000-000000000004", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Laundry Turnaround: Is the laundry processing operating within the mandated <24-hour turnaround SLA?", max_points: 5, sort_order: 4 },
+  { id: "e0000000-0000-0000-0000-000000000005", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Staff Hygiene (People): Are housekeeping staff wearing clean, standard-issue uniforms with appropriate personal protective equipment (gloves, hairnets where applicable)?", max_points: 5, sort_order: 5 },
+
+  // Food & Kitchen Operations (20%)
+  { id: "e0000000-0000-0000-0000-000000000006", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Kitchen Sanitation: Are all prep stations, industrial equipment, and floors sanitized according to daily checklists?", max_points: 5, sort_order: 1 },
+  { id: "e0000000-0000-0000-0000-000000000007", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Temperature Control: Are cold storage units holding at correct temperatures, and is hot food served at standard safety temperatures?", max_points: 5, sort_order: 2 },
+  { id: "e0000000-0000-0000-0000-000000000008", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Inventory Accuracy: Does the physical stock of high-value consumables match the ERP digital records?", max_points: 5, sort_order: 3 },
+  { id: "e0000000-0000-0000-0000-000000000009", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Food Quality & Presentation (Product): Does the daily meal match the published menu, and is it presented well in the dining hall?", max_points: 5, sort_order: 4 },
+  { id: "e0000000-0000-0000-0000-000000000010", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Waste Management: Is wet and dry waste properly segregated, sealed, and disposed of according to local municipal guidelines?", max_points: 5, sort_order: 5 },
+
+  // Maintenance & Infrastructure (15%)
+  { id: "e0000000-0000-0000-0000-000000000011", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "HVAC & Air Quality: Are all air conditioning units functioning without unusual noise or leaks, with filters cleaned on schedule?", max_points: 5, sort_order: 1 },
+  { id: "e0000000-0000-0000-0000-000000000012", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Water Filtration (RO Systems): Are central RO water purifiers functioning optimally, with recent TDS logs within acceptable limits?", max_points: 5, sort_order: 2 },
+  { id: "e0000000-0000-0000-0000-000000000013", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Power Redundancy: Has the backup generator (DG set) been tested, and is the fuel level sufficient for emergency outages?", max_points: 5, sort_order: 3 },
+  { id: "e0000000-0000-0000-0000-000000000014", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Elevator Functionality: Are all lifts operational, well-lit, and displaying up-to-date service certificates?", max_points: 5, sort_order: 4 },
+  { id: "e0000000-0000-0000-0000-000000000015", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Plumbing Integrity: Are there zero active leaks, blockages, or pressure issues in shared and private bathroom lines?", max_points: 5, sort_order: 5 },
+
+  // Safety, Security & Compliance (15%)
+  { id: "e0000000-0000-0000-0000-000000000016", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Entry/Exit Movement Tracker: Are Gate Passes (G.P.) strictly enforced and logged for all external vendors and non-resident guests?", max_points: 5, sort_order: 1 },
+  { id: "e0000000-0000-0000-0000-000000000017", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Biometric & Turnstile Functionality: Are all access control systems functioning with zero lag or bypass vulnerabilities?", max_points: 5, sort_order: 2 },
+  { id: "e0000000-0000-0000-0000-000000000018", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Fire Safety Readiness: Are all fire extinguishers fully pressurized (in the green), and are fire exits completely unobstructed?", max_points: 5, sort_order: 3 },
+  { id: "e0000000-0000-0000-0000-000000000019", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Statutory Records: Are physical/digital records for Labour Licenses, local police verifications, and food safety certificates up-to-date and accessible?", max_points: 5, sort_order: 4 },
+  { id: "e0000000-0000-0000-0000-000000000020", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "CCTV Coverage: Are all security cameras online, recording properly, and providing clear visibility of all critical choke points?", max_points: 5, sort_order: 5 },
+
+  // Community & Resident Experience (10%)
+  { id: "e0000000-0000-0000-0000-000000000021", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Event Readiness: Are communal spaces set up correctly for any upcoming daily/weekly flagship events or micro-mixers?", max_points: 5, sort_order: 1 },
+  { id: "e0000000-0000-0000-0000-000000000022", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Notice Boards & Digital Displays: Is all community communication (menus, event calendars, emergency contacts) current and visually aligned with the brand?", max_points: 5, sort_order: 2 },
+  { id: "e0000000-0000-0000-0000-000000000023", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Amenity Functionality: Are all community assets (gaming consoles, pool tables, study desks, library books) in perfect working condition?", max_points: 5, sort_order: 3 },
+
+  // Resident Feedback Proxy (20%)
+  { id: "e0000000-0000-0000-0000-000000000024", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "Helpdesk Ticket Closure: Are 100% of resident grievance tickets from the last 72 hours successfully closed or actively being worked on within SLA?", max_points: 5, sort_order: 1 },
+  { id: "e0000000-0000-0000-0000-000000000025", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "First-Response Compliance: Did all tickets raised in the last week receive a logged first-response within the target <2-hour window?", max_points: 5, sort_order: 2 },
+  { id: "e0000000-0000-0000-0000-000000000026", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "On-Floor Vibe Check: Based on random interactions during the audit, is the general resident sentiment positive regarding recent food and facility services?", max_points: 5, sort_order: 3 }
 ];
 
 // Helper to seed localStorage databases if empty
 function initializeLocalStorageDB() {
   if (typeof window === "undefined") return;
 
-  const currentVersion = "2.0";
+  const currentVersion = "4.0";
   const storedVersion = localStorage.getItem("ilh_seeder_version");
 
   if (storedVersion !== currentVersion) {
@@ -138,41 +151,41 @@ function initializeLocalStorageDB() {
 
           if (propIdx === 0) { // Pune (Climbing: 90.0% -> 92.5% -> 96.0%) - Operational Excellence
             if (i === 1) {
-              score = q.id === "q9" ? 2 : (q.id === "q3" || q.id === "q15" ? 5 : 4);
-              if (q.id === "q9") notes = "Minor electrical fluctuation in lobby main distributor box joint.";
+              score = q.id === "e0000000-0000-0000-0000-000000000015" ? 2 : (q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000018" ? 5 : 4);
+              if (q.id === "e0000000-0000-0000-0000-000000000015") notes = "Minor water seepage on washroom wall elbow joint in lobby.";
             } else if (i === 2) {
-              score = q.id === "q1" || q.id === "q5" || q.id === "q17" ? 5 : 4;
+              score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000006" || q.id === "e0000000-0000-0000-0000-000000000021" ? 5 : 4;
             } else {
-              score = q.id === "q12" ? 4 : 5;
+              score = q.id === "e0000000-0000-0000-0000-000000000012" ? 4 : 5;
             }
           }
           else if (propIdx === 1) { // Mumbai (Stable high: 84.5% -> 86.0% -> 88.5%) - Operational Excellence
             if (i === 1) {
-              score = q.id === "q1" || q.id === "q13" ? 5 : 4;
+              score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000020" ? 5 : 4;
             } else if (i === 2) {
-              score = q.id === "q5" || q.id === "q9" || q.id === "q17" ? 5 : 4;
+              score = q.id === "e0000000-0000-0000-0000-000000000006" || q.id === "e0000000-0000-0000-0000-000000000011" || q.id === "e0000000-0000-0000-0000-000000000021" ? 5 : 4;
             } else {
-              score = q.id === "q12" || q.id === "q20" ? 4 : 5;
+              score = q.id === "e0000000-0000-0000-0000-000000000012" || q.id === "e0000000-0000-0000-0000-000000000026" ? 4 : 5;
             }
           }
           else if (propIdx === 5) { // Bengaluru (Recovering: 66.0% -> 74.0% -> 84.5%) - Operational Excellence
             if (i === 1) {
-              score = q.id === "q14" ? 2 : (q.id === "q3" || q.id === "q7" ? 4 : 3);
-              if (q.id === "q14") notes = "Fire exit sign illumination bulb in Block-C lobby is fused.";
+              score = q.id === "e0000000-0000-0000-0000-000000000018" ? 2 : (q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000007" ? 4 : 3);
+              if (q.id === "e0000000-0000-0000-0000-000000000018") notes = "Fire exit sign illumination bulb in Block-C lobby is fused.";
             } else if (i === 2) {
-              score = q.id === "q1" || q.id === "q9" || q.id === "q13" ? 4 : 3;
+              score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000011" || q.id === "e0000000-0000-0000-0000-000000000020" ? 4 : 3;
             } else {
-              score = q.id === "q12" ? 4 : 5;
+              score = q.id === "e0000000-0000-0000-0000-000000000012" ? 4 : 5;
             }
           }
           else if (propIdx === 2) { // Delhi (Warning/Satisfactory: 76.5% -> 70.0% -> 73.5%) - Warning
             if (i === 1) {
-              score = q.id === "q3" || q.id === "q11" ? 4 : 3;
+              score = q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000014" ? 4 : 3;
             } else if (i === 2) {
               score = 3;
             } else {
-              score = q.id === "q10" ? 2 : 4;
-              if (q.id === "q10") {
+              score = q.id === "e0000000-0000-0000-0000-000000000015" ? 2 : 4;
+              if (q.id === "e0000000-0000-0000-0000-000000000015") {
                 notes = "Plumbing check: Restroom B-Block has an active slow drip leak under the main washing basin.";
                 imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
               }
@@ -180,49 +193,49 @@ function initializeLocalStorageDB() {
           }
           else if (propIdx === 3) { // Dehradun (Stable warning: 72.0% -> 66.5% -> 68.0%) - Warning
             if (i === 1) {
-              score = q.id === "q15" || q.id === "q19" ? 4 : 3;
+              score = q.id === "e0000000-0000-0000-0000-000000000016" || q.id === "e0000000-0000-0000-0000-000000000022" ? 4 : 3;
             } else if (i === 2) {
               score = 3;
             } else {
-              score = q.id === "q5" ? 2 : 3;
-              if (q.id === "q5") {
-                notes = "Pest Control warning: Minor signs of pest evidence spotted near dry storage racks.";
+              score = q.id === "e0000000-0000-0000-0000-000000000006" ? 2 : 3;
+              if (q.id === "e0000000-0000-0000-0000-000000000006") {
+                notes = "Pest Control warning: Minor signs of pest evidence spotted near dry kitchen storage racks.";
                 imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
               }
             }
           }
           else if (propIdx === 7) { // Vizag (Stable: 64.0% -> 68.0% -> 65.5%) - Warning
-            score = q.id === "q1" || q.id === "q7" ? 4 : 3;
+            score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000007" ? 4 : 3;
           }
           else if (propIdx === 6) { // Hyderabad (Risk/Dropping: 66.5% -> 60.0% -> 58.0%) - Failing / Risk
             if (i === 1) {
-              score = q.id === "q3" || q.id === "q15" ? 4 : 3;
+              score = q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000016" ? 4 : 3;
             } else if (i === 2) {
               score = 3;
             } else {
-              score = q.id === "q13" ? 2 : (q.id === "q14" ? 1 : 3);
-              if (q.id === "q13") {
+              score = q.id === "e0000000-0000-0000-0000-000000000020" ? 2 : (q.id === "e0000000-0000-0000-0000-000000000018" ? 1 : 3);
+              if (q.id === "e0000000-0000-0000-0000-000000000020") {
                 notes = "Two CCTV cameras in the main lobby and rear parking exit are completely inactive.";
                 imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
               }
-              if (q.id === "q14") {
+              if (q.id === "e0000000-0000-0000-0000-000000000018") {
                 notes = "Urgent: 3 fire extinguishers located on the 2nd and 3rd floors are past their annual service inspection dates by 4 months.";
               }
             }
           }
           else if (propIdx === 4) { // Durgapur (Risk/Crash: 68.0% -> 58.0% -> 54.0%) - Failing / Risk
             if (i === 1) {
-              score = q.id === "q3" || q.id === "q11" ? 4 : 3;
+              score = q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000014" ? 4 : 3;
             } else if (i === 2) {
-              score = q.id === "q8" ? 2 : 3;
+              score = q.id === "e0000000-0000-0000-0000-000000000009" ? 2 : 3;
             } else {
               score = 3;
-              if (q.id === "q8") {
+              if (q.id === "e0000000-0000-0000-0000-000000000009") {
                 score = 1;
                 notes = "Food Safety Failure: Kitchen chef was found cooking without hairnet or gloves. Prep counters had visible grease buildup.";
                 imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
               }
-              if (q.id === "q2") {
+              if (q.id === "e0000000-0000-0000-0000-000000000003") {
                 score = 2;
                 notes = "Housekeeping failure: Common toilets sanitization sheet was blank, soap dispensers were empty and there was a heavy odor.";
               }
@@ -231,7 +244,8 @@ function initializeLocalStorageDB() {
 
           const cat = MOCK_CATEGORIES.find((c) => c.id === q.category_id);
           const weight = cat ? cat.weight_percentage : 20;
-          const weightedPts = (score / q.max_points) * (weight / 4);
+          const qCount = MOCK_QUESTIONS.filter((item) => item.category_id === q.category_id).length;
+          const weightedPts = (score / q.max_points) * (weight / qCount);
           totalPoints += weightedPts;
 
           responses.push({
@@ -257,7 +271,7 @@ function initializeLocalStorageDB() {
             } else if (propIdx === 2 && i === 3) {
               capStatus = "in_progress";
               remediationNotes = "Plumbing agency contracted. Replacement washer and brass valve gaskets ordered, repair scheduled for tomorrow.";
-            } else if (propIdx === 4 && i === 3 && q.id === "q8") {
+            } else if (propIdx === 4 && i === 3 && q.id === "e0000000-0000-0000-0000-000000000009") {
               capStatus = "in_progress";
               remediationNotes = "Kitchen manager issued a formal warning letter. Kitchen closed for deep sanitation for 4 hours. Chef retrained on safety clothing compliance.";
             }

@@ -37,6 +37,98 @@ import type {
 } from "@/types/database";
 
 /* ============================================================
+   ILH Fallback Framework (Official 26-Question Framework)
+   ============================================================ */
+const ILH_FALLBACK_FRAMEWORK: CategoryWithQuestions[] = [
+  {
+    id: "c0000000-0000-0000-0000-000000000001",
+    template_id: "a0000000-0000-0000-0000-000000000001",
+    name: "Housekeeping & Hygiene",
+    weight_percentage: 20,
+    sort_order: 1,
+    created_at: "",
+    questions: [
+      { id: "e0000000-0000-0000-0000-000000000001", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Room Turn-Down Quality: Are scheduled room cleaning SOPs followed with zero visible dust/grime on surfaces and fixtures?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000002", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Common Area Cleanliness: Are lobbies, study zones, and corridors free of debris, with floors visibly mopped and vacuumed?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000003", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Washroom Sanitation: Are all communal and en-suite washrooms sanitized, odor-free, and fully stocked with consumables?", max_points: 5, sort_order: 3, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000004", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Laundry Turnaround: Is the laundry processing operating within the mandated <24-hour turnaround SLA?", max_points: 5, sort_order: 4, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000005", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Staff Hygiene (People): Are housekeeping staff wearing clean, standard-issue uniforms with appropriate personal protective equipment (gloves, hairnets where applicable)?", max_points: 5, sort_order: 5, created_at: "" }
+    ]
+  },
+  {
+    id: "c0000000-0000-0000-0000-000000000002",
+    template_id: "a0000000-0000-0000-0000-000000000001",
+    name: "Food & Kitchen Operations",
+    weight_percentage: 20,
+    sort_order: 2,
+    created_at: "",
+    questions: [
+      { id: "e0000000-0000-0000-0000-000000000006", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Kitchen Sanitation: Are all prep stations, industrial equipment, and floors sanitized according to daily checklists?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000007", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Temperature Control: Are cold storage units holding at correct temperatures, and is hot food served at standard safety temperatures?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000008", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Inventory Accuracy: Does the physical stock of high-value consumables match the ERP digital records?", max_points: 5, sort_order: 3, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000009", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Food Quality & Presentation (Product): Does the daily meal match the published menu, and is it presented well in the dining hall?", max_points: 5, sort_order: 4, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000010", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Waste Management: Is wet and dry waste properly segregated, sealed, and disposed of according to local municipal guidelines?", max_points: 5, sort_order: 5, created_at: "" }
+    ]
+  },
+  {
+    id: "c0000000-0000-0000-0000-000000000003",
+    template_id: "a0000000-0000-0000-0000-000000000001",
+    name: "Maintenance & Infrastructure",
+    weight_percentage: 15,
+    sort_order: 3,
+    created_at: "",
+    questions: [
+      { id: "e0000000-0000-0000-0000-000000000011", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "HVAC & Air Quality: Are all air conditioning units functioning without unusual noise or leaks, with filters cleaned on schedule?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000012", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Water Filtration (RO Systems): Are central RO water purifiers functioning optimally, with recent TDS logs within acceptable limits?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000013", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Power Redundancy: Has the backup generator (DG set) been tested, and is the fuel level sufficient for emergency outages?", max_points: 5, sort_order: 3, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000014", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Elevator Functionality: Are all lifts operational, well-lit, and displaying up-to-date service certificates?", max_points: 5, sort_order: 4, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000015", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Plumbing Integrity: Are there zero active leaks, blockages, or pressure issues in shared and private bathroom lines?", max_points: 5, sort_order: 5, created_at: "" }
+    ]
+  },
+  {
+    id: "c0000000-0000-0000-0000-000000000004",
+    template_id: "a0000000-0000-0000-0000-000000000001",
+    name: "Safety, Security & Compliance",
+    weight_percentage: 15,
+    sort_order: 4,
+    created_at: "",
+    questions: [
+      { id: "e0000000-0000-0000-0000-000000000016", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Entry/Exit Movement Tracker: Are Gate Passes (G.P.) strictly enforced and logged for all external vendors and non-resident guests?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000017", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Biometric & Turnstile Functionality: Are all access control systems functioning with zero lag or bypass vulnerabilities?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000018", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Fire Safety Readiness: Are all fire extinguishers fully pressurized (in the green), and are fire exits completely unobstructed?", max_points: 5, sort_order: 3, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000019", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Statutory Records: Are physical/digital records for Labour Licenses, local police verifications, and food safety certificates up-to-date and accessible?", max_points: 5, sort_order: 4, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000020", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "CCTV Coverage: Are all security cameras online, recording properly, and providing clear visibility of all critical choke points?", max_points: 5, sort_order: 5, created_at: "" }
+    ]
+  },
+  {
+    id: "c0000000-0000-0000-0000-000000000005",
+    template_id: "a0000000-0000-0000-0000-000000000001",
+    name: "Community & Resident Experience",
+    weight_percentage: 10,
+    sort_order: 5,
+    created_at: "",
+    questions: [
+      { id: "e0000000-0000-0000-0000-000000000021", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Event Readiness: Are communal spaces set up correctly for any upcoming daily/weekly flagship events or micro-mixers?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000022", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Notice Boards & Digital Displays: Is all community communication (menus, event calendars, emergency contacts) current and visually aligned with the brand?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000023", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Amenity Functionality: Are all community assets (gaming consoles, pool tables, study desks, library books) in perfect working condition?", max_points: 5, sort_order: 3, created_at: "" }
+    ]
+  },
+  {
+    id: "c0000000-0000-0000-0000-000000000006",
+    template_id: "a0000000-0000-0000-0000-000000000001",
+    name: "Resident Feedback Proxy",
+    weight_percentage: 20,
+    sort_order: 6,
+    created_at: "",
+    questions: [
+      { id: "e0000000-0000-0000-0000-000000000024", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "Helpdesk Ticket Closure: Are 100% of resident grievance tickets from the last 72 hours successfully closed or actively being worked on within SLA?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000025", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "First-Response Compliance: Did all tickets raised in the last week receive a logged first-response within the target <2-hour window?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000026", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "On-Floor Vibe Check: Based on random interactions during the audit, is the general resident sentiment positive regarding recent food and facility services?", max_points: 5, sort_order: 3, created_at: "" }
+    ]
+  }
+];
+
+/* ============================================================
    New Audit Page — Multi-step Audit Engine
    ============================================================ */
 export default function NewAuditPage() {
@@ -91,6 +183,7 @@ export default function NewAuditPage() {
       setProperties(propsData || []);
 
       /* Fetch current user profile */
+      let userRole = "auditor";
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         try {
@@ -100,10 +193,11 @@ export default function NewAuditPage() {
             .eq("id", user.id)
             .maybeSingle();
 
+          userRole = profile?.role || "auditor";
           setCurrentUser({
             full_name: profile?.full_name || user.user_metadata?.full_name || "Rahul Sharma",
             email: user.email || "auditor@ivyleaguehouse.com",
-            role: profile?.role || "auditor",
+            role: userRole,
           });
         } catch {
           setCurrentUser({
@@ -115,16 +209,21 @@ export default function NewAuditPage() {
       }
 
       /* Fetch default template */
-      const { data: templateData } = await supabase
-        .from("audit_templates")
-        .select("*")
-        .limit(1)
-        .single();
+      let templateData = null;
+      try {
+        const { data } = await supabase
+          .from("audit_templates")
+          .select("*")
+          .limit(1)
+          .maybeSingle();
+        templateData = data;
+      } catch (err) {
+        console.warn("Could not fetch template, attempting auto-seed or fallback:", err);
+      }
+
+      let loadedCategories: CategoryWithQuestions[] = [];
 
       if (templateData) {
-        setTemplate(templateData.id);
-        setLocalTemplateId(templateData.id);
-
         /* Fetch categories for this template */
         const { data: catsData } = await supabase
           .from("audit_categories")
@@ -142,19 +241,105 @@ export default function NewAuditPage() {
             .order("sort_order");
 
           /* Group questions by category */
-          const categoriesWithQuestions: CategoryWithQuestions[] = catsData.map(
-            (cat) => ({
-              ...cat,
-              questions: (questionsData || []).filter(
-                (q) => q.category_id === cat.id
-              ),
-            })
-          );
-
-          setCategories(categoriesWithQuestions);
-          setTotalSteps(categoriesWithQuestions.length + 2);
+          loadedCategories = catsData.map((cat) => ({
+            ...cat,
+            questions: (questionsData || []).filter(
+              (q) => q.category_id === cat.id
+            ),
+          }));
         }
       }
+
+      // If categories are empty, attempt client-side auto-seeding or resilient fallback
+      if (loadedCategories.length === 0) {
+        console.log("Database template/categories empty. Resiliency engine activated.");
+        
+        // If the logged-in user is an admin, let's try to seed the real Supabase database!
+        if (userRole === "admin") {
+          try {
+            toast.info("Empty database detected. Seeding the official ILH 26-Question framework...");
+            
+            // 1. Insert Template
+            const defaultTemplateId = "a0000000-0000-0000-0000-000000000001";
+            const { error: tErr } = await supabase
+              .from("audit_templates")
+              .upsert({
+                id: defaultTemplateId,
+                title: "Standard Property Audit",
+                description: "Comprehensive quality audit covering all aspects of ILH property operations including housekeeping, food, maintenance, safety, and community standards.",
+                max_score: 100
+              });
+
+            if (!tErr) {
+              // 2. Insert Categories
+              const categoriesToInsert = ILH_FALLBACK_FRAMEWORK.map(({ id, template_id, name, weight_percentage, sort_order }) => ({
+                id,
+                template_id: defaultTemplateId,
+                name,
+                weight_percentage,
+                sort_order
+              }));
+
+              const { error: cErr } = await supabase
+                .from("audit_categories")
+                .upsert(categoriesToInsert);
+
+              if (!cErr) {
+                // 3. Insert Questions
+                const questionsToInsert: any[] = [];
+                ILH_FALLBACK_FRAMEWORK.forEach((cat) => {
+                  cat.questions.forEach((q) => {
+                    questionsToInsert.push({
+                      id: q.id,
+                      category_id: cat.id,
+                      question_text: q.question_text,
+                      max_points: q.max_points,
+                      sort_order: q.sort_order
+                    });
+                  });
+                });
+
+                const { error: qErr } = await supabase
+                  .from("audit_questions")
+                  .upsert(questionsToInsert);
+
+                if (!qErr) {
+                  toast.success("Database seeded successfully!");
+                  // Load seeded categories
+                  loadedCategories = ILH_FALLBACK_FRAMEWORK;
+                  setTemplate(defaultTemplateId);
+                  setLocalTemplateId(defaultTemplateId);
+                } else {
+                  console.error("Auto-seeding questions error:", qErr);
+                }
+              } else {
+                console.error("Auto-seeding categories error:", cErr);
+              }
+            } else {
+              console.error("Auto-seeding template error:", tErr);
+            }
+          } catch (seedErr) {
+            console.error("Auto-seeding exception:", seedErr);
+          }
+        }
+
+        // If seeding wasn't performed or failed (e.g., RLS, not admin, or network offline), fall back to client static definitions!
+        if (loadedCategories.length === 0) {
+          toast.warning("Running in Resilient Fallback Mode. Quality checks are fully operational.");
+          loadedCategories = ILH_FALLBACK_FRAMEWORK;
+          const fallbackTemplateId = "a0000000-0000-0000-0000-000000000001";
+          setTemplate(fallbackTemplateId);
+          setLocalTemplateId(fallbackTemplateId);
+        }
+      } else {
+        if (templateData) {
+          setTemplate(templateData.id);
+          setLocalTemplateId(templateData.id);
+        }
+      }
+
+      setCategories(loadedCategories);
+      setTotalSteps(loadedCategories.length + 2);
     } catch (error) {
       console.error("Fetch error:", error);
       toast.error("Failed to load audit data");
