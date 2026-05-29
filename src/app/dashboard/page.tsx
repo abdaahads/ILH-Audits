@@ -313,7 +313,7 @@ export default function DashboardPage() {
           </div>
           <div className="space-y-4">
             <div className="flex items-end justify-between h-48 gap-3 pt-6 px-4 border-b border-slate-100 overflow-x-auto">
-              {leaderboard.slice(0, 7).map((prop) => {
+              {leaderboard.map((prop) => {
                 const heightPercent = `${Math.max(10, prop.avg_score)}%`;
                 const color = prop.avg_score >= 80 
                   ? "bg-ilh-green-500 hover:bg-ilh-green-600" 
