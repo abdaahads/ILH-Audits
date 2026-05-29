@@ -40,6 +40,8 @@ CREATE TABLE properties (
   name TEXT NOT NULL,
   location TEXT NOT NULL,
   total_beds INTEGER NOT NULL DEFAULT 0,
+  site_manager TEXT,
+  total_employees INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -142,6 +144,8 @@ CREATE TABLE audit_questions (
   question_text TEXT NOT NULL,
   max_points INTEGER NOT NULL DEFAULT 5,
   sort_order INTEGER NOT NULL DEFAULT 0,
+  legal_reference TEXT,
+  compliance_type TEXT NOT NULL DEFAULT 'score' CHECK (compliance_type IN ('score', 'yes_no')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -176,6 +180,10 @@ CREATE TABLE audits (
   max_possible_score INTEGER DEFAULT 100,
   conducted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   completed_at TIMESTAMPTZ,
+  major_observations TEXT,
+  good_practices TEXT,
+  recommendations TEXT,
+  next_steps TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -215,7 +223,9 @@ CREATE TABLE audit_responses (
   question_id UUID NOT NULL REFERENCES audit_questions(id) ON DELETE CASCADE,
   score_awarded INTEGER NOT NULL DEFAULT 0,
   notes TEXT,
+  remarks TEXT,
   image_url TEXT,
+  supporting_images TEXT[],
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(audit_id, question_id)
 );

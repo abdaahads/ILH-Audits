@@ -37,93 +37,73 @@ import type {
 } from "@/types/database";
 
 /* ============================================================
-   ILH Fallback Framework (Official 26-Question Framework)
+   ILH Fallback Framework (Official EHS & PGHP 16-Parameter Framework)
    ============================================================ */
 const ILH_FALLBACK_FRAMEWORK: CategoryWithQuestions[] = [
   {
     id: "c0000000-0000-0000-0000-000000000001",
     template_id: "a0000000-0000-0000-0000-000000000001",
-    name: "Housekeeping & Hygiene",
-    weight_percentage: 20,
+    name: "PGHP & Core Operations",
+    weight_percentage: 25,
     sort_order: 1,
     created_at: "",
     questions: [
-      { id: "e0000000-0000-0000-0000-000000000001", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Room Turn-Down Quality: Are scheduled room cleaning SOPs followed with zero visible dust/grime on surfaces and fixtures?", max_points: 5, sort_order: 1, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000002", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Common Area Cleanliness: Are lobbies, study zones, and corridors free of debris, with floors visibly mopped and vacuumed?", max_points: 5, sort_order: 2, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000003", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Washroom Sanitation: Are all communal and en-suite washrooms sanitized, odor-free, and fully stocked with consumables?", max_points: 5, sort_order: 3, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000004", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Laundry Turnaround: Is the laundry processing operating within the mandated <24-hour turnaround SLA?", max_points: 5, sort_order: 4, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000005", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Staff Hygiene (People): Are housekeeping staff wearing clean, standard-issue uniforms with appropriate personal protective equipment (gloves, hairnets where applicable)?", max_points: 5, sort_order: 5, created_at: "" }
+      { id: "e0000000-0000-0000-0000-000000000001", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Staff Grooming & Uniform Compliance: Are all on-duty staff wearing clean, standard-issue uniforms with appropriate PPE (gloves, hairnets, safety shoes) as per site SOP?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000002", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Food Product Quality vs. Published Menu: Does the daily meal service match the published weekly menu in terms of items, portion size, and presentation quality?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000003", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Process Adherence (SOP Compliance): Are cleaning, turn-down, and sanitization SOPs being followed with documented checklists signed off by shift supervisors?", max_points: 5, sort_order: 3, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000004", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Vendor SLA Adherence: Are all third-party vendor deliverables (laundry, pest control, waste disposal) being tracked against contracted SLAs with documented proof?", max_points: 5, sort_order: 4, created_at: "" }
     ]
   },
   {
     id: "c0000000-0000-0000-0000-000000000002",
     template_id: "a0000000-0000-0000-0000-000000000001",
-    name: "Food & Kitchen Operations",
-    weight_percentage: 20,
+    name: "EHS Documentation & Legal Compliance",
+    weight_percentage: 25,
     sort_order: 2,
     created_at: "",
     questions: [
-      { id: "e0000000-0000-0000-0000-000000000006", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Kitchen Sanitation: Are all prep stations, industrial equipment, and floors sanitized according to daily checklists?", max_points: 5, sort_order: 1, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000007", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Temperature Control: Are cold storage units holding at correct temperatures, and is hot food served at standard safety temperatures?", max_points: 5, sort_order: 2, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000008", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Inventory Accuracy: Does the physical stock of high-value consumables match the ERP digital records?", max_points: 5, sort_order: 3, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000009", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Food Quality & Presentation (Product): Does the daily meal match the published menu, and is it presented well in the dining hall?", max_points: 5, sort_order: 4, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000010", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Waste Management: Is wet and dry waste properly segregated, sealed, and disposed of according to local municipal guidelines?", max_points: 5, sort_order: 5, created_at: "" }
+      { id: "e0000000-0000-0000-0000-000000000005", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Workmen Compensation & Labour Registration: Are all workers registered under BOCWA Section 44? Is the Workmen Compensation insurance policy current and accessible?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000006", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Safety Manual, HIRA & Risk Registers: Is the site Safety Manual available and up-to-date? Are Hazard Identification and Risk Assessment (HIRA) registers maintained with quarterly reviews?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000007", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "PTW (Permit to Work) Systems: Are Permit to Work systems in place for high-risk activities (hot work, confined space, electrical work)? Are closure checklists completed post-work?", max_points: 5, sort_order: 3, created_at: "" }
     ]
   },
   {
     id: "c0000000-0000-0000-0000-000000000003",
     template_id: "a0000000-0000-0000-0000-000000000001",
-    name: "Maintenance & Infrastructure",
-    weight_percentage: 15,
+    name: "Mechanical, Electrical & Lift Safety",
+    weight_percentage: 20,
     sort_order: 3,
     created_at: "",
     questions: [
-      { id: "e0000000-0000-0000-0000-000000000011", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "HVAC & Air Quality: Are all air conditioning units functioning without unusual noise or leaks, with filters cleaned on schedule?", max_points: 5, sort_order: 1, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000012", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Water Filtration (RO Systems): Are central RO water purifiers functioning optimally, with recent TDS logs within acceptable limits?", max_points: 5, sort_order: 2, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000013", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Power Redundancy: Has the backup generator (DG set) been tested, and is the fuel level sufficient for emergency outages?", max_points: 5, sort_order: 3, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000014", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Elevator Functionality: Are all lifts operational, well-lit, and displaying up-to-date service certificates?", max_points: 5, sort_order: 4, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000015", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Plumbing Integrity: Are there zero active leaks, blockages, or pressure issues in shared and private bathroom lines?", max_points: 5, sort_order: 5, created_at: "" }
+      { id: "e0000000-0000-0000-0000-000000000008", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Lift/Hoist Installation Certificates & Door Interlocking: Are all lift installation certificates current? Is the door interlocking mechanism functioning correctly with zero bypass capability?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000009", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Electrical Earthing & Equipment Calibration: Is the electrical earthing system tested and certified within the last 12 months? Are all critical instruments calibrated per schedule?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000010", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "HVAC and Plumbing Utility Health: Are all HVAC units operational with filters cleaned on schedule? Are there zero active leaks, blockages, or pressure issues in plumbing systems?", max_points: 5, sort_order: 3, created_at: "" }
     ]
   },
   {
     id: "c0000000-0000-0000-0000-000000000004",
     template_id: "a0000000-0000-0000-0000-000000000001",
-    name: "Safety, Security & Compliance",
+    name: "Chemical, Waste & Material Management",
     weight_percentage: 15,
     sort_order: 4,
     created_at: "",
     questions: [
-      { id: "e0000000-0000-0000-0000-000000000016", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Entry/Exit Movement Tracker: Are Gate Passes (G.P.) strictly enforced and logged for all external vendors and non-resident guests?", max_points: 5, sort_order: 1, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000017", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Biometric & Turnstile Functionality: Are all access control systems functioning with zero lag or bypass vulnerabilities?", max_points: 5, sort_order: 2, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000018", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Fire Safety Readiness: Are all fire extinguishers fully pressurized (in the green), and are fire exits completely unobstructed?", max_points: 5, sort_order: 3, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000019", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Statutory Records: Are physical/digital records for Labour Licenses, local police verifications, and food safety certificates up-to-date and accessible?", max_points: 5, sort_order: 4, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000020", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "CCTV Coverage: Are all security cameras online, recording properly, and providing clear visibility of all critical choke points?", max_points: 5, sort_order: 5, created_at: "" }
+      { id: "e0000000-0000-0000-0000-000000000011", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "MSDS Availability: Are Material Safety Data Sheets (MSDS) available, current, and displayed at all chemical storage locations for every chemical used on site?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000012", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Safe Storage & Disposal Protocols: Are all chemicals stored in approved, labeled containers with secondary containment? Is liquid/chemical waste disposed per local environmental norms?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000013", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Material Handling Equipment (MHE) Fitness: Are all MHE units (forklifts, trolleys, hoists) within valid fitness certification? Are operators holding valid competency certificates?", max_points: 5, sort_order: 3, created_at: "" }
     ]
   },
   {
     id: "c0000000-0000-0000-0000-000000000005",
     template_id: "a0000000-0000-0000-0000-000000000001",
-    name: "Community & Resident Experience",
-    weight_percentage: 10,
+    name: "Emergency Preparedness & Subcontractor Safety",
+    weight_percentage: 15,
     sort_order: 5,
     created_at: "",
     questions: [
-      { id: "e0000000-0000-0000-0000-000000000021", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Event Readiness: Are communal spaces set up correctly for any upcoming daily/weekly flagship events or micro-mixers?", max_points: 5, sort_order: 1, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000022", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Notice Boards & Digital Displays: Is all community communication (menus, event calendars, emergency contacts) current and visually aligned with the brand?", max_points: 5, sort_order: 2, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000023", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Amenity Functionality: Are all community assets (gaming consoles, pool tables, study desks, library books) in perfect working condition?", max_points: 5, sort_order: 3, created_at: "" }
-    ]
-  },
-  {
-    id: "c0000000-0000-0000-0000-000000000006",
-    template_id: "a0000000-0000-0000-0000-000000000001",
-    name: "Resident Feedback Proxy",
-    weight_percentage: 20,
-    sort_order: 6,
-    created_at: "",
-    questions: [
-      { id: "e0000000-0000-0000-0000-000000000024", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "Helpdesk Ticket Closure: Are 100% of resident grievance tickets from the last 72 hours successfully closed or actively being worked on within SLA?", max_points: 5, sort_order: 1, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000025", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "First-Response Compliance: Did all tickets raised in the last week receive a logged first-response within the target <2-hour window?", max_points: 5, sort_order: 2, created_at: "" },
-      { id: "e0000000-0000-0000-0000-000000000026", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "On-Floor Vibe Check: Based on random interactions during the audit, is the general resident sentiment positive regarding recent food and facility services?", max_points: 5, sort_order: 3, created_at: "" }
+      { id: "e0000000-0000-0000-0000-000000000014", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Mock Drill Records (Fire & Evacuation): Have fire and evacuation mock drills been conducted in the last quarter? Are drill records, participant lists, and improvement notes documented?", max_points: 5, sort_order: 1, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000015", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "First Aid Box Availability & Staff Training: Are first aid boxes fully stocked at all designated locations? Have at least 2 trained first-aiders been identified per shift?", max_points: 5, sort_order: 2, created_at: "" },
+      { id: "e0000000-0000-0000-0000-000000000016", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Subcontractor Pre-Engagement Reviews & Medical Records: Are all subcontractor workers medically examined before site entry? Are pre-engagement safety inductions documented?", max_points: 5, sort_order: 3, created_at: "" }
     ]
   }
 ];
@@ -772,17 +752,14 @@ export default function NewAuditPage() {
                   onValueChange={(val) => { if (val) setProperty(val); }}
                 >
                   <SelectTrigger className="w-full h-12 text-base rounded-xl">
-                    <SelectValue placeholder="Select a property..." />
+                    <SelectValue placeholder="Select a property...">
+                      {propertyId ? properties.find(p => p.id === propertyId)?.name || "Select a property..." : "Select a property..."}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {properties.map((p) => (
                       <SelectItem key={p.id} value={p.id}>
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-slate-700">{p.name}</span>
-                          <span className="text-xs text-slate-400 mt-0.5">
-                            {p.location} · {p.total_beds} beds
-                          </span>
-                        </div>
+                        {p.name} — {p.location}
                       </SelectItem>
                     ))}
                   </SelectContent>

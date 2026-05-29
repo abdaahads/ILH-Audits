@@ -1,100 +1,188 @@
 /**
- * High-Fidelity Mock Supabase Client
+ * High-Fidelity Mock Supabase Client — v5.0
+ * 
+ * EHS & PGHP Comprehensive Audit Framework
+ * 5 Categories · 16 Parameters · Legal References
  * 
  * Implements complete local-storage database state for:
- *  - properties
+ *  - properties (9 locations incl. Student Village Ahmedabad)
  *  - profiles
- *  - audits
- *  - audit_responses
+ *  - audits (3 historical per target property)
+ *  - audit_responses (with supporting_images, remarks)
  *  - corrective_actions (CAP board)
  *  - audit_templates
- *  - audit_categories
- *  - audit_questions
+ *  - audit_categories (5 EHS departments)
+ *  - audit_questions (16 parameters with legal_reference, compliance_type)
  * 
- * Supports query builders: from().select(), .insert(), .update(), .eq(), .in(), .order(), .limit()
+ * Supports query builders: from().select(), .insert(), .update(), .eq(), .in(), .order(), .limit(), .maybeSingle(), .single()
  */
 
 import { toast } from "sonner";
 
-// Static Seed Data
+// ============================================================
+// Static Seed Data — EHS v2.0
+// ============================================================
+
 const MOCK_PROFILES = [
   { id: "u1111111-1111-1111-1111-111111111111", full_name: "Abdulahad Sheikh", role: "admin", created_at: new Date().toISOString() },
   { id: "u2222222-2222-2222-2222-222222222222", full_name: "Rahul Sharma", role: "auditor", created_at: new Date().toISOString() }
 ];
 
 const MOCK_PROPERTIES = [
-  { id: "p0000000-0000-0000-0000-000000000001", name: "ILH Pune", location: "Tathawade, Pune, Maharashtra", total_beds: 706, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000002", name: "ILH Mumbai", location: "Vile Parle, Mumbai, Maharashtra", total_beds: 450, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000003", name: "ILH Delhi", location: "Kamla Nagar, Delhi", total_beds: 350, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000004", name: "ILH Dehradun", location: "Rajpur Road, Dehradun, Uttarakhand", total_beds: 400, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000005", name: "ILH Durgapur", location: "Durgapur, West Bengal", total_beds: 250, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000006", name: "ILH Bengaluru", location: "Koramangala, Bengaluru, Karnataka", total_beds: 320, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000007", name: "ILH Hyderabad", location: "Gachibowli, Hyderabad, Telangana", total_beds: 280, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000008", name: "ILH Vizag", location: "Visakhapatnam, Andhra Pradesh", total_beds: 200, created_at: new Date().toISOString() }
+  { id: "p0000000-0000-0000-0000-000000000001", name: "ILH Pune Pilot", location: "Tathawade, Pune, Maharashtra", total_beds: 706, site_manager: "Rajesh Kulkarni", total_employees: 85, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000002", name: "ILH Mumbai", location: "Vile Parle, Mumbai, Maharashtra", total_beds: 450, site_manager: "Priya Nair", total_employees: 62, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000003", name: "ILH Delhi", location: "Kamla Nagar, Delhi", total_beds: 350, site_manager: "Vikram Singh", total_employees: 48, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000004", name: "ILH Dehradun", location: "Rajpur Road, Dehradun, Uttarakhand", total_beds: 400, site_manager: "Ankit Rawat", total_employees: 45, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000005", name: "ILH Durgapur", location: "Durgapur, West Bengal", total_beds: 250, site_manager: "Sourav Das", total_employees: 32, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000006", name: "ILH Bengaluru", location: "Koramangala, Bengaluru, Karnataka", total_beds: 320, site_manager: "Meera Reddy", total_employees: 40, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000007", name: "ILH Hyderabad", location: "Gachibowli, Hyderabad, Telangana", total_beds: 280, site_manager: "Farhan Ahmed", total_employees: 36, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000008", name: "ILH Vizag", location: "Visakhapatnam, Andhra Pradesh", total_beds: 200, site_manager: "Lakshmi Prasad", total_employees: 28, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000009", name: "Student Village Ahmedabad", location: "SG Highway, Ahmedabad, Gujarat", total_beds: 520, site_manager: "Harsh Patel", total_employees: 70, created_at: new Date().toISOString() }
 ];
 
 const MOCK_TEMPLATES = [
-  { id: "a0000000-0000-0000-0000-000000000001", title: "Standard Property Audit", description: "Comprehensive quality audit covering all aspects of ILH property operations including housekeeping, food, maintenance, safety, and community standards.", max_score: 100 }
+  { id: "a0000000-0000-0000-0000-000000000001", title: "EHS & PGHP Comprehensive Audit", description: "Environment, Health & Safety and Process-Grooming-Hygiene-Product audit framework for ILH properties.", max_score: 100 }
 ];
 
 const MOCK_CATEGORIES = [
-  { id: "c0000000-0000-0000-0000-000000000001", template_id: "a0000000-0000-0000-0000-000000000001", name: "Housekeeping & Hygiene", weight_percentage: 20, sort_order: 1 },
-  { id: "c0000000-0000-0000-0000-000000000002", template_id: "a0000000-0000-0000-0000-000000000001", name: "Food & Kitchen Operations", weight_percentage: 20, sort_order: 2 },
-  { id: "c0000000-0000-0000-0000-000000000003", template_id: "a0000000-0000-0000-0000-000000000001", name: "Maintenance & Infrastructure", weight_percentage: 15, sort_order: 3 },
-  { id: "c0000000-0000-0000-0000-000000000004", template_id: "a0000000-0000-0000-0000-000000000001", name: "Safety, Security & Compliance", weight_percentage: 15, sort_order: 4 },
-  { id: "c0000000-0000-0000-0000-000000000005", template_id: "a0000000-0000-0000-0000-000000000001", name: "Community & Resident Experience", weight_percentage: 10, sort_order: 5 },
-  { id: "c0000000-0000-0000-0000-000000000006", template_id: "a0000000-0000-0000-0000-000000000001", name: "Resident Feedback Proxy", weight_percentage: 20, sort_order: 6 }
+  { id: "c0000000-0000-0000-0000-000000000001", template_id: "a0000000-0000-0000-0000-000000000001", name: "PGHP & Core Operations", weight_percentage: 25, sort_order: 1 },
+  { id: "c0000000-0000-0000-0000-000000000002", template_id: "a0000000-0000-0000-0000-000000000001", name: "EHS Documentation & Legal Compliance", weight_percentage: 25, sort_order: 2 },
+  { id: "c0000000-0000-0000-0000-000000000003", template_id: "a0000000-0000-0000-0000-000000000001", name: "Mechanical, Electrical & Lift Safety", weight_percentage: 20, sort_order: 3 },
+  { id: "c0000000-0000-0000-0000-000000000004", template_id: "a0000000-0000-0000-0000-000000000001", name: "Chemical, Waste & Material Management", weight_percentage: 15, sort_order: 4 },
+  { id: "c0000000-0000-0000-0000-000000000005", template_id: "a0000000-0000-0000-0000-000000000001", name: "Emergency Preparedness & Subcontractor Safety", weight_percentage: 15, sort_order: 5 }
 ];
 
 const MOCK_QUESTIONS = [
-  // Housekeeping & Hygiene (20%)
-  { id: "e0000000-0000-0000-0000-000000000001", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Room Turn-Down Quality: Are scheduled room cleaning SOPs followed with zero visible dust/grime on surfaces and fixtures?", max_points: 5, sort_order: 1 },
-  { id: "e0000000-0000-0000-0000-000000000002", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Common Area Cleanliness: Are lobbies, study zones, and corridors free of debris, with floors visibly mopped and vacuumed?", max_points: 5, sort_order: 2 },
-  { id: "e0000000-0000-0000-0000-000000000003", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Washroom Sanitation: Are all communal and en-suite washrooms sanitized, odor-free, and fully stocked with consumables?", max_points: 5, sort_order: 3 },
-  { id: "e0000000-0000-0000-0000-000000000004", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Laundry Turnaround: Is the laundry processing operating within the mandated <24-hour turnaround SLA?", max_points: 5, sort_order: 4 },
-  { id: "e0000000-0000-0000-0000-000000000005", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Staff Hygiene (People): Are housekeeping staff wearing clean, standard-issue uniforms with appropriate personal protective equipment (gloves, hairnets where applicable)?", max_points: 5, sort_order: 5 },
-
-  // Food & Kitchen Operations (20%)
-  { id: "e0000000-0000-0000-0000-000000000006", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Kitchen Sanitation: Are all prep stations, industrial equipment, and floors sanitized according to daily checklists?", max_points: 5, sort_order: 1 },
-  { id: "e0000000-0000-0000-0000-000000000007", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Temperature Control: Are cold storage units holding at correct temperatures, and is hot food served at standard safety temperatures?", max_points: 5, sort_order: 2 },
-  { id: "e0000000-0000-0000-0000-000000000008", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Inventory Accuracy: Does the physical stock of high-value consumables match the ERP digital records?", max_points: 5, sort_order: 3 },
-  { id: "e0000000-0000-0000-0000-000000000009", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Food Quality & Presentation (Product): Does the daily meal match the published menu, and is it presented well in the dining hall?", max_points: 5, sort_order: 4 },
-  { id: "e0000000-0000-0000-0000-000000000010", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Waste Management: Is wet and dry waste properly segregated, sealed, and disposed of according to local municipal guidelines?", max_points: 5, sort_order: 5 },
-
-  // Maintenance & Infrastructure (15%)
-  { id: "e0000000-0000-0000-0000-000000000011", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "HVAC & Air Quality: Are all air conditioning units functioning without unusual noise or leaks, with filters cleaned on schedule?", max_points: 5, sort_order: 1 },
-  { id: "e0000000-0000-0000-0000-000000000012", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Water Filtration (RO Systems): Are central RO water purifiers functioning optimally, with recent TDS logs within acceptable limits?", max_points: 5, sort_order: 2 },
-  { id: "e0000000-0000-0000-0000-000000000013", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Power Redundancy: Has the backup generator (DG set) been tested, and is the fuel level sufficient for emergency outages?", max_points: 5, sort_order: 3 },
-  { id: "e0000000-0000-0000-0000-000000000014", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Elevator Functionality: Are all lifts operational, well-lit, and displaying up-to-date service certificates?", max_points: 5, sort_order: 4 },
-  { id: "e0000000-0000-0000-0000-000000000015", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Plumbing Integrity: Are there zero active leaks, blockages, or pressure issues in shared and private bathroom lines?", max_points: 5, sort_order: 5 },
-
-  // Safety, Security & Compliance (15%)
-  { id: "e0000000-0000-0000-0000-000000000016", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Entry/Exit Movement Tracker: Are Gate Passes (G.P.) strictly enforced and logged for all external vendors and non-resident guests?", max_points: 5, sort_order: 1 },
-  { id: "e0000000-0000-0000-0000-000000000017", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Biometric & Turnstile Functionality: Are all access control systems functioning with zero lag or bypass vulnerabilities?", max_points: 5, sort_order: 2 },
-  { id: "e0000000-0000-0000-0000-000000000018", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Fire Safety Readiness: Are all fire extinguishers fully pressurized (in the green), and are fire exits completely unobstructed?", max_points: 5, sort_order: 3 },
-  { id: "e0000000-0000-0000-0000-000000000019", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Statutory Records: Are physical/digital records for Labour Licenses, local police verifications, and food safety certificates up-to-date and accessible?", max_points: 5, sort_order: 4 },
-  { id: "e0000000-0000-0000-0000-000000000020", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "CCTV Coverage: Are all security cameras online, recording properly, and providing clear visibility of all critical choke points?", max_points: 5, sort_order: 5 },
-
-  // Community & Resident Experience (10%)
-  { id: "e0000000-0000-0000-0000-000000000021", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Event Readiness: Are communal spaces set up correctly for any upcoming daily/weekly flagship events or micro-mixers?", max_points: 5, sort_order: 1 },
-  { id: "e0000000-0000-0000-0000-000000000022", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Notice Boards & Digital Displays: Is all community communication (menus, event calendars, emergency contacts) current and visually aligned with the brand?", max_points: 5, sort_order: 2 },
-  { id: "e0000000-0000-0000-0000-000000000023", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Amenity Functionality: Are all community assets (gaming consoles, pool tables, study desks, library books) in perfect working condition?", max_points: 5, sort_order: 3 },
-
-  // Resident Feedback Proxy (20%)
-  { id: "e0000000-0000-0000-0000-000000000024", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "Helpdesk Ticket Closure: Are 100% of resident grievance tickets from the last 72 hours successfully closed or actively being worked on within SLA?", max_points: 5, sort_order: 1 },
-  { id: "e0000000-0000-0000-0000-000000000025", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "First-Response Compliance: Did all tickets raised in the last week receive a logged first-response within the target <2-hour window?", max_points: 5, sort_order: 2 },
-  { id: "e0000000-0000-0000-0000-000000000026", category_id: "c0000000-0000-0000-0000-000000000006", question_text: "On-Floor Vibe Check: Based on random interactions during the audit, is the general resident sentiment positive regarding recent food and facility services?", max_points: 5, sort_order: 3 }
+  // Cat 1: PGHP & Core Operations (25%)
+  { id: "e0000000-0000-0000-0000-000000000001", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Staff Grooming & Uniform Compliance", max_points: 5, sort_order: 1, legal_reference: "Internal PPE & Grooming SOP", compliance_type: "score" },
+  { id: "e0000000-0000-0000-0000-000000000002", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Food Product Quality vs. Published Menu", max_points: 5, sort_order: 2, legal_reference: "FSSAI Act 2006", compliance_type: "score" },
+  { id: "e0000000-0000-0000-0000-000000000003", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Process Adherence (SOP Compliance)", max_points: 5, sort_order: 3, legal_reference: "Internal SOP Framework", compliance_type: "score" },
+  { id: "e0000000-0000-0000-0000-000000000004", category_id: "c0000000-0000-0000-0000-000000000001", question_text: "Vendor SLA Adherence", max_points: 5, sort_order: 4, legal_reference: "Vendor Contract Terms", compliance_type: "score" },
+  // Cat 2: EHS Documentation & Legal Compliance (25%)
+  { id: "e0000000-0000-0000-0000-000000000005", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Workmen Compensation & Labour Registration", max_points: 5, sort_order: 1, legal_reference: "BOCWA Section 44", compliance_type: "yes_no" },
+  { id: "e0000000-0000-0000-0000-000000000006", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "Safety Manual, HIRA & Risk Registers", max_points: 5, sort_order: 2, legal_reference: "HIRA Standards / ISO 45001", compliance_type: "yes_no" },
+  { id: "e0000000-0000-0000-0000-000000000007", category_id: "c0000000-0000-0000-0000-000000000002", question_text: "PTW (Permit to Work) Systems", max_points: 5, sort_order: 3, legal_reference: "PTW Regulations / OISD 105", compliance_type: "yes_no" },
+  // Cat 3: Mechanical, Electrical & Lift Safety (20%)
+  { id: "e0000000-0000-0000-0000-000000000008", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Lift/Hoist Installation Certificates & Door Interlocking", max_points: 5, sort_order: 1, legal_reference: "Factories Act 1948, Section 28-29", compliance_type: "yes_no" },
+  { id: "e0000000-0000-0000-0000-000000000009", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "Electrical Earthing & Equipment Calibration", max_points: 5, sort_order: 2, legal_reference: "Indian Electricity Rules 1956", compliance_type: "yes_no" },
+  { id: "e0000000-0000-0000-0000-000000000010", category_id: "c0000000-0000-0000-0000-000000000003", question_text: "HVAC and Plumbing Utility Health", max_points: 5, sort_order: 3, legal_reference: null, compliance_type: "score" },
+  // Cat 4: Chemical, Waste & Material Management (15%)
+  { id: "e0000000-0000-0000-0000-000000000011", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "MSDS Availability", max_points: 5, sort_order: 1, legal_reference: "MSDS / GHS Regulations", compliance_type: "yes_no" },
+  { id: "e0000000-0000-0000-0000-000000000012", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Safe Storage & Disposal Protocols", max_points: 5, sort_order: 2, legal_reference: "Hazardous Waste Management Rules 2016", compliance_type: "score" },
+  { id: "e0000000-0000-0000-0000-000000000013", category_id: "c0000000-0000-0000-0000-000000000004", question_text: "Material Handling Equipment (MHE) Fitness", max_points: 5, sort_order: 3, legal_reference: "Factories Act 1948", compliance_type: "yes_no" },
+  // Cat 5: Emergency Preparedness & Subcontractor Safety (15%)
+  { id: "e0000000-0000-0000-0000-000000000014", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Mock Drill Records (Fire & Evacuation)", max_points: 5, sort_order: 1, legal_reference: "Fire Safety Act / NBC 2016", compliance_type: "yes_no" },
+  { id: "e0000000-0000-0000-0000-000000000015", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "First Aid Box Availability & Staff Training", max_points: 5, sort_order: 2, legal_reference: "Factories Act 1948, Section 45", compliance_type: "yes_no" },
+  { id: "e0000000-0000-0000-0000-000000000016", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Subcontractor Pre-Engagement Reviews & Medical Records", max_points: 5, sort_order: 3, legal_reference: "BOCWA / Contract Labour Act 1970", compliance_type: "yes_no" }
 ];
 
-// Helper to seed localStorage databases if empty
+// ============================================================
+// Historical Audit Data Generation
+// ============================================================
+
+/** Target property indices (ILH Pune Pilot = 0, Student Village Ahmedabad = 8) */
+const TARGET_PROPS = [0, 8];
+
+/** Audit dates: Aug 2025, Jan 2026, May 2026 */
+const AUDIT_DATES = [
+  new Date("2025-08-15T10:00:00Z"),
+  new Date("2026-01-20T10:00:00Z"),
+  new Date("2026-05-12T10:00:00Z")
+];
+
+/** Score profiles per (property, audit) combination */
+type ScoreProfile = Record<string, number>;
+
+function getScoreProfiles(): Record<string, ScoreProfile[]> {
+  // ILH Pune Pilot: Mixed → Improved → High with 2 critical failures
+  const pune: ScoreProfile[] = [
+    // Aug 2025 — baseline mixed (target ~68%)
+    { "e0000000-0000-0000-0000-000000000001": 3, "e0000000-0000-0000-0000-000000000002": 4, "e0000000-0000-0000-0000-000000000003": 3, "e0000000-0000-0000-0000-000000000004": 3,
+      "e0000000-0000-0000-0000-000000000005": 3, "e0000000-0000-0000-0000-000000000006": 4, "e0000000-0000-0000-0000-000000000007": 3,
+      "e0000000-0000-0000-0000-000000000008": 4, "e0000000-0000-0000-0000-000000000009": 3, "e0000000-0000-0000-0000-000000000010": 4,
+      "e0000000-0000-0000-0000-000000000011": 3, "e0000000-0000-0000-0000-000000000012": 3, "e0000000-0000-0000-0000-000000000013": 4,
+      "e0000000-0000-0000-0000-000000000014": 3, "e0000000-0000-0000-0000-000000000015": 4, "e0000000-0000-0000-0000-000000000016": 3 },
+    // Jan 2026 — improved (target ~82%)
+    { "e0000000-0000-0000-0000-000000000001": 4, "e0000000-0000-0000-0000-000000000002": 5, "e0000000-0000-0000-0000-000000000003": 4, "e0000000-0000-0000-0000-000000000004": 4,
+      "e0000000-0000-0000-0000-000000000005": 4, "e0000000-0000-0000-0000-000000000006": 5, "e0000000-0000-0000-0000-000000000007": 4,
+      "e0000000-0000-0000-0000-000000000008": 5, "e0000000-0000-0000-0000-000000000009": 4, "e0000000-0000-0000-0000-000000000010": 4,
+      "e0000000-0000-0000-0000-000000000011": 4, "e0000000-0000-0000-0000-000000000012": 4, "e0000000-0000-0000-0000-000000000013": 3,
+      "e0000000-0000-0000-0000-000000000014": 4, "e0000000-0000-0000-0000-000000000015": 5, "e0000000-0000-0000-0000-000000000016": 4 },
+    // May 2026 — high but 2 critical failures (target ~88% with 2 failures)
+    { "e0000000-0000-0000-0000-000000000001": 5, "e0000000-0000-0000-0000-000000000002": 5, "e0000000-0000-0000-0000-000000000003": 5, "e0000000-0000-0000-0000-000000000004": 4,
+      "e0000000-0000-0000-0000-000000000005": 5, "e0000000-0000-0000-0000-000000000006": 5, "e0000000-0000-0000-0000-000000000007": 5,
+      "e0000000-0000-0000-0000-000000000008": 1, "e0000000-0000-0000-0000-000000000009": 5, "e0000000-0000-0000-0000-000000000010": 5,
+      "e0000000-0000-0000-0000-000000000011": 1, "e0000000-0000-0000-0000-000000000012": 5, "e0000000-0000-0000-0000-000000000013": 5,
+      "e0000000-0000-0000-0000-000000000014": 5, "e0000000-0000-0000-0000-000000000015": 5, "e0000000-0000-0000-0000-000000000016": 5 }
+  ];
+
+  // Student Village Ahmedabad: Mixed → Improved → High with 2 critical failures
+  const ahmedabad: ScoreProfile[] = [
+    // Aug 2025 — baseline (target ~62%)
+    { "e0000000-0000-0000-0000-000000000001": 3, "e0000000-0000-0000-0000-000000000002": 3, "e0000000-0000-0000-0000-000000000003": 3, "e0000000-0000-0000-0000-000000000004": 3,
+      "e0000000-0000-0000-0000-000000000005": 3, "e0000000-0000-0000-0000-000000000006": 3, "e0000000-0000-0000-0000-000000000007": 4,
+      "e0000000-0000-0000-0000-000000000008": 3, "e0000000-0000-0000-0000-000000000009": 3, "e0000000-0000-0000-0000-000000000010": 3,
+      "e0000000-0000-0000-0000-000000000011": 3, "e0000000-0000-0000-0000-000000000012": 3, "e0000000-0000-0000-0000-000000000013": 3,
+      "e0000000-0000-0000-0000-000000000014": 3, "e0000000-0000-0000-0000-000000000015": 3, "e0000000-0000-0000-0000-000000000016": 4 },
+    // Jan 2026 — improved (target ~76%)
+    { "e0000000-0000-0000-0000-000000000001": 4, "e0000000-0000-0000-0000-000000000002": 4, "e0000000-0000-0000-0000-000000000003": 4, "e0000000-0000-0000-0000-000000000004": 3,
+      "e0000000-0000-0000-0000-000000000005": 4, "e0000000-0000-0000-0000-000000000006": 4, "e0000000-0000-0000-0000-000000000007": 3,
+      "e0000000-0000-0000-0000-000000000008": 4, "e0000000-0000-0000-0000-000000000009": 3, "e0000000-0000-0000-0000-000000000010": 4,
+      "e0000000-0000-0000-0000-000000000011": 4, "e0000000-0000-0000-0000-000000000012": 3, "e0000000-0000-0000-0000-000000000013": 4,
+      "e0000000-0000-0000-0000-000000000014": 4, "e0000000-0000-0000-0000-000000000015": 4, "e0000000-0000-0000-0000-000000000016": 3 },
+    // May 2026 — high but 2 critical failures
+    { "e0000000-0000-0000-0000-000000000001": 5, "e0000000-0000-0000-0000-000000000002": 5, "e0000000-0000-0000-0000-000000000003": 4, "e0000000-0000-0000-0000-000000000004": 5,
+      "e0000000-0000-0000-0000-000000000005": 5, "e0000000-0000-0000-0000-000000000006": 5, "e0000000-0000-0000-0000-000000000007": 4,
+      "e0000000-0000-0000-0000-000000000008": 5, "e0000000-0000-0000-0000-000000000009": 1, "e0000000-0000-0000-0000-000000000010": 5,
+      "e0000000-0000-0000-0000-000000000011": 5, "e0000000-0000-0000-0000-000000000012": 1, "e0000000-0000-0000-0000-000000000013": 5,
+      "e0000000-0000-0000-0000-000000000014": 5, "e0000000-0000-0000-0000-000000000015": 5, "e0000000-0000-0000-0000-000000000016": 5 }
+  ];
+
+  return {
+    "p0000000-0000-0000-0000-000000000001": pune,
+    "p0000000-0000-0000-0000-000000000009": ahmedabad
+  };
+}
+
+/** Remarks for critical failures */
+const CRITICAL_REMARKS: Record<string, string> = {
+  "e0000000-0000-0000-0000-000000000008": "CRITICAL: Lift inspection certificate expired 3 months ago. Door interlocking mechanism found bypassed on Floor 4. Immediate shutdown required per Factories Act 1948 Section 29.",
+  "e0000000-0000-0000-0000-000000000009": "CRITICAL: Electrical earthing test overdue by 6 months. Phase imbalance detected in main DB panel. Non-compliant per Indian Electricity Rules 1956.",
+  "e0000000-0000-0000-0000-000000000011": "CRITICAL: MSDS sheets missing for 4 out of 7 chemicals in housekeeping store. Chemical spill containment kit not available. Violation of GHS Regulations.",
+  "e0000000-0000-0000-0000-000000000012": "CRITICAL: Chemical waste disposal log not maintained for past 2 months. Unlabeled containers found in storage. Non-compliant with Hazardous Waste Management Rules 2016."
+};
+
+/** Dummy supporting image URLs */
+const EVIDENCE_IMAGES: Record<string, string[]> = {
+  "e0000000-0000-0000-0000-000000000008": [
+    "https://placehold.co/800x600/dc2626/ffffff?text=Expired+Lift+Certificate",
+    "https://placehold.co/800x600/dc2626/ffffff?text=Door+Interlock+Bypass"
+  ],
+  "e0000000-0000-0000-0000-000000000009": [
+    "https://placehold.co/800x600/dc2626/ffffff?text=Earthing+Test+Overdue",
+    "https://placehold.co/800x600/dc2626/ffffff?text=Phase+Imbalance+Panel"
+  ],
+  "e0000000-0000-0000-0000-000000000011": [
+    "https://placehold.co/800x600/dc2626/ffffff?text=Missing+MSDS+Sheets",
+    "https://placehold.co/800x600/dc2626/ffffff?text=No+Spill+Kit"
+  ],
+  "e0000000-0000-0000-0000-000000000012": [
+    "https://placehold.co/800x600/dc2626/ffffff?text=Unlabeled+Containers",
+    "https://placehold.co/800x600/dc2626/ffffff?text=Waste+Log+Missing"
+  ]
+};
+
+// ============================================================
+// LocalStorage Initialization
+// ============================================================
+
 function initializeLocalStorageDB() {
   if (typeof window === "undefined") return;
 
-  const currentVersion = "4.0";
+  const currentVersion = "5.0";
   const storedVersion = localStorage.getItem("ilh_seeder_version");
 
   if (storedVersion !== currentVersion) {
-    // Clear all previous mock tables to force reload the upgraded, premium dataset
     localStorage.removeItem("ilh_profiles");
     localStorage.removeItem("ilh_properties");
     localStorage.removeItem("ilh_audit_templates");
@@ -122,174 +210,97 @@ function initializeLocalStorageDB() {
     localStorage.setItem("ilh_audit_questions", JSON.stringify(MOCK_QUESTIONS));
   }
 
-  // Pre-seed mock historical audits & corrective actions to make the charts/sparklines gorgeous!
+  // Pre-seed historical audits for target properties
   if (!localStorage.getItem("ilh_audits")) {
     const audits: any[] = [];
     const responses: any[] = [];
     const correctiveActions: any[] = [];
-
     const auditorId = MOCK_PROFILES[0].id;
     const templateId = MOCK_TEMPLATES[0].id;
+    const scoreProfiles = getScoreProfiles();
 
-    // Seed 3 historic audits per property (differing dates, scores, and departments)
-    MOCK_PROPERTIES.forEach((prop, propIdx) => {
-      const count = 3;
-      for (let i = 1; i <= count; i++) {
-        const auditId = `audit-${prop.id.substring(2, 6)}-${i}`;
-        const daysAgo = (count - i) * 10 + 2;
-        const date = new Date();
-        date.setDate(date.getDate() - daysAgo);
+    TARGET_PROPS.forEach((propIdx) => {
+      const prop = MOCK_PROPERTIES[propIdx];
+      const profiles = scoreProfiles[prop.id];
+      if (!profiles) return;
 
-        let totalPoints = 0;
-        let maxPoints = 100;
+      profiles.forEach((profile, auditIdx) => {
+        const date = AUDIT_DATES[auditIdx];
+        const auditId = `audit-${prop.id.substring(2, 6)}-${auditIdx + 1}`;
+        const isMostRecent = auditIdx === 2;
 
+        // Calculate weighted score
+        let totalWeightedScore = 0;
+        MOCK_CATEGORIES.forEach((cat) => {
+          const catQuestions = MOCK_QUESTIONS.filter((q) => q.category_id === cat.id);
+          let catScored = 0;
+          let catMax = 0;
+          catQuestions.forEach((q) => {
+            catScored += profile[q.id] || 3;
+            catMax += q.max_points;
+          });
+          const catPct = catMax > 0 ? (catScored / catMax) * 100 : 0;
+          totalWeightedScore += catPct * (cat.weight_percentage / 100);
+        });
+
+        // Build responses
+        const failures: string[] = [];
         MOCK_QUESTIONS.forEach((q) => {
-          // Default: standard good score
-          let score = 4;
-          let notes = "Maintained as per operational standards.";
-          let imageUrl = null;
+          const score = profile[q.id] || 3;
+          const isCritical = isMostRecent && score <= 1;
+          const notes = score >= 4 ? "Maintained as per operational standards." : (score === 3 ? "Acceptable but room for improvement." : null);
+          const remarks = isCritical ? (CRITICAL_REMARKS[q.id] || `Non-compliance flagged. Score: ${score}/5.`) : null;
+          const supportingImages = isCritical ? (EVIDENCE_IMAGES[q.id] || null) : null;
 
-          if (propIdx === 0) { // Pune (Climbing: 90.0% -> 92.5% -> 96.0%) - Operational Excellence
-            if (i === 1) {
-              score = q.id === "e0000000-0000-0000-0000-000000000015" ? 2 : (q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000018" ? 5 : 4);
-              if (q.id === "e0000000-0000-0000-0000-000000000015") notes = "Minor water seepage on washroom wall elbow joint in lobby.";
-            } else if (i === 2) {
-              score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000006" || q.id === "e0000000-0000-0000-0000-000000000021" ? 5 : 4;
-            } else {
-              score = q.id === "e0000000-0000-0000-0000-000000000012" ? 4 : 5;
-            }
+          if (isCritical) {
+            failures.push(`${q.question_text}: ${remarks}`);
           }
-          else if (propIdx === 1) { // Mumbai (Stable high: 84.5% -> 86.0% -> 88.5%) - Operational Excellence
-            if (i === 1) {
-              score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000020" ? 5 : 4;
-            } else if (i === 2) {
-              score = q.id === "e0000000-0000-0000-0000-000000000006" || q.id === "e0000000-0000-0000-0000-000000000011" || q.id === "e0000000-0000-0000-0000-000000000021" ? 5 : 4;
-            } else {
-              score = q.id === "e0000000-0000-0000-0000-000000000012" || q.id === "e0000000-0000-0000-0000-000000000026" ? 4 : 5;
-            }
-          }
-          else if (propIdx === 5) { // Bengaluru (Recovering: 66.0% -> 74.0% -> 84.5%) - Operational Excellence
-            if (i === 1) {
-              score = q.id === "e0000000-0000-0000-0000-000000000018" ? 2 : (q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000007" ? 4 : 3);
-              if (q.id === "e0000000-0000-0000-0000-000000000018") notes = "Fire exit sign illumination bulb in Block-C lobby is fused.";
-            } else if (i === 2) {
-              score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000011" || q.id === "e0000000-0000-0000-0000-000000000020" ? 4 : 3;
-            } else {
-              score = q.id === "e0000000-0000-0000-0000-000000000012" ? 4 : 5;
-            }
-          }
-          else if (propIdx === 2) { // Delhi (Warning/Satisfactory: 76.5% -> 70.0% -> 73.5%) - Warning
-            if (i === 1) {
-              score = q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000014" ? 4 : 3;
-            } else if (i === 2) {
-              score = 3;
-            } else {
-              score = q.id === "e0000000-0000-0000-0000-000000000015" ? 2 : 4;
-              if (q.id === "e0000000-0000-0000-0000-000000000015") {
-                notes = "Plumbing check: Restroom B-Block has an active slow drip leak under the main washing basin.";
-                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
-              }
-            }
-          }
-          else if (propIdx === 3) { // Dehradun (Stable warning: 72.0% -> 66.5% -> 68.0%) - Warning
-            if (i === 1) {
-              score = q.id === "e0000000-0000-0000-0000-000000000016" || q.id === "e0000000-0000-0000-0000-000000000022" ? 4 : 3;
-            } else if (i === 2) {
-              score = 3;
-            } else {
-              score = q.id === "e0000000-0000-0000-0000-000000000006" ? 2 : 3;
-              if (q.id === "e0000000-0000-0000-0000-000000000006") {
-                notes = "Pest Control warning: Minor signs of pest evidence spotted near dry kitchen storage racks.";
-                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
-              }
-            }
-          }
-          else if (propIdx === 7) { // Vizag (Stable: 64.0% -> 68.0% -> 65.5%) - Warning
-            score = q.id === "e0000000-0000-0000-0000-000000000001" || q.id === "e0000000-0000-0000-0000-000000000007" ? 4 : 3;
-          }
-          else if (propIdx === 6) { // Hyderabad (Risk/Dropping: 66.5% -> 60.0% -> 58.0%) - Failing / Risk
-            if (i === 1) {
-              score = q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000016" ? 4 : 3;
-            } else if (i === 2) {
-              score = 3;
-            } else {
-              score = q.id === "e0000000-0000-0000-0000-000000000020" ? 2 : (q.id === "e0000000-0000-0000-0000-000000000018" ? 1 : 3);
-              if (q.id === "e0000000-0000-0000-0000-000000000020") {
-                notes = "Two CCTV cameras in the main lobby and rear parking exit are completely inactive.";
-                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
-              }
-              if (q.id === "e0000000-0000-0000-0000-000000000018") {
-                notes = "Urgent: 3 fire extinguishers located on the 2nd and 3rd floors are past their annual service inspection dates by 4 months.";
-              }
-            }
-          }
-          else if (propIdx === 4) { // Durgapur (Risk/Crash: 68.0% -> 58.0% -> 54.0%) - Failing / Risk
-            if (i === 1) {
-              score = q.id === "e0000000-0000-0000-0000-000000000003" || q.id === "e0000000-0000-0000-0000-000000000014" ? 4 : 3;
-            } else if (i === 2) {
-              score = q.id === "e0000000-0000-0000-0000-000000000009" ? 2 : 3;
-            } else {
-              score = 3;
-              if (q.id === "e0000000-0000-0000-0000-000000000009") {
-                score = 1;
-                notes = "Food Safety Failure: Kitchen chef was found cooking without hairnet or gloves. Prep counters had visible grease buildup.";
-                imageUrl = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400";
-              }
-              if (q.id === "e0000000-0000-0000-0000-000000000003") {
-                score = 2;
-                notes = "Housekeeping failure: Common toilets sanitization sheet was blank, soap dispensers were empty and there was a heavy odor.";
-              }
-            }
-          }
-
-          const cat = MOCK_CATEGORIES.find((c) => c.id === q.category_id);
-          const weight = cat ? cat.weight_percentage : 20;
-          const qCount = MOCK_QUESTIONS.filter((item) => item.category_id === q.category_id).length;
-          const weightedPts = (score / q.max_points) * (weight / qCount);
-          totalPoints += weightedPts;
 
           responses.push({
             id: `resp-${auditId}-${q.id}`,
             audit_id: auditId,
             question_id: q.id,
             score_awarded: score,
-            notes,
-            image_url: imageUrl,
-            created_at: date.toISOString(),
+            notes: notes || remarks,
+            remarks,
+            image_url: supportingImages ? supportingImages[0] : null,
+            supporting_images: supportingImages,
+            created_at: date.toISOString()
           });
 
           if (score <= 2) {
-            let capStatus = "open";
-            let remediationNotes = "";
-
-            if (propIdx === 0 && i === 1) {
-              capStatus = "resolved";
-              remediationNotes = "Maintenance electrician dispatched. Replaced faulty distributor breaker. Checked main line current, load balanced successfully.";
-            } else if (propIdx === 5 && i === 1) {
-              capStatus = "resolved";
-              remediationNotes = "Standard sign bulb replaced with high-durability LED indicator. Tested and operational.";
-            } else if (propIdx === 2 && i === 3) {
-              capStatus = "in_progress";
-              remediationNotes = "Plumbing agency contracted. Replacement washer and brass valve gaskets ordered, repair scheduled for tomorrow.";
-            } else if (propIdx === 4 && i === 3 && q.id === "e0000000-0000-0000-0000-000000000009") {
-              capStatus = "in_progress";
-              remediationNotes = "Kitchen manager issued a formal warning letter. Kitchen closed for deep sanitation for 4 hours. Chef retrained on safety clothing compliance.";
-            }
-
+            const cat = MOCK_CATEGORIES.find((c) => c.id === q.category_id);
             correctiveActions.push({
               id: `cap-${auditId}-${q.id}`,
               audit_id: auditId,
               property_id: prop.id,
               question_id: q.id,
-              issue_description: `${cat?.name || "General"} Department: ${q.question_text} (Inspector Score: ${score}/5)`,
-              status: capStatus,
+              issue_description: `${cat?.name || "General"}: ${q.question_text} (Score: ${score}/5)`,
+              status: isMostRecent ? "open" : "resolved",
               assigned_to: auditorId,
-              remediation_notes: remediationNotes,
+              remediation_notes: isMostRecent ? "" : "Issue resolved in subsequent inspection cycle.",
               created_at: date.toISOString(),
-              updated_at: date.toISOString(),
+              updated_at: date.toISOString()
             });
           }
         });
+
+        // Executive summary auto-generation
+        const majorObservations = failures.length > 0
+          ? failures.map((f, i) => `${i + 1}. ${f}`).join("\n")
+          : "No critical non-compliances observed. All parameters within acceptable limits.";
+
+        const nextSteps = failures.length > 0
+          ? `1. Immediate corrective action required for ${failures.length} critical finding(s).\n2. Re-audit within 15 days to verify closure.\n3. Escalate to Regional EHS Head if not resolved within 7 days.`
+          : "Continue monitoring. Next scheduled audit in 90 days.";
+
+        const goodPractices = auditIdx >= 1
+          ? "Strong SOP adherence observed in PGHP operations. Staff grooming compliance improved significantly."
+          : "Basic compliance maintained. Staff cooperation during audit noted.";
+
+        const recommendations = failures.length > 0
+          ? "Prioritize statutory compliance gaps. Conduct refresher training for site teams on EHS documentation requirements."
+          : "Maintain current standards. Consider sharing best practices across properties.";
 
         audits.push({
           id: auditId,
@@ -297,13 +308,67 @@ function initializeLocalStorageDB() {
           template_id: templateId,
           auditor_id: auditorId,
           status: "completed",
-          total_score: parseFloat(totalPoints.toFixed(1)),
-          max_possible_score: maxPoints,
+          total_score: parseFloat(totalWeightedScore.toFixed(1)),
+          max_possible_score: 100,
           conducted_at: date.toISOString(),
           completed_at: date.toISOString(),
-          created_at: date.toISOString(),
+          major_observations: majorObservations,
+          good_practices: goodPractices,
+          recommendations,
+          next_steps: nextSteps,
+          created_at: date.toISOString()
         });
-      }
+      });
+    });
+
+    // Also generate audits for other properties (just 1 each for leaderboard/bar chart data)
+    MOCK_PROPERTIES.forEach((prop, propIdx) => {
+      if (TARGET_PROPS.includes(propIdx)) return; // Already handled
+      const auditId = `audit-other-${prop.id.substring(2, 6)}`;
+      const date = new Date("2026-04-10T10:00:00Z");
+      let totalWeightedScore = 0;
+
+      MOCK_CATEGORIES.forEach((cat) => {
+        const catQuestions = MOCK_QUESTIONS.filter((q) => q.category_id === cat.id);
+        let catScored = 0;
+        let catMax = 0;
+        const baseScore = 3 + (propIdx % 2); // alternating 3-4 baseline
+        catQuestions.forEach((q) => {
+          const score = baseScore;
+          catScored += score;
+          catMax += q.max_points;
+          responses.push({
+            id: `resp-${auditId}-${q.id}`,
+            audit_id: auditId,
+            question_id: q.id,
+            score_awarded: score,
+            notes: "Operational baseline maintained.",
+            remarks: null,
+            image_url: null,
+            supporting_images: null,
+            created_at: date.toISOString()
+          });
+        });
+        const catPct = catMax > 0 ? (catScored / catMax) * 100 : 0;
+        totalWeightedScore += catPct * (cat.weight_percentage / 100);
+      });
+
+      audits.push({
+        id: auditId,
+        property_id: prop.id,
+        template_id: templateId,
+        auditor_id: MOCK_PROFILES[0].id,
+        status: "completed",
+        total_score: parseFloat(totalWeightedScore.toFixed(1)),
+        max_possible_score: 100,
+        conducted_at: date.toISOString(),
+        completed_at: date.toISOString(),
+        major_observations: null,
+        good_practices: null,
+        recommendations: null,
+        next_steps: null,
+        created_at: date.toISOString()
+      });
     });
 
     localStorage.setItem("ilh_audits", JSON.stringify(audits));
@@ -317,13 +382,18 @@ if (typeof window !== "undefined") {
   initializeLocalStorageDB();
 }
 
-/** Mock Client Class implementing Supabase query methods */
+// ============================================================
+// Mock Query Builder
+// ============================================================
+
 class MockQueryBuilder {
   private tableName: string;
   private filters: Array<(item: any) => boolean> = [];
   private orderCol: string | null = null;
   private orderAsc = true;
   private limitCount: number | null = null;
+  private isSingle = false;
+  private isMaybeSingle = false;
 
   constructor(tableName: string) {
     this.tableName = `ilh_${tableName}`;
@@ -365,16 +435,26 @@ class MockQueryBuilder {
     return this;
   }
 
+  single() {
+    this.isSingle = true;
+    this.limitCount = 1;
+    return this;
+  }
+
+  maybeSingle() {
+    this.isMaybeSingle = true;
+    this.limitCount = 1;
+    return this;
+  }
+
   // Execute Select Query
   async then(resolve: (result: any) => void) {
     let list = this.getData();
 
-    // Apply filters
     this.filters.forEach((filter) => {
       list = list.filter(filter);
     });
 
-    // Apply sorting
     if (this.orderCol) {
       list.sort((a, b) => {
         const valA = a[this.orderCol!];
@@ -385,17 +465,24 @@ class MockQueryBuilder {
       });
     }
 
-    // Apply limits
     const rawCount = list.length;
     if (this.limitCount !== null) {
       list = list.slice(0, this.limitCount);
     }
 
-    resolve({
-      data: list,
-      error: null,
-      count: rawCount
-    });
+    if (this.isSingle || this.isMaybeSingle) {
+      resolve({
+        data: list[0] || null,
+        error: null,
+        count: rawCount
+      });
+    } else {
+      resolve({
+        data: list,
+        error: null,
+        count: rawCount
+      });
+    }
   }
 
   // Insert Record
@@ -413,7 +500,6 @@ class MockQueryBuilder {
       };
       list.push(newRec);
 
-      // Trigger automatic Corrective Action (CAP) tracking for failing score
       if (this.tableName === "ilh_audit_responses" && Number(rec.score_awarded) <= 2) {
         this.autoCreateCAP(newRec);
       }
@@ -486,7 +572,7 @@ class MockQueryBuilder {
     };
   }
 
-  // Intercept and auto-create Corrective Action Plan items
+  // Auto-create Corrective Action Plan items
   private autoCreateCAP(response: any) {
     try {
       const audits = JSON.parse(localStorage.getItem("ilh_audits") || "[]");
@@ -506,7 +592,7 @@ class MockQueryBuilder {
         audit_id: response.audit_id,
         property_id: audit.property_id,
         question_id: response.question_id,
-        issue_description: `${cat ? cat.name : "General"} Compliance: ${q ? q.question_text : "Review Flag"} (Inspector Score: ${response.score_awarded}/5)`,
+        issue_description: `${cat ? cat.name : "General"}: ${q ? q.question_text : "Review Flag"} (Score: ${response.score_awarded}/5)`,
         status: "open",
         assigned_to: audit.auditor_id,
         remediation_notes: "",
@@ -523,13 +609,15 @@ class MockQueryBuilder {
   }
 }
 
-/** Complete Mock Client API */
+// ============================================================
+// Complete Mock Client API
+// ============================================================
+
 export const mockSupabase = {
   from(tableName: string) {
     return new MockQueryBuilder(tableName);
   },
 
-  // Mock Authentication APIs
   auth: {
     async getUser() {
       if (typeof window === "undefined") return { data: { user: null }, error: null };
@@ -550,7 +638,7 @@ export const mockSupabase = {
         user_metadata: { full_name: "Abdulahad Sheikh" }
       };
       localStorage.setItem("ilh_mock_session", JSON.stringify(user));
-      toast.success("Successfully logged in in Mock Demo Mode!");
+      toast.success("Successfully logged in!");
       return { data: { user }, error: null };
     },
 
@@ -563,7 +651,6 @@ export const mockSupabase = {
         user_metadata: { full_name: options?.data?.full_name || "New Auditor" }
       };
 
-      // Add to profiles
       const raw = localStorage.getItem("ilh_profiles");
       const profiles = raw ? JSON.parse(raw) : [];
       profiles.push({
@@ -575,27 +662,26 @@ export const mockSupabase = {
       localStorage.setItem("ilh_profiles", JSON.stringify(profiles));
 
       localStorage.setItem("ilh_mock_session", JSON.stringify(user));
-      toast.success("Mock account created successfully!");
+      toast.success("Account created successfully!");
       return { data: { user }, error: null };
     },
 
     async signOut() {
       localStorage.removeItem("ilh_mock_session");
-      toast.success("Logged out from Mock Demo Mode.");
+      toast.success("Logged out.");
       return { error: null };
     }
   },
 
-  // Mock Storage APIs
   storage: {
     from(bucketName: string) {
       return {
         async upload(filePath: string, file: any) {
-          toast.success("Mock upload: file saved to audit-images bucket.");
+          toast.success("File uploaded to audit-images bucket.");
           return { data: { path: filePath }, error: null };
         },
         getPublicUrl(filePath: string) {
-          return { data: { publicUrl: `https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800` } };
+          return { data: { publicUrl: `https://placehold.co/800x600/003366/ffffff?text=Audit+Evidence` } };
         }
       };
     }

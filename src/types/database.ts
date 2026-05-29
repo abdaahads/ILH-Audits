@@ -15,6 +15,8 @@ export interface Property {
   name: string;
   location: string;
   total_beds: number;
+  site_manager?: string | null;
+  total_employees?: number;
   created_at: string;
 }
 
@@ -35,7 +37,7 @@ export interface AuditTemplate {
   created_at: string;
 }
 
-/** Weighted category within a template (e.g. "Infection Control") */
+/** Weighted category within a template (e.g. "EHS Documentation") */
 export interface AuditCategory {
   id: string;
   template_id: string;
@@ -52,6 +54,8 @@ export interface AuditQuestion {
   question_text: string;
   max_points: number;
   sort_order: number;
+  legal_reference?: string | null;
+  compliance_type?: 'score' | 'yes_no';
   created_at: string;
 }
 
@@ -66,6 +70,10 @@ export interface Audit {
   max_possible_score: number;
   conducted_at: string;
   completed_at: string | null;
+  major_observations?: string | null;
+  good_practices?: string | null;
+  recommendations?: string | null;
+  next_steps?: string | null;
   created_at: string;
   /** Populated when joined via Supabase select */
   property?: Property;
@@ -80,7 +88,9 @@ export interface AuditResponse {
   question_id: string;
   score_awarded: number;
   notes: string | null;
+  remarks: string | null;
   image_url: string | null;
+  supporting_images: string[] | null;
   created_at: string;
 }
 
@@ -121,4 +131,3 @@ export interface CorrectiveAction {
   question?: AuditQuestion;
   auditor?: Profile;
 }
-
