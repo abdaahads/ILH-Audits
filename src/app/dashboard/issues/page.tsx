@@ -237,7 +237,11 @@ export default function IssuesPage() {
 
         <Select value={propertyFilter} onValueChange={(val) => { if (val) setPropertyFilter(val); }}>
           <SelectTrigger className="w-[200px] h-9 text-sm rounded-xl">
-            <SelectValue placeholder="All Properties" />
+            <SelectValue placeholder="All Properties">
+              {propertyFilter === "all"
+                ? "All Properties"
+                : (properties.find((p) => p.id === propertyFilter)?.name || "All Properties")}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Properties</SelectItem>

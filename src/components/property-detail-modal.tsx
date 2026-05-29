@@ -312,7 +312,7 @@ export default function PropertyDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-0 sm:p-4">
       {/* Background overlay */}
       <div 
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
@@ -320,7 +320,7 @@ export default function PropertyDetailModal({
       />
 
       {/* Modal Content */}
-      <div className="relative w-full h-[90vh] max-w-4xl bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-scale-in border border-slate-100">
+      <div className="relative w-full h-full sm:h-[90vh] max-w-4xl bg-white sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-scale-in border border-slate-100">
         
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-ilh-navy-700 text-white shrink-0">

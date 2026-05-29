@@ -713,6 +713,60 @@ export default function NewAuditPage() {
         {/* Right Side Step Content */}
         <main className="col-span-1 lg:col-span-3 space-y-6">
           
+          {/* Mobile Swipeable Stepper Navigation (Horizontal scrolling, hidden on lg) */}
+          <div className="block lg:hidden overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none select-none">
+            <div className="flex gap-2 min-w-max">
+              {/* Step 0: Property Selection */}
+              <button
+                onClick={() => setCurrentStep(0)}
+                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all shadow-xs ${
+                  currentStep === 0
+                    ? "bg-ilh-navy-500 text-white"
+                    : "bg-white text-ilh-navy-400 border border-slate-100 hover:bg-slate-50"
+                }`}
+              >
+                <span>1. Property</span>
+                {propertyId && <CheckCircle2 className={`h-3.5 w-3.5 ${currentStep === 0 ? "text-white/80" : "text-ilh-green-500"}`} />}
+              </button>
+
+              {/* Steps 1..N: Categories */}
+              {categories.map((cat, idx) => {
+                const stepIdx = idx + 1;
+                const completed = isCategoryCompleted(cat);
+                const disabled = !propertyId;
+
+                return (
+                  <button
+                    key={cat.id}
+                    disabled={disabled}
+                    onClick={() => setCurrentStep(stepIdx)}
+                    className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs ${
+                      currentStep === stepIdx
+                        ? "bg-ilh-navy-500 text-white"
+                        : "bg-white text-ilh-navy-400 border border-slate-100 hover:bg-slate-50"
+                    }`}
+                  >
+                    <span>{idx + 2}. {cat.name.replace("Mechanical, Electrical & ", "").replace("Chemical, Waste & ", "").replace("Emergency Preparedness & ", "")}</span>
+                    {completed && <CheckCircle2 className={`h-3.5 w-3.5 ${currentStep === stepIdx ? "text-white/80" : "text-ilh-green-500"}`} />}
+                  </button>
+                );
+              })}
+
+              {/* Step N+1: Review */}
+              <button
+                disabled={!propertyId}
+                onClick={() => setCurrentStep(totalSteps - 1)}
+                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs ${
+                  currentStep === totalSteps - 1
+                    ? "bg-ilh-navy-500 text-white"
+                    : "bg-white text-ilh-navy-400 border border-slate-100 hover:bg-slate-50"
+                }`}
+              >
+                <span>{totalSteps}. Review</span>
+              </button>
+            </div>
+          </div>
+
           {/* Mobile indicator (stepper shown only on small viewports) */}
           {currentStep > 0 && (
             <div className="block lg:hidden bg-white rounded-xl border border-slate-100 p-4 space-y-2">

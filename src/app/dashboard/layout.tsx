@@ -118,7 +118,7 @@ export default function DashboardLayout({
         className={`
           fixed inset-y-0 left-0 z-50 flex flex-col
           glass-sidebar transition-all duration-300 ease-in-out
-          ${collapsed ? "w-[72px]" : "w-64"}
+          ${collapsed ? "lg:w-[72px]" : "lg:w-64"} w-64
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
           lg:relative lg:translate-x-0
         `}
