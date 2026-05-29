@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Building2, MapPin, BedDouble, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Property, Audit } from "@/types/database";
+import PropertyDetailModal from "@/components/property-detail-modal";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -84,6 +85,8 @@ function PropertyCardSkeleton() {
 export default function PropertiesPage() {
   const [properties, setProperties] = useState<PropertyWithLatestScore[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   /* ── Data Fetching ── */
   useEffect(() => {
@@ -216,7 +219,11 @@ export default function PropertiesPage() {
           return (
             <div
               key={property.id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+              onClick={() => {
+                setSelectedPropertyId(property.id);
+                setIsModalOpen(true);
+              }}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer hover:border-ilh-navy-100 animate-scale-in"
             >
               {/* Property Name */}
               <h3 className="text-lg font-bold text-ilh-navy-700 mb-3">
@@ -249,6 +256,7 @@ export default function PropertiesPage() {
 
                 <Link
                   href={`/dashboard/audits?property=${property.id}`}
+                  onClick={(e) => e.stopPropagation()}
                   className="inline-flex items-center gap-1 text-xs font-medium text-ilh-navy-500 hover:text-ilh-navy-700 transition-colors"
                 >
                   View Audits
@@ -259,6 +267,17 @@ export default function PropertiesPage() {
           );
         })}
       </div>
+
+      {selectedPropertyId && (
+        <PropertyDetailModal
+          propertyId={selectedPropertyId}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedPropertyId(null);
+          }}
+        />
+      )}
     </div>
   );
 }

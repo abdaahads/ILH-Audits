@@ -13,6 +13,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import AuditDetailModal from "@/components/audit-detail-modal";
 import {
   Table,
   TableBody,
@@ -146,6 +147,8 @@ export default function DashboardPage() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [recentAudits, setRecentAudits] = useState<RecentAudit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAuditId, setSelectedAuditId] = useState<string | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     const supabase = createClient();
@@ -300,6 +303,53 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* ── Visual Analytics Section (Founder Overview) ── */}
+      {!loading && leaderboard.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-slide-up opacity-0"
+          style={{ animationDelay: "350ms", animationFillMode: "forwards" }}>
+          <div className="flex items-center gap-2 mb-6">
+            <TrendingUp className="h-5 w-5 text-ilh-navy-500" />
+            <h2 className="text-lg font-bold text-ilh-navy-700">Portfolio Compliance Performance Chart</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-end justify-between h-48 gap-3 pt-6 px-4 border-b border-slate-100 overflow-x-auto">
+              {leaderboard.slice(0, 7).map((prop) => {
+                const heightPercent = `${Math.max(10, prop.avg_score)}%`;
+                const color = prop.avg_score >= 80 
+                  ? "bg-ilh-green-500 hover:bg-ilh-green-600" 
+                  : prop.avg_score >= 60 
+                    ? "bg-amber-400 hover:bg-amber-500" 
+                    : "bg-red-500 hover:bg-red-600";
+                
+                return (
+                  <div key={prop.id} className="flex flex-col items-center flex-1 min-w-[50px] group cursor-pointer">
+                    <div className="relative w-full flex justify-center items-end h-full">
+                      {/* Bar tooltip */}
+                      <span className="absolute -top-7 scale-0 group-hover:scale-100 transition-all bg-ilh-navy-700 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-md z-10 font-mono">
+                        {prop.avg_score.toFixed(1)}%
+                      </span>
+                      {/* Bar */}
+                      <div 
+                        style={{ height: heightPercent }}
+                        className={`w-8 sm:w-10 rounded-t-lg transition-all duration-500 shadow-sm ${color}`}
+                      />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400 truncate max-w-full mt-2 text-center select-none group-hover:text-ilh-navy-700">
+                      {prop.name.replace("ILH ", "")}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ilh-green-500" />Excellent (&ge;80%)</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-amber-400" />Satisfactory (60%-79%)</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-red-500" />Risk / CAP (&lt;60%)</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Leaderboard + Recent Audits ── */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Leaderboard */}
@@ -396,7 +446,14 @@ export default function DashboardPage() {
                 </TableHeader>
                 <TableBody>
                   {recentAudits.map((audit) => (
-                    <TableRow key={audit.id} className="hover:bg-gray-50">
+                    <TableRow 
+                      key={audit.id} 
+                      className="hover:bg-gray-50 cursor-pointer transition-colors"
+                      onClick={() => {
+                        setSelectedAuditId(audit.id);
+                        setIsDetailOpen(true);
+                      }}
+                    >
                       <TableCell className="text-sm font-medium text-ilh-navy-700">
                         {audit.property_name}
                       </TableCell>
@@ -417,6 +474,17 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {selectedAuditId && (
+        <AuditDetailModal
+          auditId={selectedAuditId}
+          isOpen={isDetailOpen}
+          onClose={() => {
+            setIsDetailOpen(false);
+            setSelectedAuditId(null);
+          }}
+        />
+      )}
     </div>
   );
 }

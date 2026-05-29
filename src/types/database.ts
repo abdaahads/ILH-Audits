@@ -104,3 +104,21 @@ export interface AuditWithDetails extends Audit {
   property: Property;
   auditor: Profile;
 }
+
+/** A corrective action item (CAP) to track failed audit questions */
+export interface CorrectiveAction {
+  id: string;
+  audit_id: string;
+  property_id: string;
+  question_id: string;
+  issue_description: string;
+  status: 'open' | 'in_progress' | 'resolved';
+  assigned_to: string | null;
+  remediation_notes: string | null;
+  created_at: string;
+  updated_at: string;
+  property?: Property;
+  question?: AuditQuestion;
+  auditor?: Profile;
+}
+

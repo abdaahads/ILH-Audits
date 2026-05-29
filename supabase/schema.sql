@@ -264,6 +264,44 @@ CREATE POLICY "Users can update responses for own audits"
   );
 
 -- ============================================================
+-- 8. CORRECTIVE ACTIONS (CAP ISSUES) TABLE
+-- Track compliance issues found during audits that require resolution
+-- ============================================================
+CREATE TABLE corrective_actions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+  property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  question_id UUID NOT NULL REFERENCES audit_questions(id) ON DELETE CASCADE,
+  issue_description TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('open', 'in_progress', 'resolved')) DEFAULT 'open',
+  assigned_to UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  remediation_notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE corrective_actions ENABLE ROW LEVEL SECURITY;
+
+-- All authenticated users can view corrective actions
+CREATE POLICY "Authenticated users can view corrective actions"
+  ON corrective_actions FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Authenticated users can insert corrective actions (when completing audits)
+CREATE POLICY "Authenticated users can insert corrective actions"
+  ON corrective_actions FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+-- Users can update corrective actions to manage their resolution
+CREATE POLICY "Authenticated users can update corrective actions"
+  ON corrective_actions FOR UPDATE
+  TO authenticated
+  USING (true);
+
+
+-- ============================================================
 -- 8. AUTO-CREATE PROFILE ON USER SIGNUP
 -- Trigger function to create a profile row when a new user signs up
 -- ============================================================
@@ -313,3 +351,7 @@ CREATE INDEX idx_audits_conducted_at ON audits(conducted_at DESC);
 CREATE INDEX idx_audit_responses_audit_id ON audit_responses(audit_id);
 CREATE INDEX idx_audit_categories_template_id ON audit_categories(template_id);
 CREATE INDEX idx_audit_questions_category_id ON audit_questions(category_id);
+CREATE INDEX idx_corrective_actions_audit_id ON corrective_actions(audit_id);
+CREATE INDEX idx_corrective_actions_property_id ON corrective_actions(property_id);
+CREATE INDEX idx_corrective_actions_status ON corrective_actions(status);
+

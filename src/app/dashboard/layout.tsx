@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   ChevronLeft,
+  AlertTriangle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,11 @@ const navItems = [
     label: "Audit History",
     href: "/dashboard/audits",
     icon: ClipboardCheck,
+  },
+  {
+    label: "Issues (CAP)",
+    href: "/dashboard/issues",
+    icon: AlertTriangle,
   },
 ];
 

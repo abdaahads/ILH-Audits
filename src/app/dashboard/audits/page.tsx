@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ClipboardCheck, Filter } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import AuditDetailModal from "@/components/audit-detail-modal";
 import {
   Select,
   SelectContent,
@@ -74,9 +75,23 @@ export default function AuditHistoryPage() {
   const [properties, setProperties] = useState<PropertyOption[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /* Modal state */
+  const [selectedAuditId, setSelectedAuditId] = useState<string | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
   /* Filters */
   const [propertyFilter, setPropertyFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const propId = params.get("property");
+      if (propId) {
+        setPropertyFilter(propId);
+      }
+    }
+  }, []);
 
   const fetchData = useCallback(async () => {
     const supabase = createClient();
@@ -233,7 +248,14 @@ export default function AuditHistoryPage() {
               </TableHeader>
               <TableBody>
                 {filteredAudits.map((audit) => (
-                  <TableRow key={audit.id} className="hover:bg-gray-50 transition-colors">
+                  <TableRow 
+                    key={audit.id} 
+                    className="hover:bg-gray-50 transition-colors cursor-pointer animate-fade-in"
+                    onClick={() => {
+                      setSelectedAuditId(audit.id);
+                      setIsDetailOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-ilh-navy-700">
                       {audit.property_name}
                     </TableCell>
@@ -256,6 +278,17 @@ export default function AuditHistoryPage() {
           </div>
         )}
       </div>
+
+      {selectedAuditId && (
+        <AuditDetailModal
+          auditId={selectedAuditId}
+          isOpen={isDetailOpen}
+          onClose={() => {
+            setIsDetailOpen(false);
+            setSelectedAuditId(null);
+          }}
+        />
+      )}
     </div>
   );
 }

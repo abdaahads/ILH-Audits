@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Mail, Lock, User, LogIn, UserPlus, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, LogIn, UserPlus, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
 /**
  * LoginPage — Full-screen authentication page for the ILH Audits app.
@@ -28,6 +28,7 @@ export default function LoginPage() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const isSignUp = mode === 'signup';
 
@@ -252,14 +253,21 @@ export default function LoginPage() {
                 />
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/30 backdrop-blur transition-colors focus:border-[#339966]/60 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#339966]/25"
+                  className="w-full rounded-lg border border-white/15 bg-white/5 py-3 pl-11 pr-12 text-sm text-white placeholder:text-white/30 backdrop-blur transition-colors focus:border-[#339966]/60 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#339966]/25"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors cursor-pointer"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
