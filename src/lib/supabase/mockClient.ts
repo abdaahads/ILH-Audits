@@ -20,7 +20,7 @@ const MOCK_PROFILES = [
 ];
 
 const MOCK_PROPERTIES = [
-  { id: "p0000000-0000-0000-0000-000000000001", name: "ILH Pune Pilot", location: "Tathawade, Pune, Maharashtra", total_beds: 706, site_manager: "Rajesh Kulkarni", total_employees: 85, created_at: new Date().toISOString() },
+  { id: "p0000000-0000-0000-0000-000000000001", name: "ILH Pune", location: "Tathawade, Pune, Maharashtra", total_beds: 706, site_manager: "Rajesh Kulkarni", total_employees: 85, created_at: new Date().toISOString() },
   { id: "p0000000-0000-0000-0000-000000000002", name: "ILH Mumbai", location: "Vile Parle, Mumbai, Maharashtra", total_beds: 450, site_manager: "Priya Nair", total_employees: 62, created_at: new Date().toISOString() },
   { id: "p0000000-0000-0000-0000-000000000003", name: "ILH Delhi", location: "Kamla Nagar, Delhi", total_beds: 350, site_manager: "Vikram Singh", total_employees: 48, created_at: new Date().toISOString() },
   { id: "p0000000-0000-0000-0000-000000000004", name: "ILH Dehradun", location: "Rajpur Road, Dehradun, Uttarakhand", total_beds: 400, site_manager: "Ankit Rawat", total_employees: 45, created_at: new Date().toISOString() },
@@ -28,7 +28,7 @@ const MOCK_PROPERTIES = [
   { id: "p0000000-0000-0000-0000-000000000006", name: "ILH Bengaluru", location: "Koramangala, Bengaluru, Karnataka", total_beds: 320, site_manager: "Meera Reddy", total_employees: 40, created_at: new Date().toISOString() },
   { id: "p0000000-0000-0000-0000-000000000007", name: "ILH Hyderabad", location: "Gachibowli, Hyderabad, Telangana", total_beds: 280, site_manager: "Farhan Ahmed", total_employees: 36, created_at: new Date().toISOString() },
   { id: "p0000000-0000-0000-0000-000000000008", name: "ILH Vizag", location: "Visakhapatnam, Andhra Pradesh", total_beds: 200, site_manager: "Lakshmi Prasad", total_employees: 28, created_at: new Date().toISOString() },
-  { id: "p0000000-0000-0000-0000-000000000009", name: "Student Village Ahmedabad", location: "SG Highway, Ahmedabad, Gujarat", total_beds: 520, site_manager: "Harsh Patel", total_employees: 70, created_at: new Date().toISOString() }
+  { id: "p0000000-0000-0000-0000-000000000009", name: "ILH Ahmedabad", location: "SG Highway, Ahmedabad, Gujarat", total_beds: 520, site_manager: "Harsh Patel", total_employees: 70, created_at: new Date().toISOString() }
 ];
 
 const MOCK_TEMPLATES = [
@@ -84,7 +84,7 @@ const PROP_FAIL_QUESTION_IDX = [8, 9, 11, 12, 14, 15, 5, 6, 9];
 function initializeLocalStorageDB() {
   if (typeof window === "undefined") return;
 
-  const currentVersion = "6.0"; // Bump to v6.0 to trigger fresh wipe of old mock seeder
+  const currentVersion = "6.1"; // Bump to v6.1 to trigger fresh wipe of old mock seeder and load renamed properties
   const storedVersion = localStorage.getItem("ilh_seeder_version");
 
   if (storedVersion !== currentVersion) {

@@ -33,7 +33,7 @@ ON CONFLICT (id) DO NOTHING;
 -- 1. PROPERTIES
 -- ============================================================
 INSERT INTO properties (id, name, location, total_beds, site_manager, total_employees) VALUES
-  ('p0000000-0000-0000-0000-000000000001', 'ILH Pune Pilot', 'Tathawade, Pune, Maharashtra', 706, 'Rajesh Kulkarni', 85),
+  ('p0000000-0000-0000-0000-000000000001', 'ILH Pune', 'Tathawade, Pune, Maharashtra', 706, 'Rajesh Kulkarni', 85),
   ('p0000000-0000-0000-0000-000000000002', 'ILH Mumbai', 'Vile Parle, Mumbai, Maharashtra', 450, 'Priya Nair', 62),
   ('p0000000-0000-0000-0000-000000000003', 'ILH Delhi', 'Kamla Nagar, Delhi', 350, 'Vikram Singh', 48),
   ('p0000000-0000-0000-0000-000000000004', 'ILH Dehradun', 'Rajpur Road, Dehradun, Uttarakhand', 400, 'Ankit Rawat', 45),
@@ -41,7 +41,7 @@ INSERT INTO properties (id, name, location, total_beds, site_manager, total_empl
   ('p0000000-0000-0000-0000-000000000006', 'ILH Bengaluru', 'Koramangala, Bengaluru, Karnataka', 320, 'Meera Reddy', 40),
   ('p0000000-0000-0000-0000-000000000007', 'ILH Hyderabad', 'Gachibowli, Hyderabad, Telangana', 280, 'Farhan Ahmed', 36),
   ('p0000000-0000-0000-0000-000000000008', 'ILH Vizag', 'Visakhapatnam, Andhra Pradesh', 200, 'Lakshmi Prasad', 28),
-  ('p0000000-0000-0000-0000-000000000009', 'Student Village Ahmedabad', 'SG Highway, Ahmedabad, Gujarat', 520, 'Harsh Patel', 70)
+  ('p0000000-0000-0000-0000-000000000009', 'ILH Ahmedabad', 'SG Highway, Ahmedabad, Gujarat', 520, 'Harsh Patel', 70)
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
