@@ -322,8 +322,8 @@ export default function DashboardPage() {
                     : "bg-red-500 hover:bg-red-600";
                 
                 return (
-                  <div key={prop.id} className="flex flex-col items-center flex-1 min-w-[50px] group cursor-pointer">
-                    <div className="relative w-full flex justify-center items-end h-full">
+                  <div key={prop.id} className="flex flex-col items-center flex-1 min-w-[50px] group cursor-pointer justify-end">
+                    <div className="relative w-full flex justify-center items-end h-32 mb-2">
                       {/* Bar tooltip */}
                       <span className="absolute -top-7 scale-0 group-hover:scale-100 transition-all bg-ilh-navy-700 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-md z-10 font-mono">
                         {prop.avg_score.toFixed(1)}%

@@ -1,26 +1,17 @@
 /**
- * High-Fidelity Mock Supabase Client — v5.0
+ * High-Fidelity Mock Supabase Client — v6.0
  * 
- * EHS & PGHP Comprehensive Audit Framework
- * 5 Categories · 16 Parameters · Legal References
- * 
- * Implements complete local-storage database state for:
- *  - properties (9 locations incl. Student Village Ahmedabad)
- *  - profiles
- *  - audits (3 historical per target property)
- *  - audit_responses (with supporting_images, remarks)
- *  - corrective_actions (CAP board)
- *  - audit_templates
- *  - audit_categories (5 EHS departments)
- *  - audit_questions (16 parameters with legal_reference, compliance_type)
- * 
- * Supports query builders: from().select(), .insert(), .update(), .eq(), .in(), .order(), .limit(), .maybeSingle(), .single()
+ * Secure Architect Abstraction Layer:
+ *  - ZERO hardcoded or sensitive Completed Audits / Remarks / Evidence in codebase (Confidentiality).
+ *  - Dynamically constructs generic formulaic mock data in client LocalStorage at runtime.
+ *  - Seeds 3 completed audits for ALL 9 properties to guarantee perfect visual trendline sparklines and full dashboards.
+ *  - Pristine asynchronous Radix-style query builder chaining supporting select, update, insert, upsert, delete.
  */
 
 import { toast } from "sonner";
 
 // ============================================================
-// Static Seed Data — EHS v2.0
+// Public Enterprise Metadata (Non-Confidential)
 // ============================================================
 
 const MOCK_PROFILES = [
@@ -76,110 +67,24 @@ const MOCK_QUESTIONS = [
   { id: "e0000000-0000-0000-0000-000000000016", category_id: "c0000000-0000-0000-0000-000000000005", question_text: "Subcontractor Pre-Engagement Reviews & Medical Records", max_points: 5, sort_order: 3, legal_reference: "BOCWA / Contract Labour Act 1970", compliance_type: "yes_no" }
 ];
 
-// ============================================================
-// Historical Audit Data Generation
-// ============================================================
-
-/** Target property indices (ILH Pune Pilot = 0, Student Village Ahmedabad = 8) */
-const TARGET_PROPS = [0, 8];
-
-/** Audit dates: Aug 2025, Jan 2026, May 2026 */
+// Audit dates: Aug 2025, Jan 2026, May 2026
 const AUDIT_DATES = [
   new Date("2025-08-15T10:00:00Z"),
   new Date("2026-01-20T10:00:00Z"),
   new Date("2026-05-12T10:00:00Z")
 ];
 
-/** Score profiles per (property, audit) combination */
-type ScoreProfile = Record<string, number>;
-
-function getScoreProfiles(): Record<string, ScoreProfile[]> {
-  // ILH Pune Pilot: Mixed → Improved → High with 2 critical failures
-  const pune: ScoreProfile[] = [
-    // Aug 2025 — baseline mixed (target ~68%)
-    { "e0000000-0000-0000-0000-000000000001": 3, "e0000000-0000-0000-0000-000000000002": 4, "e0000000-0000-0000-0000-000000000003": 3, "e0000000-0000-0000-0000-000000000004": 3,
-      "e0000000-0000-0000-0000-000000000005": 3, "e0000000-0000-0000-0000-000000000006": 4, "e0000000-0000-0000-0000-000000000007": 3,
-      "e0000000-0000-0000-0000-000000000008": 4, "e0000000-0000-0000-0000-000000000009": 3, "e0000000-0000-0000-0000-000000000010": 4,
-      "e0000000-0000-0000-0000-000000000011": 3, "e0000000-0000-0000-0000-000000000012": 3, "e0000000-0000-0000-0000-000000000013": 4,
-      "e0000000-0000-0000-0000-000000000014": 3, "e0000000-0000-0000-0000-000000000015": 4, "e0000000-0000-0000-0000-000000000016": 3 },
-    // Jan 2026 — improved (target ~82%)
-    { "e0000000-0000-0000-0000-000000000001": 4, "e0000000-0000-0000-0000-000000000002": 5, "e0000000-0000-0000-0000-000000000003": 4, "e0000000-0000-0000-0000-000000000004": 4,
-      "e0000000-0000-0000-0000-000000000005": 4, "e0000000-0000-0000-0000-000000000006": 5, "e0000000-0000-0000-0000-000000000007": 4,
-      "e0000000-0000-0000-0000-000000000008": 5, "e0000000-0000-0000-0000-000000000009": 4, "e0000000-0000-0000-0000-000000000010": 4,
-      "e0000000-0000-0000-0000-000000000011": 4, "e0000000-0000-0000-0000-000000000012": 4, "e0000000-0000-0000-0000-000000000013": 3,
-      "e0000000-0000-0000-0000-000000000014": 4, "e0000000-0000-0000-0000-000000000015": 5, "e0000000-0000-0000-0000-000000000016": 4 },
-    // May 2026 — high but 2 critical failures (target ~88% with 2 failures)
-    { "e0000000-0000-0000-0000-000000000001": 5, "e0000000-0000-0000-0000-000000000002": 5, "e0000000-0000-0000-0000-000000000003": 5, "e0000000-0000-0000-0000-000000000004": 4,
-      "e0000000-0000-0000-0000-000000000005": 5, "e0000000-0000-0000-0000-000000000006": 5, "e0000000-0000-0000-0000-000000000007": 5,
-      "e0000000-0000-0000-0000-000000000008": 1, "e0000000-0000-0000-0000-000000000009": 5, "e0000000-0000-0000-0000-000000000010": 5,
-      "e0000000-0000-0000-0000-000000000011": 1, "e0000000-0000-0000-0000-000000000012": 5, "e0000000-0000-0000-0000-000000000013": 5,
-      "e0000000-0000-0000-0000-000000000014": 5, "e0000000-0000-0000-0000-000000000015": 5, "e0000000-0000-0000-0000-000000000016": 5 }
-  ];
-
-  // Student Village Ahmedabad: Mixed → Improved → High with 2 critical failures
-  const ahmedabad: ScoreProfile[] = [
-    // Aug 2025 — baseline (target ~62%)
-    { "e0000000-0000-0000-0000-000000000001": 3, "e0000000-0000-0000-0000-000000000002": 3, "e0000000-0000-0000-0000-000000000003": 3, "e0000000-0000-0000-0000-000000000004": 3,
-      "e0000000-0000-0000-0000-000000000005": 3, "e0000000-0000-0000-0000-000000000006": 3, "e0000000-0000-0000-0000-000000000007": 4,
-      "e0000000-0000-0000-0000-000000000008": 3, "e0000000-0000-0000-0000-000000000009": 3, "e0000000-0000-0000-0000-000000000010": 3,
-      "e0000000-0000-0000-0000-000000000011": 3, "e0000000-0000-0000-0000-000000000012": 3, "e0000000-0000-0000-0000-000000000013": 3,
-      "e0000000-0000-0000-0000-000000000014": 3, "e0000000-0000-0000-0000-000000000015": 3, "e0000000-0000-0000-0000-000000000016": 4 },
-    // Jan 2026 — improved (target ~76%)
-    { "e0000000-0000-0000-0000-000000000001": 4, "e0000000-0000-0000-0000-000000000002": 4, "e0000000-0000-0000-0000-000000000003": 4, "e0000000-0000-0000-0000-000000000004": 3,
-      "e0000000-0000-0000-0000-000000000005": 4, "e0000000-0000-0000-0000-000000000006": 4, "e0000000-0000-0000-0000-000000000007": 3,
-      "e0000000-0000-0000-0000-000000000008": 4, "e0000000-0000-0000-0000-000000000009": 3, "e0000000-0000-0000-0000-000000000010": 4,
-      "e0000000-0000-0000-0000-000000000011": 4, "e0000000-0000-0000-0000-000000000012": 3, "e0000000-0000-0000-0000-000000000013": 4,
-      "e0000000-0000-0000-0000-000000000014": 4, "e0000000-0000-0000-0000-000000000015": 4, "e0000000-0000-0000-0000-000000000016": 3 },
-    // May 2026 — high but 2 critical failures
-    { "e0000000-0000-0000-0000-000000000001": 5, "e0000000-0000-0000-0000-000000000002": 5, "e0000000-0000-0000-0000-000000000003": 4, "e0000000-0000-0000-0000-000000000004": 5,
-      "e0000000-0000-0000-0000-000000000005": 5, "e0000000-0000-0000-0000-000000000006": 5, "e0000000-0000-0000-0000-000000000007": 4,
-      "e0000000-0000-0000-0000-000000000008": 5, "e0000000-0000-0000-0000-000000000009": 1, "e0000000-0000-0000-0000-000000000010": 5,
-      "e0000000-0000-0000-0000-000000000011": 5, "e0000000-0000-0000-0000-000000000012": 1, "e0000000-0000-0000-0000-000000000013": 5,
-      "e0000000-0000-0000-0000-000000000014": 5, "e0000000-0000-0000-0000-000000000015": 5, "e0000000-0000-0000-0000-000000000016": 5 }
-  ];
-
-  return {
-    "p0000000-0000-0000-0000-000000000001": pune,
-    "p0000000-0000-0000-0000-000000000009": ahmedabad
-  };
-}
-
-/** Remarks for critical failures */
-const CRITICAL_REMARKS: Record<string, string> = {
-  "e0000000-0000-0000-0000-000000000008": "CRITICAL: Lift inspection certificate expired 3 months ago. Door interlocking mechanism found bypassed on Floor 4. Immediate shutdown required per Factories Act 1948 Section 29.",
-  "e0000000-0000-0000-0000-000000000009": "CRITICAL: Electrical earthing test overdue by 6 months. Phase imbalance detected in main DB panel. Non-compliant per Indian Electricity Rules 1956.",
-  "e0000000-0000-0000-0000-000000000011": "CRITICAL: MSDS sheets missing for 4 out of 7 chemicals in housekeeping store. Chemical spill containment kit not available. Violation of GHS Regulations.",
-  "e0000000-0000-0000-0000-000000000012": "CRITICAL: Chemical waste disposal log not maintained for past 2 months. Unlabeled containers found in storage. Non-compliant with Hazardous Waste Management Rules 2016."
-};
-
-/** Dummy supporting image URLs */
-const EVIDENCE_IMAGES: Record<string, string[]> = {
-  "e0000000-0000-0000-0000-000000000008": [
-    "https://placehold.co/800x600/dc2626/ffffff?text=Expired+Lift+Certificate",
-    "https://placehold.co/800x600/dc2626/ffffff?text=Door+Interlock+Bypass"
-  ],
-  "e0000000-0000-0000-0000-000000000009": [
-    "https://placehold.co/800x600/dc2626/ffffff?text=Earthing+Test+Overdue",
-    "https://placehold.co/800x600/dc2626/ffffff?text=Phase+Imbalance+Panel"
-  ],
-  "e0000000-0000-0000-0000-000000000011": [
-    "https://placehold.co/800x600/dc2626/ffffff?text=Missing+MSDS+Sheets",
-    "https://placehold.co/800x600/dc2626/ffffff?text=No+Spill+Kit"
-  ],
-  "e0000000-0000-0000-0000-000000000012": [
-    "https://placehold.co/800x600/dc2626/ffffff?text=Unlabeled+Containers",
-    "https://placehold.co/800x600/dc2626/ffffff?text=Waste+Log+Missing"
-  ]
-};
+// May 2026 specific fail questions map to prevent hardcoding actual text
+const PROP_FAIL_QUESTION_IDX = [8, 9, 11, 12, 14, 15, 5, 6, 9];
 
 // ============================================================
-// LocalStorage Initialization
+// LocalStorage Initialization & Runtime Generator
 // ============================================================
 
 function initializeLocalStorageDB() {
   if (typeof window === "undefined") return;
 
-  const currentVersion = "5.0";
+  const currentVersion = "6.0"; // Bump to v6.0 to trigger fresh wipe of old mock seeder
   const storedVersion = localStorage.getItem("ilh_seeder_version");
 
   if (storedVersion !== currentVersion) {
@@ -210,50 +115,73 @@ function initializeLocalStorageDB() {
     localStorage.setItem("ilh_audit_questions", JSON.stringify(MOCK_QUESTIONS));
   }
 
-  // Pre-seed historical audits for target properties
+  // Generate 3 completed audits for ALL 9 properties programmatically (runtime, non-confidential formula)
   if (!localStorage.getItem("ilh_audits")) {
     const audits: any[] = [];
     const responses: any[] = [];
     const correctiveActions: any[] = [];
+    
     const auditorId = MOCK_PROFILES[0].id;
     const templateId = MOCK_TEMPLATES[0].id;
-    const scoreProfiles = getScoreProfiles();
 
-    TARGET_PROPS.forEach((propIdx) => {
-      const prop = MOCK_PROPERTIES[propIdx];
-      const profiles = scoreProfiles[prop.id];
-      if (!profiles) return;
-
-      profiles.forEach((profile, auditIdx) => {
-        const date = AUDIT_DATES[auditIdx];
+    MOCK_PROPERTIES.forEach((prop, propIdx) => {
+      // Each property gets 3 completed historical audits
+      AUDIT_DATES.forEach((date, auditIdx) => {
         const auditId = `audit-${prop.id.substring(2, 6)}-${auditIdx + 1}`;
         const isMostRecent = auditIdx === 2;
 
-        // Calculate weighted score
+        // May 2026 failure question for this property
+        const failQIdx = PROP_FAIL_QUESTION_IDX[propIdx % PROP_FAIL_QUESTION_IDX.length];
+        const failQuestion = MOCK_QUESTIONS[failQIdx - 1];
+
+        // Dynamic formulaic score assignment:
+        // Audit 1 (Aug 2025): baseline mixed (alternate scores 3 and 4)
+        // Audit 2 (Jan 2026): improved compliance (alternate scores 4 and 5)
+        // Audit 3 (May 2026): high compliance (all 5s, except 1 critical failure of score 1)
+        const qScores: Record<string, number> = {};
+        MOCK_QUESTIONS.forEach((q, idx) => {
+          if (auditIdx === 0) {
+            qScores[q.id] = (idx % 2 === 0) ? 3 : 4;
+          } else if (auditIdx === 1) {
+            qScores[q.id] = (idx % 2 === 0) ? 4 : 5;
+          } else {
+            qScores[q.id] = (q.id === failQuestion.id) ? 1 : 5;
+          }
+        });
+
+        // Compute actual weighted score based on categories
         let totalWeightedScore = 0;
         MOCK_CATEGORIES.forEach((cat) => {
           const catQuestions = MOCK_QUESTIONS.filter((q) => q.category_id === cat.id);
           let catScored = 0;
           let catMax = 0;
           catQuestions.forEach((q) => {
-            catScored += profile[q.id] || 3;
+            catScored += qScores[q.id];
             catMax += q.max_points;
           });
           const catPct = catMax > 0 ? (catScored / catMax) * 100 : 0;
           totalWeightedScore += catPct * (cat.weight_percentage / 100);
         });
 
-        // Build responses
-        const failures: string[] = [];
+        const finalScore = parseFloat(totalWeightedScore.toFixed(1));
+
+        // Create responses
+        let hasFailures = false;
         MOCK_QUESTIONS.forEach((q) => {
-          const score = profile[q.id] || 3;
-          const isCritical = isMostRecent && score <= 1;
-          const notes = score >= 4 ? "Maintained as per operational standards." : (score === 3 ? "Acceptable but room for improvement." : null);
-          const remarks = isCritical ? (CRITICAL_REMARKS[q.id] || `Non-compliance flagged. Score: ${score}/5.`) : null;
-          const supportingImages = isCritical ? (EVIDENCE_IMAGES[q.id] || null) : null;
+          const score = qScores[q.id];
+          const isCritical = isMostRecent && (q.id === failQuestion.id);
+          
+          const notes = score >= 4 ? "Operational baseline maintained as per SOP." : (score === 3 ? "Acceptable operational baseline." : null);
+          const remarks = isCritical ? `CRITICAL NON-COMPLIANCE: Safety parameters failed check. Non-compliant with statutory acts.` : null;
+          const supportingImages = isCritical 
+            ? [
+                `https://placehold.co/800x600/dc2626/ffffff?text=Statutory+Violation`,
+                `https://placehold.co/800x600/dc2626/ffffff?text=Evidence+Capture`
+              ] 
+            : null;
 
           if (isCritical) {
-            failures.push(`${q.question_text}: ${remarks}`);
+            hasFailures = true;
           }
 
           responses.push({
@@ -268,6 +196,7 @@ function initializeLocalStorageDB() {
             created_at: date.toISOString()
           });
 
+          // Seed Corrective Actions
           if (score <= 2) {
             const cat = MOCK_CATEGORIES.find((c) => c.id === q.category_id);
             correctiveActions.push({
@@ -278,29 +207,25 @@ function initializeLocalStorageDB() {
               issue_description: `${cat?.name || "General"}: ${q.question_text} (Score: ${score}/5)`,
               status: isMostRecent ? "open" : "resolved",
               assigned_to: auditorId,
-              remediation_notes: isMostRecent ? "" : "Issue resolved in subsequent inspection cycle.",
+              remediation_notes: isMostRecent ? "" : "Remediated successfully in subsequent inspection cycle.",
               created_at: date.toISOString(),
               updated_at: date.toISOString()
             });
           }
         });
 
-        // Executive summary auto-generation
-        const majorObservations = failures.length > 0
-          ? failures.map((f, i) => `${i + 1}. ${f}`).join("\n")
-          : "No critical non-compliances observed. All parameters within acceptable limits.";
+        // Dynamic formulaic Executive Summary texts
+        let majorObservations = "No critical compliance failures observed. All operational departments met acceptable compliance standards.";
+        let nextSteps = "Continue standard operations. Schedule next routine quarterly compliance audit.";
+        let goodPractices = "Excellent organization in core grooming and standard hygiene parameters.";
+        let recommendations = "Maintain current standards. Continue standard site training programs.";
 
-        const nextSteps = failures.length > 0
-          ? `1. Immediate corrective action required for ${failures.length} critical finding(s).\n2. Re-audit within 15 days to verify closure.\n3. Escalate to Regional EHS Head if not resolved within 7 days.`
-          : "Continue monitoring. Next scheduled audit in 90 days.";
-
-        const goodPractices = auditIdx >= 1
-          ? "Strong SOP adherence observed in PGHP operations. Staff grooming compliance improved significantly."
-          : "Basic compliance maintained. Staff cooperation during audit noted.";
-
-        const recommendations = failures.length > 0
-          ? "Prioritize statutory compliance gaps. Conduct refresher training for site teams on EHS documentation requirements."
-          : "Maintain current standards. Consider sharing best practices across properties.";
+        if (hasFailures) {
+          majorObservations = `CRITICAL FAILURE: ${failQuestion.question_text} was flagged non-compliant (Score: 1/5). Immediate corrective action required.`;
+          nextSteps = "1. Immediate escalation to Site Manager.\n2. Rectify critical safety issue within 24 hours.\n3. Conduct verification check.";
+          goodPractices = "Strong overall operational records. Excellent FSSAI compliance and worker PPE compliance.";
+          recommendations = "Prioritize immediate mitigation of flagged statutory gaps. Conduct emergency refresher training.";
+        }
 
         audits.push({
           id: auditId,
@@ -308,7 +233,7 @@ function initializeLocalStorageDB() {
           template_id: templateId,
           auditor_id: auditorId,
           status: "completed",
-          total_score: parseFloat(totalWeightedScore.toFixed(1)),
+          total_score: finalScore,
           max_possible_score: 100,
           conducted_at: date.toISOString(),
           completed_at: date.toISOString(),
@@ -321,69 +246,19 @@ function initializeLocalStorageDB() {
       });
     });
 
-    // Also generate audits for other properties (just 1 each for leaderboard/bar chart data)
-    MOCK_PROPERTIES.forEach((prop, propIdx) => {
-      if (TARGET_PROPS.includes(propIdx)) return; // Already handled
-      const auditId = `audit-other-${prop.id.substring(2, 6)}`;
-      const date = new Date("2026-04-10T10:00:00Z");
-      let totalWeightedScore = 0;
-
-      MOCK_CATEGORIES.forEach((cat) => {
-        const catQuestions = MOCK_QUESTIONS.filter((q) => q.category_id === cat.id);
-        let catScored = 0;
-        let catMax = 0;
-        const baseScore = 3 + (propIdx % 2); // alternating 3-4 baseline
-        catQuestions.forEach((q) => {
-          const score = baseScore;
-          catScored += score;
-          catMax += q.max_points;
-          responses.push({
-            id: `resp-${auditId}-${q.id}`,
-            audit_id: auditId,
-            question_id: q.id,
-            score_awarded: score,
-            notes: "Operational baseline maintained.",
-            remarks: null,
-            image_url: null,
-            supporting_images: null,
-            created_at: date.toISOString()
-          });
-        });
-        const catPct = catMax > 0 ? (catScored / catMax) * 100 : 0;
-        totalWeightedScore += catPct * (cat.weight_percentage / 100);
-      });
-
-      audits.push({
-        id: auditId,
-        property_id: prop.id,
-        template_id: templateId,
-        auditor_id: MOCK_PROFILES[0].id,
-        status: "completed",
-        total_score: parseFloat(totalWeightedScore.toFixed(1)),
-        max_possible_score: 100,
-        conducted_at: date.toISOString(),
-        completed_at: date.toISOString(),
-        major_observations: null,
-        good_practices: null,
-        recommendations: null,
-        next_steps: null,
-        created_at: date.toISOString()
-      });
-    });
-
     localStorage.setItem("ilh_audits", JSON.stringify(audits));
     localStorage.setItem("ilh_audit_responses", JSON.stringify(responses));
     localStorage.setItem("ilh_corrective_actions", JSON.stringify(correctiveActions));
   }
 }
 
-// Ensure mock tables are setup in LocalStorage
+// Ensure mock tables are setup in LocalStorage at runtime
 if (typeof window !== "undefined") {
   initializeLocalStorageDB();
 }
 
 // ============================================================
-// Mock Query Builder
+// Professional Chaining Mock Query Builder
 // ============================================================
 
 class MockQueryBuilder {
@@ -394,6 +269,9 @@ class MockQueryBuilder {
   private limitCount: number | null = null;
   private isSingle = false;
   private isMaybeSingle = false;
+
+  private op: 'select' | 'update' | 'insert' | 'upsert' | 'delete' = 'select';
+  private opData: any = null;
 
   constructor(tableName: string) {
     this.tableName = `ilh_${tableName}`;
@@ -411,6 +289,30 @@ class MockQueryBuilder {
   }
 
   select(columns = "*", { count }: { count?: "exact" | "planned" | "estimated" } = {}) {
+    this.op = 'select';
+    return this;
+  }
+
+  update(updates: any) {
+    this.op = 'update';
+    this.opData = updates;
+    return this;
+  }
+
+  insert(records: any | any[]) {
+    this.op = 'insert';
+    this.opData = records;
+    return this;
+  }
+
+  upsert(records: any | any[]) {
+    this.op = 'upsert';
+    this.opData = records;
+    return this;
+  }
+
+  delete() {
+    this.op = 'delete';
     return this;
   }
 
@@ -447,113 +349,65 @@ class MockQueryBuilder {
     return this;
   }
 
-  // Execute Select Query
+  // Execute actual database operations when Awaited (then method)
   async then(resolve: (result: any) => void) {
-    let list = this.getData();
+    const list = this.getData();
+    let resultData: any = null;
+    let error: any = null;
 
+    // Apply filters
+    let filteredList = [...list];
     this.filters.forEach((filter) => {
-      list = list.filter(filter);
+      filteredList = filteredList.filter(filter);
     });
 
-    if (this.orderCol) {
-      list.sort((a, b) => {
-        const valA = a[this.orderCol!];
-        const valB = b[this.orderCol!];
-        if (valA < valB) return this.orderAsc ? -1 : 1;
-        if (valA > valB) return this.orderAsc ? 1 : -1;
-        return 0;
-      });
-    }
-
-    const rawCount = list.length;
-    if (this.limitCount !== null) {
-      list = list.slice(0, this.limitCount);
-    }
-
-    if (this.isSingle || this.isMaybeSingle) {
-      resolve({
-        data: list[0] || null,
-        error: null,
-        count: rawCount
-      });
-    } else {
-      resolve({
-        data: list,
-        error: null,
-        count: rawCount
-      });
-    }
-  }
-
-  // Insert Record
-  async insert(records: any | any[]) {
-    const list = this.getData();
-    const isArray = Array.isArray(records);
-    const toInsert = isArray ? records : [records];
-
-    const inserted = toInsert.map((rec) => {
-      const newRec = {
-        id: rec.id || `mock-${Math.random().toString(36).substring(2, 9)}`,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        ...rec
-      };
-      list.push(newRec);
-
-      if (this.tableName === "ilh_audit_responses" && Number(rec.score_awarded) <= 2) {
-        this.autoCreateCAP(newRec);
+    if (this.op === 'select') {
+      if (this.orderCol) {
+        filteredList.sort((a, b) => {
+          const valA = a[this.orderCol!];
+          const valB = b[this.orderCol!];
+          if (valA < valB) return this.orderAsc ? -1 : 1;
+          if (valA > valB) return this.orderAsc ? 1 : -1;
+          return 0;
+        });
+      }
+      
+      const rawCount = filteredList.length;
+      if (this.limitCount !== null) {
+        filteredList = filteredList.slice(0, this.limitCount);
       }
 
-      return newRec;
-    });
+      resultData = (this.isSingle || this.isMaybeSingle) ? (filteredList[0] || null) : filteredList;
+    } 
+    
+    else if (this.op === 'update') {
+      let updated: any[] = [];
+      const updatedList = list.map((item) => {
+        let matches = true;
+        this.filters.forEach((f) => {
+          if (!f(item)) matches = false;
+        });
 
-    this.saveData(list);
-    return {
-      data: isArray ? inserted : inserted[0],
-      error: null
-    };
-  }
-
-  // Update Record
-  async update(updates: any) {
-    const list = this.getData();
-    let updated: any[] = [];
-
-    const updatedList = list.map((item) => {
-      let matches = true;
-      this.filters.forEach((f) => {
-        if (!f(item)) matches = false;
+        if (matches) {
+          const updatedItem = {
+            ...item,
+            ...this.opData,
+            updated_at: new Date().toISOString()
+          };
+          updated.push(updatedItem);
+          return updatedItem;
+        }
+        return item;
       });
 
-      if (matches) {
-        const updatedItem = {
-          ...item,
-          ...updates,
-          updated_at: new Date().toISOString()
-        };
-        updated.push(updatedItem);
-        return updatedItem;
-      }
-      return item;
-    });
-
-    this.saveData(updatedList);
-    return {
-      data: updated,
-      error: null
-    };
-  }
-
-  // Upsert Record
-  async upsert(records: any | any[]) {
-    const list = this.getData();
-    const toUpsert = Array.isArray(records) ? records : [records];
-    const upserted = toUpsert.map((rec) => {
-      const idx = list.findIndex((item) => item.id === rec.id);
-      if (idx !== -1) {
-        list[idx] = { ...list[idx], ...rec, updated_at: new Date().toISOString() };
-        return list[idx];
-      } else {
+      this.saveData(updatedList);
+      resultData = updated;
+    } 
+    
+    else if (this.op === 'insert') {
+      const isArray = Array.isArray(this.opData);
+      const toInsert = isArray ? this.opData : [this.opData];
+      const inserted = toInsert.map((rec: any) => {
         const newRec = {
           id: rec.id || `mock-${Math.random().toString(36).substring(2, 9)}`,
           created_at: new Date().toISOString(),
@@ -561,18 +415,61 @@ class MockQueryBuilder {
           ...rec
         };
         list.push(newRec);
-        return newRec;
-      }
-    });
 
-    this.saveData(list);
-    return {
-      data: Array.isArray(records) ? upserted : upserted[0],
-      error: null
-    };
+        if (this.tableName === "ilh_audit_responses" && Number(rec.score_awarded) <= 2) {
+          this.autoCreateCAP(newRec);
+        }
+        return newRec;
+      });
+
+      this.saveData(list);
+      resultData = isArray ? inserted : inserted[0];
+    } 
+    
+    else if (this.op === 'upsert') {
+      const isArray = Array.isArray(this.opData);
+      const toUpsert = isArray ? this.opData : [this.opData];
+      const upserted = toUpsert.map((rec: any) => {
+        const idx = list.findIndex((item) => item.id === rec.id);
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...rec, updated_at: new Date().toISOString() };
+          return list[idx];
+        } else {
+          const newRec = {
+            id: rec.id || `mock-${Math.random().toString(36).substring(2, 9)}`,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            ...rec
+          };
+          list.push(newRec);
+          return newRec;
+        }
+      });
+
+      this.saveData(list);
+      resultData = isArray ? upserted : upserted[0];
+    } 
+    
+    else if (this.op === 'delete') {
+      const deletedList = list.filter((item) => {
+        let matches = true;
+        this.filters.forEach((f) => {
+          if (!f(item)) matches = false;
+        });
+        return !matches;
+      });
+
+      this.saveData(deletedList);
+      resultData = filteredList;
+    }
+
+    resolve({
+      data: resultData,
+      error
+    });
   }
 
-  // Auto-create Corrective Action Plan items
+  // Dynamic Corrective Action Auto-generation
   private autoCreateCAP(response: any) {
     try {
       const audits = JSON.parse(localStorage.getItem("ilh_audits") || "[]");

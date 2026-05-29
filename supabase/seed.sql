@@ -1,149 +1,600 @@
 -- ============================================================
--- ILH Audits — Seed Data
--- EHS & PGHP Comprehensive Audit Framework v2.0
--- 5 Categories · 16 Parameters · Legal References
+-- ILH Audits — Complete Database Seed Script
+-- EHS & PGHP Comprehensive Enterprise Framework
+-- Seeds 9 properties, 3 completed historical audits each (27 total)
+-- Seeds 432 Responses, evidence lightboxes, and CAP corrective actions
 -- ============================================================
 
+-- Disable triggers temporarily for bulk seed speed
+SET session_replication_role = 'replica';
+
 -- ============================================================
--- 1. PROPERTIES (ILH Portfolio + Student Village Ahmedabad)
+-- 0. SEED DEFAULT USER AND PROFILE
+-- ============================================================
+INSERT INTO auth.users (
+  id, instance_id, email, encrypted_password, email_confirmed_at,
+  raw_app_meta_data, raw_user_meta_data, is_super_admin, created_at, updated_at
+) VALUES (
+  'u1111111-1111-1111-1111-111111111111',
+  '00000000-0000-0000-0000-000000000000',
+  'auditor@ilh.com',
+  '$2a$10$wE0vH2GkZ6jE3mQfB/dZgOpTsmY5N9L6qS9l9tY3nNq5xK23mC/9K', -- Hashed 'Password123'
+  NOW(),
+  '{"provider": "email", "providers": ["email"]}',
+  '{"full_name": "Abdulahad Sheikh", "role": "admin"}',
+  FALSE, NOW(), NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.profiles (id, full_name, role)
+VALUES ('u1111111-1111-1111-1111-111111111111', 'Abdulahad Sheikh', 'admin')
+ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================
+-- 1. PROPERTIES
 -- ============================================================
 INSERT INTO properties (id, name, location, total_beds, site_manager, total_employees) VALUES
-  ('p0000000-0000-0000-0000-000000000001', 'ILH Pune Pilot',           'Tathawade, Pune, Maharashtra',            706, 'Rajesh Kulkarni',    85),
-  ('p0000000-0000-0000-0000-000000000002', 'ILH Mumbai',               'Vile Parle, Mumbai, Maharashtra',         450, 'Priya Nair',         62),
-  ('p0000000-0000-0000-0000-000000000003', 'ILH Delhi',                'Kamla Nagar, Delhi',                      350, 'Vikram Singh',       48),
-  ('p0000000-0000-0000-0000-000000000004', 'ILH Dehradun',             'Rajpur Road, Dehradun, Uttarakhand',      400, 'Ankit Rawat',        45),
-  ('p0000000-0000-0000-0000-000000000005', 'ILH Durgapur',             'Durgapur, West Bengal',                   250, 'Sourav Das',         32),
-  ('p0000000-0000-0000-0000-000000000006', 'ILH Bengaluru',            'Koramangala, Bengaluru, Karnataka',       320, 'Meera Reddy',        40),
-  ('p0000000-0000-0000-0000-000000000007', 'ILH Hyderabad',            'Gachibowli, Hyderabad, Telangana',        280, 'Farhan Ahmed',       36),
-  ('p0000000-0000-0000-0000-000000000008', 'ILH Vizag',                'Visakhapatnam, Andhra Pradesh',           200, 'Lakshmi Prasad',     28),
-  ('p0000000-0000-0000-0000-000000000009', 'Student Village Ahmedabad','SG Highway, Ahmedabad, Gujarat',          520, 'Harsh Patel',        70)
-ON CONFLICT (id) DO UPDATE SET
-  name = EXCLUDED.name,
-  location = EXCLUDED.location,
-  total_beds = EXCLUDED.total_beds,
-  site_manager = EXCLUDED.site_manager,
-  total_employees = EXCLUDED.total_employees;
+  ('p0000000-0000-0000-0000-000000000001', 'ILH Pune Pilot', 'Tathawade, Pune, Maharashtra', 706, 'Rajesh Kulkarni', 85),
+  ('p0000000-0000-0000-0000-000000000002', 'ILH Mumbai', 'Vile Parle, Mumbai, Maharashtra', 450, 'Priya Nair', 62),
+  ('p0000000-0000-0000-0000-000000000003', 'ILH Delhi', 'Kamla Nagar, Delhi', 350, 'Vikram Singh', 48),
+  ('p0000000-0000-0000-0000-000000000004', 'ILH Dehradun', 'Rajpur Road, Dehradun, Uttarakhand', 400, 'Ankit Rawat', 45),
+  ('p0000000-0000-0000-0000-000000000005', 'ILH Durgapur', 'Durgapur, West Bengal', 250, 'Sourav Das', 32),
+  ('p0000000-0000-0000-0000-000000000006', 'ILH Bengaluru', 'Koramangala, Bengaluru, Karnataka', 320, 'Meera Reddy', 40),
+  ('p0000000-0000-0000-0000-000000000007', 'ILH Hyderabad', 'Gachibowli, Hyderabad, Telangana', 280, 'Farhan Ahmed', 36),
+  ('p0000000-0000-0000-0000-000000000008', 'ILH Vizag', 'Visakhapatnam, Andhra Pradesh', 200, 'Lakshmi Prasad', 28),
+  ('p0000000-0000-0000-0000-000000000009', 'Student Village Ahmedabad', 'SG Highway, Ahmedabad, Gujarat', 520, 'Harsh Patel', 70)
+ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
--- 2. DEFAULT AUDIT TEMPLATE (EHS & PGHP v2.0)
+-- 2. AUDIT TEMPLATE
 -- ============================================================
 INSERT INTO audit_templates (id, title, description, max_score) VALUES
-  ('a0000000-0000-0000-0000-000000000001',
-   'EHS & PGHP Comprehensive Audit',
-   'Environment, Health & Safety and Process-Grooming-Hygiene-Product audit framework for ILH properties. Covers statutory compliance, mechanical/electrical safety, chemical management, and emergency preparedness.',
-   100)
-ON CONFLICT (id) DO UPDATE SET
-  title = EXCLUDED.title,
-  description = EXCLUDED.description,
-  max_score = EXCLUDED.max_score;
+  ('a0000000-0000-0000-0000-000000000001', 'EHS & PGHP Comprehensive Audit', 'Environment, Health & Safety and Process-Grooming-Hygiene-Product audit framework for ILH properties.', 100)
+ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
--- 3. AUDIT CATEGORIES (5 EHS-weighted departments = 100%)
+-- 3. AUDIT CATEGORIES
 -- ============================================================
 INSERT INTO audit_categories (id, template_id, name, weight_percentage, sort_order) VALUES
-  ('c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'PGHP & Core Operations',                     25, 1),
-  ('c0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000001', 'EHS Documentation & Legal Compliance',       25, 2),
-  ('c0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000001', 'Mechanical, Electrical & Lift Safety',       20, 3),
-  ('c0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000001', 'Chemical, Waste & Material Management',      15, 4),
+  ('c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'PGHP & Core Operations', 25, 1),
+  ('c0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000001', 'EHS Documentation & Legal Compliance', 25, 2),
+  ('c0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000001', 'Mechanical, Electrical & Lift Safety', 20, 3),
+  ('c0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000001', 'Chemical, Waste & Material Management', 15, 4),
   ('c0000000-0000-0000-0000-000000000005', 'a0000000-0000-0000-0000-000000000001', 'Emergency Preparedness & Subcontractor Safety', 15, 5)
-ON CONFLICT (id) DO UPDATE SET
-  name = EXCLUDED.name,
-  weight_percentage = EXCLUDED.weight_percentage,
-  sort_order = EXCLUDED.sort_order;
+ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
--- 4. AUDIT QUESTIONS (16 parameters across 5 categories)
+-- 4. AUDIT QUESTIONS
 -- ============================================================
-
--- Category 1: PGHP & Core Operations (25%, 4 questions)
 INSERT INTO audit_questions (id, category_id, question_text, max_points, sort_order, legal_reference, compliance_type) VALUES
-  ('e0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001',
-   'Staff Grooming & Uniform Compliance: Are all on-duty staff wearing clean, standard-issue uniforms with appropriate PPE (gloves, hairnets, safety shoes) as per site SOP?',
-   5, 1, 'Internal PPE & Grooming SOP', 'score'),
-  ('e0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001',
-   'Food Product Quality vs. Published Menu: Does the daily meal service match the published weekly menu in terms of items, portion size, and presentation quality?',
-   5, 2, 'FSSAI Act 2006', 'score'),
-  ('e0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000001',
-   'Process Adherence (SOP Compliance): Are cleaning, turn-down, and sanitization SOPs being followed with documented checklists signed off by shift supervisors?',
-   5, 3, 'Internal SOP Framework', 'score'),
-  ('e0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000001',
-   'Vendor SLA Adherence: Are all third-party vendor deliverables (laundry, pest control, waste disposal) being tracked against contracted SLAs with documented proof?',
-   5, 4, 'Vendor Contract Terms', 'score')
-ON CONFLICT (id) DO UPDATE SET
-  question_text = EXCLUDED.question_text,
-  max_points = EXCLUDED.max_points,
-  sort_order = EXCLUDED.sort_order,
-  legal_reference = EXCLUDED.legal_reference,
-  compliance_type = EXCLUDED.compliance_type;
+  ('e0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', 'Staff Grooming & Uniform Compliance: Are all on-duty staff wearing clean, standard-issue uniforms with appropriate PPE (gloves, hairnets, safety shoes) as per site SOP?', 5, 1, 'Internal PPE & Grooming SOP', 'score'),
+  ('e0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001', 'Food Product Quality vs. Published Menu: Does the daily meal service match the published weekly menu in terms of items, portion size, and presentation quality?', 5, 2, 'FSSAI Act 2006', 'score'),
+  ('e0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000001', 'Process Adherence (SOP Compliance): Are cleaning, turn-down, and sanitization SOPs being followed with documented checklists signed off by shift supervisors?', 5, 3, 'Internal SOP Framework', 'score'),
+  ('e0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000001', 'Vendor SLA Adherence: Are all third-party vendor deliverables (laundry, pest control, waste disposal) being tracked against contracted SLAs with documented proof?', 5, 4, 'Vendor Contract Terms', 'score'),
+  ('e0000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000002', 'Workmen Compensation & Labour Registration: Are all workers registered under BOCWA Section 44? Is the Workmen Compensation insurance policy current and accessible?', 5, 5, 'BOCWA Section 44', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000006', 'c0000000-0000-0000-0000-000000000002', 'Safety Manual, HIRA & Risk Registers: Is the site Safety Manual available and up-to-date? Are Hazard Identification and Risk Assessment (HIRA) registers maintained with quarterly reviews?', 5, 6, 'HIRA Standards / ISO 45001', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000007', 'c0000000-0000-0000-0000-000000000002', 'PTW (Permit to Work) Systems: Are Permit to Work systems in place for high-risk activities (hot work, confined space, electrical work)? Are closure checklists completed post-work?', 5, 7, 'PTW Regulations / OISD 105', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000008', 'c0000000-0000-0000-0000-000000000003', 'Lift/Hoist Installation Certificates & Door Interlocking: Are all lift installation certificates current? Is the door interlocking mechanism functioning correctly with zero bypass capability?', 5, 8, 'Factories Act 1948, Section 28-29', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000009', 'c0000000-0000-0000-0000-000000000003', 'Electrical Earthing & Equipment Calibration: Is the electrical earthing system tested and certified within the last 12 months? Are all critical instruments calibrated per schedule?', 5, 9, 'Indian Electricity Rules 1956', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000010', 'c0000000-0000-0000-0000-000000000003', 'HVAC and Plumbing Utility Health: Are all HVAC units operational with filters cleaned on schedule? Are there zero active leaks, blockages, or pressure issues in plumbing systems?', 5, 10, NULL, 'score'),
+  ('e0000000-0000-0000-0000-000000000011', 'c0000000-0000-0000-0000-000000000004', 'MSDS Availability: Are Material Safety Data Sheets (MSDS) available, current, and displayed at all chemical storage locations for every chemical used on site?', 5, 11, 'MSDS / GHS Regulations', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000012', 'c0000000-0000-0000-0000-000000000004', 'Safe Storage & Disposal Protocols: Are all chemicals stored in approved, labeled containers with secondary containment? Is liquid/chemical waste disposed per local environmental norms?', 5, 12, 'Hazardous Waste Management Rules 2016', 'score'),
+  ('e0000000-0000-0000-0000-000000000013', 'c0000000-0000-0000-0000-000000000004', 'Material Handling Equipment (MHE) Fitness: Are all MHE units (forklifts, trolleys, hoists) within valid fitness certification? Are operators holding valid competency certificates?', 5, 13, 'Factories Act 1948', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000014', 'c0000000-0000-0000-0000-000000000005', 'Mock Drill Records (Fire & Evacuation): Have fire and evacuation mock drills been conducted in the last quarter? Are drill records, participant lists, and improvement notes documented?', 5, 14, 'Fire Safety Act / NBC 2016', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000015', 'c0000000-0000-0000-0000-000000000005', 'First Aid Box Availability & Staff Training: Are first aid boxes fully stocked at all designated locations? Have at least 2 trained first-aiders been identified per shift?', 5, 15, 'Factories Act 1948, Section 45', 'yes_no'),
+  ('e0000000-0000-0000-0000-000000000016', 'c0000000-0000-0000-0000-000000000005', 'Subcontractor Pre-Engagement Reviews & Medical Records: Are all subcontractor workers medically examined before site entry? Are pre-engagement safety inductions documented?', 5, 16, 'BOCWA / Contract Labour Act 1970', 'yes_no')
+ON CONFLICT (id) DO NOTHING;
 
--- Category 2: EHS Documentation & Legal Compliance (25%, 3 questions)
-INSERT INTO audit_questions (id, category_id, question_text, max_points, sort_order, legal_reference, compliance_type) VALUES
-  ('e0000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000002',
-   'Workmen Compensation & Labour Registration: Are all workers registered under BOCWA Section 44? Is the Workmen Compensation insurance policy current and accessible?',
-   5, 1, 'BOCWA Section 44', 'yes_no'),
-  ('e0000000-0000-0000-0000-000000000006', 'c0000000-0000-0000-0000-000000000002',
-   'Safety Manual, HIRA & Risk Registers: Is the site Safety Manual available and up-to-date? Are Hazard Identification and Risk Assessment (HIRA) registers maintained with quarterly reviews?',
-   5, 2, 'HIRA Standards / ISO 45001', 'yes_no'),
-  ('e0000000-0000-0000-0000-000000000007', 'c0000000-0000-0000-0000-000000000002',
-   'PTW (Permit to Work) Systems: Are Permit to Work systems in place for high-risk activities (hot work, confined space, electrical work)? Are closure checklists completed post-work?',
-   5, 3, 'PTW Regulations / OISD 105', 'yes_no')
-ON CONFLICT (id) DO UPDATE SET
-  question_text = EXCLUDED.question_text,
-  max_points = EXCLUDED.max_points,
-  sort_order = EXCLUDED.sort_order,
-  legal_reference = EXCLUDED.legal_reference,
-  compliance_type = EXCLUDED.compliance_type;
+-- ============================================================
+-- 5. AUDITS HISTORY (27 COMPLETED AUDITS)
+-- ============================================================
+INSERT INTO audits (id, property_id, template_id, auditor_id, status, total_score, max_possible_score, conducted_at, completed_at, major_observations, good_practices, recommendations, next_steps) VALUES
+  ('a0000000-0000-0000-0001-000000000001', 'p0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0001-000000000002', 'p0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0001-000000000003', 'p0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 94.700000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: Lift door interlocking bypassed on Floor 4. Expiry of fitness certificate. Non-compliant with Factories Act Section 29.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0002-000000000001', 'p0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0002-000000000002', 'p0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0002-000000000003', 'p0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 94.700000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: Electrical earthing systematic calibration overdue by 6 months. Non-compliant with Indian Electricity Rules 1956.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0003-000000000001', 'p0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0003-000000000002', 'p0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0003-000000000003', 'p0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 96.000000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: MSDS sheets completely missing from chemical storage rooms. Violation of GHS Regulations.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0004-000000000001', 'p0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0004-000000000002', 'p0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0004-000000000003', 'p0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 96.000000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: Secondary containment missing for acids. Violation of Hazardous Waste Management Rules 2016.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0005-000000000001', 'p0000000-0000-0000-0000-000000000005', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0005-000000000002', 'p0000000-0000-0000-0000-000000000005', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0005-000000000003', 'p0000000-0000-0000-0000-000000000005', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 96.000000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: Q1 fire mock drill not conducted. Evacuation routes blocked in East Wing.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0006-000000000001', 'p0000000-0000-0000-0000-000000000006', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0006-000000000002', 'p0000000-0000-0000-0000-000000000006', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0006-000000000003', 'p0000000-0000-0000-0000-000000000006', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 96.000000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: First Aid cabinets completely empty. Zero trained first-aiders on shift. Violation of Factories Act Section 45.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0007-000000000001', 'p0000000-0000-0000-0000-000000000007', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0007-000000000002', 'p0000000-0000-0000-0000-000000000007', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0007-000000000003', 'p0000000-0000-0000-0000-000000000007', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 93.300000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: Subcontractor workmen compensation records missing on site. Violation of BOCWA Section 44.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0008-000000000001', 'p0000000-0000-0000-0000-000000000008', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0008-000000000002', 'p0000000-0000-0000-0000-000000000008', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0008-000000000003', 'p0000000-0000-0000-0000-000000000008', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 93.300000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: Hazard Identification and Risk Assessment (HIRA) registers completely blank since last quarter.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.'),
+  ('a0000000-0000-0000-0009-000000000001', 'p0000000-0000-0000-0000-000000000009', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 70.200000, 100, '2025-08-15 10:00:00+00', '2025-08-15 12:30:00+00', 'Initial baseline audit. Minor compliance gaps identified in EHS documentation, electrical safety tagging, and chemical storage labeling. Corrective actions initiated.', 'Adequate housekeeping standards maintained. Kitchen staff certified with basic hygiene compliance.', 'Update site HIRA registers. Conduct safety induction refreshers for contract workers. Implement LOTO logs.', 'Correct documented gaps within 30 days. Next quarterly audit scheduled for Q4.'),
+  ('a0000000-0000-0000-0009-000000000002', 'p0000000-0000-0000-0000-000000000009', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 90.200000, 100, '2026-01-20 10:00:00+00', '2026-01-20 13:00:00+00', 'Compliance scores improved significantly. Prior gaps in risk registers and PTW checklists resolved. Solid SOP adherence observed across all departments.', 'Perfect record-keeping for mock fire drills. Outstanding staff uniform and PPE compliance.', 'Share chemical secondary containment practices with sister properties. Standardize site safety registers.', 'Maintain current compliance momentum. Conduct regular shift huddles.'),
+  ('a0000000-0000-0000-0009-000000000003', 'p0000000-0000-0000-0000-000000000009', 'a0000000-0000-0000-0000-000000000001', 'u1111111-1111-1111-1111-111111111111', 'completed', 94.700000, 100, '2026-05-12 10:00:00+00', '2026-05-12 12:45:00+00', 'CRITICAL NON-COMPLIANCE: CRITICAL: Main electrical distribution earthing test overdue. Non-compliant with Indian Electricity Rules 1956.. All other operational and documentation checkpoints scored exceptional (5/5).', 'Outstanding FSSAI standards. Flawless workmen compensation registration and Safety manual access. 100% PPE compliance.', 'Address the critical safety finding immediately! Conduct emergency audit on all mechanical utility interlocking systems.', '1. Immediate escalation to Site Manager.
+2. Remediate critical safety gap within 24 hours.
+3. Re-verify during upcoming weekly compliance call.')
+ON CONFLICT (id) DO NOTHING;
 
--- Category 3: Mechanical, Electrical & Lift Safety (20%, 3 questions)
-INSERT INTO audit_questions (id, category_id, question_text, max_points, sort_order, legal_reference, compliance_type) VALUES
-  ('e0000000-0000-0000-0000-000000000008', 'c0000000-0000-0000-0000-000000000003',
-   'Lift/Hoist Installation Certificates & Door Interlocking: Are all lift installation certificates current? Is the door interlocking mechanism functioning correctly with zero bypass capability?',
-   5, 1, 'Factories Act 1948, Section 28-29', 'yes_no'),
-  ('e0000000-0000-0000-0000-000000000009', 'c0000000-0000-0000-0000-000000000003',
-   'Electrical Earthing & Equipment Calibration: Is the electrical earthing system tested and certified within the last 12 months? Are all critical instruments calibrated per schedule?',
-   5, 2, 'Indian Electricity Rules 1956', 'yes_no'),
-  ('e0000000-0000-0000-0000-000000000010', 'c0000000-0000-0000-0000-000000000003',
-   'HVAC and Plumbing Utility Health: Are all HVAC units operational with filters cleaned on schedule? Are there zero active leaks, blockages, or pressure issues in plumbing systems?',
-   5, 3, NULL, 'score')
-ON CONFLICT (id) DO UPDATE SET
-  question_text = EXCLUDED.question_text,
-  max_points = EXCLUDED.max_points,
-  sort_order = EXCLUDED.sort_order,
-  legal_reference = EXCLUDED.legal_reference,
-  compliance_type = EXCLUDED.compliance_type;
+-- ============================================================
+-- 6. AUDIT RESPONSES (432 COMPLETED ANSWERS)
+-- ============================================================
+INSERT INTO audit_responses (id, audit_id, question_id, score_awarded, notes, remarks, image_url, supporting_images) VALUES
+  ('r0000000-0001-0001-0001', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0002', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0003', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0004', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0005', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0006', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0007', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0008', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0009', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0010', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0011', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0012', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0013', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0014', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0015', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0001-0016', 'a0000000-0000-0000-0001-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0001', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0002', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0003', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0004', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0005', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0006', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0007', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0008', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0009', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0010', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0011', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0012', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0013', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0014', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0015', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0002-0016', 'a0000000-0000-0000-0001-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0001', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0002', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0003', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0004', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0005', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0006', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0007', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0008', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000008', 1, NULL, 'CRITICAL: Lift door interlocking bypassed on Floor 4. Expiry of fitness certificate. Non-compliant with Factories Act Section 29.', 'https://placehold.co/800x600/dc2626/ffffff?text=Expired+Lift+Certificate', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Expired+Lift+Certificate', 'https://placehold.co/800x600/dc2626/ffffff?text=Door+Interlock+Bypass']),
+  ('r0000000-0001-0003-0009', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0010', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0011', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0012', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0013', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0014', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0015', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0001-0003-0016', 'a0000000-0000-0000-0001-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0001', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0002', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0003', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0004', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0005', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0006', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0007', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0008', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0009', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0010', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0011', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0012', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0013', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0014', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0015', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0001-0016', 'a0000000-0000-0000-0002-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0001', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0002', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0003', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0004', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0005', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0006', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0007', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0008', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0009', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0010', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0011', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0012', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0013', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0014', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0015', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0002-0016', 'a0000000-0000-0000-0002-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0001', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0002', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0003', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0004', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0005', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0006', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0007', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0008', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0009', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000009', 1, NULL, 'CRITICAL: Electrical earthing systematic calibration overdue by 6 months. Non-compliant with Indian Electricity Rules 1956.', 'https://placehold.co/800x600/dc2626/ffffff?text=Earthing+Test+Overdue', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Earthing+Test+Overdue', 'https://placehold.co/800x600/dc2626/ffffff?text=Phase+Imbalance+Panel']),
+  ('r0000000-0002-0003-0010', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0011', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0012', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0013', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0014', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0015', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0002-0003-0016', 'a0000000-0000-0000-0002-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0001', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0002', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0003', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0004', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
+INSERT INTO audit_responses (id, audit_id, question_id, score_awarded, notes, remarks, image_url, supporting_images) VALUES
+  ('r0000000-0003-0001-0005', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0006', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0007', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0008', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0009', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0010', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0011', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0012', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0013', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0014', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0015', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0001-0016', 'a0000000-0000-0000-0003-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0001', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0002', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0003', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0004', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0005', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0006', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0007', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0008', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0009', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0010', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0011', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0012', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0013', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0014', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0015', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0002-0016', 'a0000000-0000-0000-0003-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0001', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0002', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0003', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0004', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0005', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0006', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0007', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0008', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0009', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0010', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0011', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000011', 1, NULL, 'CRITICAL: MSDS sheets completely missing from chemical storage rooms. Violation of GHS Regulations.', 'https://placehold.co/800x600/dc2626/ffffff?text=Missing+MSDS+Sheets', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Missing+MSDS+Sheets', 'https://placehold.co/800x600/dc2626/ffffff?text=No+Spill+Kit']),
+  ('r0000000-0003-0003-0012', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0013', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0014', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0015', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0003-0003-0016', 'a0000000-0000-0000-0003-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0001', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0002', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0003', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0004', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0005', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0006', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0007', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0008', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0009', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0010', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0011', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0012', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0013', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0014', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0015', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0001-0016', 'a0000000-0000-0000-0004-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0001', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0002', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0003', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0004', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0005', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0006', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0007', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0008', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0009', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0010', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0011', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0012', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0013', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0014', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0015', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0002-0016', 'a0000000-0000-0000-0004-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0001', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0002', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0003', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0004', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0005', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0006', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0007', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0008', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0009', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0010', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0011', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0012', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000012', 1, NULL, 'CRITICAL: Secondary containment missing for acids. Violation of Hazardous Waste Management Rules 2016.', 'https://placehold.co/800x600/dc2626/ffffff?text=Unlabeled+Containers', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Unlabeled+Containers', 'https://placehold.co/800x600/dc2626/ffffff?text=Secondary+Containment+Missing']),
+  ('r0000000-0004-0003-0013', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0014', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0015', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0004-0003-0016', 'a0000000-0000-0000-0004-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0001', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0002', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0003', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0004', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0005', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0006', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0007', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0008', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
+INSERT INTO audit_responses (id, audit_id, question_id, score_awarded, notes, remarks, image_url, supporting_images) VALUES
+  ('r0000000-0005-0001-0009', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0010', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0011', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0012', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0013', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0014', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0015', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0001-0016', 'a0000000-0000-0000-0005-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0001', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0002', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0003', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0004', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0005', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0006', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0007', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0008', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0009', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0010', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0011', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0012', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0013', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0014', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0015', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0002-0016', 'a0000000-0000-0000-0005-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0001', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0002', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0003', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0004', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0005', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0006', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0007', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0008', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0009', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0010', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0011', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0012', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0013', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0014', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000014', 1, NULL, 'CRITICAL: Q1 fire mock drill not conducted. Evacuation routes blocked in East Wing.', 'https://placehold.co/800x600/dc2626/ffffff?text=Fire+Drill+Missing', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Fire+Drill+Missing', 'https://placehold.co/800x600/dc2626/ffffff?text=Blocked+Evacuation+Exit']),
+  ('r0000000-0005-0003-0015', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0005-0003-0016', 'a0000000-0000-0000-0005-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0001', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0002', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0003', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0004', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0005', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0006', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0007', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0008', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0009', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0010', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0011', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0012', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0013', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0014', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0015', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0001-0016', 'a0000000-0000-0000-0006-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0001', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0002', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0003', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0004', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0005', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0006', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0007', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0008', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0009', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0010', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0011', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0012', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0013', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0014', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0015', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0002-0016', 'a0000000-0000-0000-0006-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0001', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0002', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0003', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0004', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0005', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0006', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0007', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0008', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0009', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0010', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0011', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0012', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0013', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0014', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0006-0003-0015', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000015', 1, NULL, 'CRITICAL: First Aid cabinets completely empty. Zero trained first-aiders on shift. Violation of Factories Act Section 45.', 'https://placehold.co/800x600/dc2626/ffffff?text=Empty+First+Aid+Box', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Empty+First+Aid+Box', 'https://placehold.co/800x600/dc2626/ffffff?text=No+First+Aider+List']),
+  ('r0000000-0006-0003-0016', 'a0000000-0000-0000-0006-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0001', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0002', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0003', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0004', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0005', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0006', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0007', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0008', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0009', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0010', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0011', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0012', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
+INSERT INTO audit_responses (id, audit_id, question_id, score_awarded, notes, remarks, image_url, supporting_images) VALUES
+  ('r0000000-0007-0001-0013', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0014', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0015', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0001-0016', 'a0000000-0000-0000-0007-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0001', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0002', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0003', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0004', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0005', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0006', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0007', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0008', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0009', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0010', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0011', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0012', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0013', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0014', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0015', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0002-0016', 'a0000000-0000-0000-0007-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0001', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0002', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0003', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0004', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0005', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000005', 1, NULL, 'CRITICAL: Subcontractor workmen compensation records missing on site. Violation of BOCWA Section 44.', 'https://placehold.co/800x600/dc2626/ffffff?text=Subcontractor+Insurance+Expired', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Subcontractor+Insurance+Expired', 'https://placehold.co/800x600/dc2626/ffffff?text=Missing+Registration+Docs']),
+  ('r0000000-0007-0003-0006', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0007', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0008', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0009', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0010', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0011', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0012', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0013', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0014', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0015', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0007-0003-0016', 'a0000000-0000-0000-0007-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0001', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0002', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0003', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0004', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0005', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0006', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0007', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0008', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0009', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0010', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0011', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0012', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0013', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0014', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0015', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0001-0016', 'a0000000-0000-0000-0008-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0001', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0002', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0003', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0004', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0005', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0006', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0007', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0008', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0009', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0010', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0011', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0012', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0013', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0014', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0015', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0002-0016', 'a0000000-0000-0000-0008-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0001', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0002', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0003', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0004', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0005', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0006', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000006', 1, NULL, 'CRITICAL: Hazard Identification and Risk Assessment (HIRA) registers completely blank since last quarter.', 'https://placehold.co/800x600/dc2626/ffffff?text=Safety+Manual+Overdue', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Safety+Manual+Overdue', 'https://placehold.co/800x600/dc2626/ffffff?text=Blank+HIRA+Sheet']),
+  ('r0000000-0008-0003-0007', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0008', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0009', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0010', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0011', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0012', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0013', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0014', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0015', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0008-0003-0016', 'a0000000-0000-0000-0008-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0001', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000001', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0002', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000002', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0003', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000003', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0004', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000004', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0005', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000005', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0006', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000006', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0007', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000007', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0008', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000008', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0009', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000009', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0010', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000010', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0011', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000011', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0012', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000012', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0013', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000013', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0014', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000014', 3, 'Acceptable operational baseline.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0015', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000015', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0001-0016', 'a0000000-0000-0000-0009-000000000001', 'e0000000-0000-0000-0000-000000000016', 3, 'Acceptable operational baseline.', NULL, NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
+INSERT INTO audit_responses (id, audit_id, question_id, score_awarded, notes, remarks, image_url, supporting_images) VALUES
+  ('r0000000-0009-0002-0001', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0002', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000002', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0003', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0004', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000004', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0005', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0006', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000006', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0007', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0008', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000008', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0009', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000009', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0010', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000010', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0011', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0012', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000012', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0013', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0014', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000014', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0015', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0002-0016', 'a0000000-0000-0000-0009-000000000002', 'e0000000-0000-0000-0000-000000000016', 4, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0001', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000001', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0002', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000002', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0003', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000003', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0004', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000004', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0005', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000005', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0006', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000006', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0007', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000007', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0008', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000008', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0009', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000009', 1, NULL, 'CRITICAL: Main electrical distribution earthing test overdue. Non-compliant with Indian Electricity Rules 1956.', 'https://placehold.co/800x600/dc2626/ffffff?text=Earthing+Test+Overdue', ARRAY['https://placehold.co/800x600/dc2626/ffffff?text=Earthing+Test+Overdue', 'https://placehold.co/800x600/dc2626/ffffff?text=Phase+Imbalance+Panel']),
+  ('r0000000-0009-0003-0010', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000010', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0011', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000011', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0012', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000012', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0013', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000013', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0014', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000014', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0015', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000015', 5, 'Maintained as per operational standards.', NULL, NULL, NULL),
+  ('r0000000-0009-0003-0016', 'a0000000-0000-0000-0009-000000000003', 'e0000000-0000-0000-0000-000000000016', 5, 'Maintained as per operational standards.', NULL, NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
 
--- Category 4: Chemical, Waste & Material Management (15%, 3 questions)
-INSERT INTO audit_questions (id, category_id, question_text, max_points, sort_order, legal_reference, compliance_type) VALUES
-  ('e0000000-0000-0000-0000-000000000011', 'c0000000-0000-0000-0000-000000000004',
-   'MSDS Availability: Are Material Safety Data Sheets (MSDS) available, current, and displayed at all chemical storage locations for every chemical used on site?',
-   5, 1, 'MSDS / GHS Regulations', 'yes_no'),
-  ('e0000000-0000-0000-0000-000000000012', 'c0000000-0000-0000-0000-000000000004',
-   'Safe Storage & Disposal Protocols: Are all chemicals stored in approved, labeled containers with secondary containment? Is liquid/chemical waste disposed per local environmental norms?',
-   5, 2, 'Hazardous Waste Management Rules 2016', 'score'),
-  ('e0000000-0000-0000-0000-000000000013', 'c0000000-0000-0000-0000-000000000004',
-   'Material Handling Equipment (MHE) Fitness: Are all MHE units (forklifts, trolleys, hoists) within valid fitness certification? Are operators holding valid competency certificates?',
-   5, 3, 'Factories Act 1948', 'yes_no')
-ON CONFLICT (id) DO UPDATE SET
-  question_text = EXCLUDED.question_text,
-  max_points = EXCLUDED.max_points,
-  sort_order = EXCLUDED.sort_order,
-  legal_reference = EXCLUDED.legal_reference,
-  compliance_type = EXCLUDED.compliance_type;
+-- ============================================================
+-- 7. CORRECTIVE ACTIONS (CAP BOARD)
+-- ============================================================
+INSERT INTO corrective_actions (id, audit_id, property_id, question_id, issue_description, status, assigned_to, remediation_notes, created_at, updated_at) VALUES
+  ('cap00000-0001-0003-0008', 'a0000000-0000-0000-0001-000000000003', 'p0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000008', 'Mechanical, Electrical & Lift Safety: Lift/Hoist Installation Certificates & Door Interlocking (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0002-0003-0009', 'a0000000-0000-0000-0002-000000000003', 'p0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000009', 'Mechanical, Electrical & Lift Safety: Electrical Earthing & Equipment Calibration (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0003-0003-0011', 'a0000000-0000-0000-0003-000000000003', 'p0000000-0000-0000-0000-000000000003', 'e0000000-0000-0000-0000-000000000011', 'Chemical, Waste & Material Management: MSDS Availability (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0004-0003-0012', 'a0000000-0000-0000-0004-000000000003', 'p0000000-0000-0000-0000-000000000004', 'e0000000-0000-0000-0000-000000000012', 'Chemical, Waste & Material Management: Safe Storage & Disposal Protocols (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0005-0003-0014', 'a0000000-0000-0000-0005-000000000003', 'p0000000-0000-0000-0000-000000000005', 'e0000000-0000-0000-0000-000000000014', 'Emergency Preparedness & Subcontractor Safety: Mock Drill Records (Fire & Evacuation) (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0006-0003-0015', 'a0000000-0000-0000-0006-000000000003', 'p0000000-0000-0000-0000-000000000006', 'e0000000-0000-0000-0000-000000000015', 'Emergency Preparedness & Subcontractor Safety: First Aid Box Availability & Staff Training (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0007-0003-0005', 'a0000000-0000-0000-0007-000000000003', 'p0000000-0000-0000-0000-000000000007', 'e0000000-0000-0000-0000-000000000005', 'EHS Documentation & Legal Compliance: Workmen Compensation & Labour Registration (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0008-0003-0006', 'a0000000-0000-0000-0008-000000000003', 'p0000000-0000-0000-0000-000000000008', 'e0000000-0000-0000-0000-000000000006', 'EHS Documentation & Legal Compliance: Safety Manual, HIRA & Risk Registers (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00'),
+  ('cap00000-0009-0003-0009', 'a0000000-0000-0000-0009-000000000003', 'p0000000-0000-0000-0000-000000000009', 'e0000000-0000-0000-0000-000000000009', 'Mechanical, Electrical & Lift Safety: Electrical Earthing & Equipment Calibration (Score: 1/5)', 'open', 'u1111111-1111-1111-1111-111111111111', NULL, '2026-05-12 10:00:00+00', '2026-05-12 10:00:00+00')
+ON CONFLICT (id) DO NOTHING;
 
--- Category 5: Emergency Preparedness & Subcontractor Safety (15%, 3 questions)
-INSERT INTO audit_questions (id, category_id, question_text, max_points, sort_order, legal_reference, compliance_type) VALUES
-  ('e0000000-0000-0000-0000-000000000014', 'c0000000-0000-0000-0000-000000000005',
-   'Mock Drill Records (Fire & Evacuation): Have fire and evacuation mock drills been conducted in the last quarter? Are drill records, participant lists, and improvement notes documented?',
-   5, 1, 'Fire Safety Act / NBC 2016', 'yes_no'),
-  ('e0000000-0000-0000-0000-000000000015', 'c0000000-0000-0000-0000-000000000005',
-   'First Aid Box Availability & Staff Training: Are first aid boxes fully stocked at all designated locations? Have at least 2 trained first-aiders been identified per shift?',
-   5, 2, 'Factories Act 1948, Section 45', 'yes_no'),
-  ('e0000000-0000-0000-0000-000000000016', 'c0000000-0000-0000-0000-000000000005',
-   'Subcontractor Pre-Engagement Reviews & Medical Records: Are all subcontractor workers medically examined before site entry? Are pre-engagement safety inductions documented?',
-   5, 3, 'BOCWA / Contract Labour Act 1970', 'yes_no')
-ON CONFLICT (id) DO UPDATE SET
-  question_text = EXCLUDED.question_text,
-  max_points = EXCLUDED.max_points,
-  sort_order = EXCLUDED.sort_order,
-  legal_reference = EXCLUDED.legal_reference,
-  compliance_type = EXCLUDED.compliance_type;
+-- Re-enable triggers
+SET session_replication_role = 'origin';
