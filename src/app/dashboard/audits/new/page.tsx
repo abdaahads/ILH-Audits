@@ -12,6 +12,9 @@ import {
   ClipboardCheck,
   Building2,
   AlertTriangle,
+  User,
+  Calendar,
+  ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuditStore } from "@/store/audit-store";
@@ -58,6 +61,15 @@ export default function NewAuditPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [templateId, setLocalTemplateId] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<{ full_name: string; email: string; role: string } | null>(null);
+  const [lastAuditScore, setLastAuditScore] = useState<number | null>(null);
+  const [lastAuditDate, setLastAuditDate] = useState<string | null>(null);
+  const [guidelinesChecked, setGuidelinesChecked] = useState<Record<string, boolean>>({
+    charged: false,
+    camera: false,
+    clothing: false,
+    prevIssues: false,
+  });
 
   /* Ref for scroll-to-top on step change */
   const topRef = useRef<HTMLDivElement>(null);
@@ -77,6 +89,30 @@ export default function NewAuditPage() {
         .order("name");
 
       setProperties(propsData || []);
+
+      /* Fetch current user profile */
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        try {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name, role")
+            .eq("id", user.id)
+            .maybeSingle();
+
+          setCurrentUser({
+            full_name: profile?.full_name || user.user_metadata?.full_name || "Rahul Sharma",
+            email: user.email || "auditor@ivyleaguehouse.com",
+            role: profile?.role || "auditor",
+          });
+        } catch {
+          setCurrentUser({
+            full_name: user.user_metadata?.full_name || "Rahul Sharma",
+            email: user.email || "auditor@ivyleaguehouse.com",
+            role: "auditor",
+          });
+        }
+      }
 
       /* Fetch default template */
       const { data: templateData } = await supabase
@@ -130,6 +166,40 @@ export default function NewAuditPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    if (!propertyId) {
+      setLastAuditScore(null);
+      setLastAuditDate(null);
+      return;
+    }
+
+    const fetchPropertyHistory = async () => {
+      const supabase = createClient();
+      try {
+        const { data } = await supabase
+          .from("audits")
+          .select("total_score, conducted_at")
+          .eq("property_id", propertyId)
+          .eq("status", "completed")
+          .order("conducted_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (data) {
+          setLastAuditScore(Number(data.total_score));
+          setLastAuditDate(data.conducted_at);
+        } else {
+          setLastAuditScore(null);
+          setLastAuditDate(null);
+        }
+      } catch (err) {
+        console.error("History fetch error:", err);
+      }
+    };
+
+    fetchPropertyHistory();
+  }, [propertyId]);
 
   /* ── Step navigation ── */
   const goNext = () => {
@@ -496,7 +566,8 @@ export default function NewAuditPage() {
                ============================================================ */}
           {currentStep === 0 && (
             <div className="animate-fade-in space-y-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              {/* Card 1: Property Selection */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ilh-navy-500 text-white">
                     <Building2 className="h-5 w-5" />
@@ -533,11 +604,189 @@ export default function NewAuditPage() {
                 </Select>
               </div>
 
+              {/* Card 2: Onboarding & Historical Insights (Only when property selected) */}
+              {propertyId && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 animate-slide-up opacity-0" style={{ animationDelay: "100ms", animationFillMode: "forwards" }}>
+                  {/* Left Side: Audit Parameters */}
+                  <div className="space-y-4 pr-0 md:pr-6 md:border-r border-slate-100">
+                    <h3 className="text-sm font-bold text-ilh-navy-700 border-b pb-2 flex items-center gap-2">
+                      <User className="h-4 w-4 text-ilh-navy-500" />
+                      Auditor Profile & Parameters
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400 font-semibold">Conducted By:</span>
+                        <span className="text-ilh-navy-700 font-bold">{currentUser?.full_name || "Rahul Sharma"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400 font-semibold">Auditor Email:</span>
+                        <span className="text-ilh-navy-700 font-bold">{currentUser?.email || "auditor@ivyleaguehouse.com"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400 font-semibold">Audit Template:</span>
+                        <span className="text-ilh-navy-700 font-bold">Standard Property Audit</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400 font-semibold">Inspection Date:</span>
+                        <span className="text-ilh-navy-700 font-bold flex items-center gap-1.5 font-mono text-xs">
+                          <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                          {new Date().toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Side: Historical Quality Insights */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold text-ilh-navy-700 border-b pb-2 flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-ilh-navy-500" />
+                      Historical Location Insights
+                    </h3>
+                    <div className="flex flex-col items-center justify-center py-2">
+                      {lastAuditScore !== null ? (
+                        <div className="text-center space-y-2">
+                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            Last Audit Compliance Score
+                          </p>
+                          <div className="inline-flex items-center gap-2">
+                            <span className={`text-4xl font-black ${
+                              lastAuditScore >= 80 ? "text-ilh-green-600" : lastAuditScore >= 60 ? "text-amber-500" : "text-red-500"
+                            }`}>
+                              {lastAuditScore.toFixed(1)}%
+                            </span>
+                            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
+                              lastAuditScore >= 80 
+                                ? "bg-ilh-green-50 text-ilh-green-700 border-ilh-green-200" 
+                                : lastAuditScore >= 60 
+                                  ? "bg-amber-50 text-amber-700 border-amber-200" 
+                                  : "bg-red-50 text-red-700 border-red-200"
+                            }`}>
+                              {lastAuditScore >= 80 ? "Excellent" : lastAuditScore >= 60 ? "Warning" : "Critical"}
+                            </span>
+                          </div>
+                          {lastAuditDate && (
+                            <p className="text-[10px] text-slate-400 font-semibold font-mono">
+                              Conducted on {new Date(lastAuditDate).toLocaleDateString("en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4 space-y-1">
+                          <p className="text-sm font-bold text-slate-500">No Previous Audits Found</p>
+                          <p className="text-xs text-slate-400">This property will start fresh with its initial baseline check today.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Card 3: Pre-Audit SOP Verification Checklist (Only when property selected) */}
+              {propertyId && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 animate-slide-up opacity-0" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
+                  <h3 className="text-sm font-bold text-ilh-navy-700 border-b pb-3 mb-4 flex items-center gap-2">
+                    <CheckCircle2 className="h-4.5 w-4.5 text-ilh-navy-500" />
+                    Pre-Audit SOP Verification Checklist
+                  </h3>
+                  <p className="text-xs text-slate-400 mb-4 font-semibold">
+                    You must verify and acknowledge all standard operating guidelines before starting:
+                  </p>
+                  <div className="space-y-3.5">
+                    {/* Item 1: Device Charged */}
+                    <label className="flex items-start gap-3 cursor-pointer group select-none">
+                      <input
+                        type="checkbox"
+                        checked={guidelinesChecked.charged}
+                        onChange={(e) => setGuidelinesChecked(prev => ({ ...prev, charged: e.target.checked }))}
+                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-ilh-green-500 focus:ring-ilh-green-200 cursor-pointer"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-ilh-navy-700 group-hover:text-ilh-navy-500 transition-colors">
+                          Inspection Device Power Status
+                        </span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">
+                          My tablet/phone battery is above 50% or connected to power for continuous data logging on site.
+                        </span>
+                      </div>
+                    </label>
+
+                    {/* Item 2: Camera Permissions */}
+                    <label className="flex items-start gap-3 cursor-pointer group select-none">
+                      <input
+                        type="checkbox"
+                        checked={guidelinesChecked.camera}
+                        onChange={(e) => setGuidelinesChecked(prev => ({ ...prev, camera: e.target.checked }))}
+                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-ilh-green-500 focus:ring-ilh-green-200 cursor-pointer"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-ilh-navy-700 group-hover:text-ilh-navy-500 transition-colors">
+                          Media Uploads & Camera Ready
+                        </span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">
+                          Camera permissions are enabled to capture high-res photo evidence for compliance checkpoint failures (score ≤ 2).
+                        </span>
+                      </div>
+                    </label>
+
+                    {/* Item 3: Safety Gear */}
+                    <label className="flex items-start gap-3 cursor-pointer group select-none">
+                      <input
+                        type="checkbox"
+                        checked={guidelinesChecked.clothing}
+                        onChange={(e) => setGuidelinesChecked(prev => ({ ...prev, clothing: e.target.checked }))}
+                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-ilh-green-500 focus:ring-ilh-green-200 cursor-pointer"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-ilh-navy-700 group-hover:text-ilh-navy-500 transition-colors">
+                          Operational Safety Gear
+                        </span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">
+                          I am wearing the standard operational vest and safety clothing required for walking property utility sectors.
+                        </span>
+                      </div>
+                    </label>
+
+                    {/* Item 4: Review CAP Issues */}
+                    <label className="flex items-start gap-3 cursor-pointer group select-none">
+                      <input
+                        type="checkbox"
+                        checked={guidelinesChecked.prevIssues}
+                        onChange={(e) => setGuidelinesChecked(prev => ({ ...prev, prevIssues: e.target.checked }))}
+                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-ilh-green-500 focus:ring-ilh-green-200 cursor-pointer"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-ilh-navy-700 group-hover:text-ilh-navy-500 transition-colors">
+                          Familiarity with Location CAP Board
+                        </span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">
+                          I have reviewed outstanding corrective action tasks for this location to verify remediation updates during this walk.
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Start Checklist Button */}
               <Button
                 size="lg"
-                disabled={!propertyId}
+                disabled={
+                  !propertyId ||
+                  !guidelinesChecked.charged ||
+                  !guidelinesChecked.camera ||
+                  !guidelinesChecked.clothing ||
+                  !guidelinesChecked.prevIssues
+                }
                 onClick={goNext}
-                className="w-full h-12 bg-ilh-green-500 hover:bg-ilh-green-600 text-white text-base font-bold rounded-xl shadow-lg shadow-ilh-green-500/10 transition-transform active:scale-95"
+                className="w-full h-12 bg-ilh-green-500 hover:bg-ilh-green-600 text-white text-base font-bold rounded-xl shadow-lg shadow-ilh-green-500/10 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Start Checklist
                 <ChevronRight className="h-5 w-5 ml-2" />
