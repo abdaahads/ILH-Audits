@@ -16,7 +16,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 export async function updateSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const isOfflineMode = request.cookies.get("ilh_offline_mode")?.value === "true";
+  const isOfflineMode = 
+    process.env.NEXT_PUBLIC_OFFLINE_DEMO === "true" ||
+    request.cookies.get("ilh_offline_mode")?.value === "true";
 
   if (isOfflineMode) {
     return NextResponse.next();
