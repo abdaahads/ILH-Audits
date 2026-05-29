@@ -40,6 +40,27 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here`;
     }, 1500);
   };
 
+  const handleLaunchOfflineMode = () => {
+    if (typeof window !== "undefined") {
+      // Set bypass cookie
+      document.cookie = "ilh_offline_mode=true; path=/; max-age=31536000; SameSite=Lax";
+
+      // Seed local session
+      localStorage.setItem("ilh_mock_session", JSON.stringify({
+        id: "u1111111-1111-1111-1111-111111111111",
+        email: "admin@ivyleaguehouse.com",
+        full_name: "Abdulahad Sheikh",
+        role: "admin",
+        user_metadata: { full_name: "Abdulahad Sheikh" }
+      }));
+
+      toast.success("Initializing Interactive Sandbox Mode...");
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
+    }
+  };
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 bg-slate-900 font-sans">
       
@@ -139,6 +160,16 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here`;
                 </>
               )}
             </Button>
+
+            <Button
+              onClick={handleLaunchOfflineMode}
+              variant="outline"
+              className="w-full h-11 bg-white/5 hover:bg-white/10 text-white border-white/10 hover:border-white/20 font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer active:scale-98 transition-transform"
+            >
+              <span>Explore Offline Sandbox Mode</span>
+              <ArrowRight className="h-4 w-4 text-[#339966]" />
+            </Button>
+
             <p className="text-center text-[10px] text-white/30">
               Note: You must restart the development server (<code className="font-mono bg-white/5 px-1 rounded">npm run dev</code>) after adding the .env.local file.
             </p>
