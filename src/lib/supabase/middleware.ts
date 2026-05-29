@@ -16,7 +16,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 export async function updateSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const isOfflineMode = request.cookies.get("ilh_offline_mode")?.value === "true";
+  const isOfflineMode = 
+    process.env.NEXT_PUBLIC_OFFLINE_DEMO === "true" ||
+    request.cookies.get("ilh_offline_mode")?.value === "true";
 
   if (isOfflineMode) {
     return NextResponse.next();
@@ -30,8 +32,7 @@ export async function updateSession(request: NextRequest) {
     ) {
       return NextResponse.next();
     }
-    const setupUrl = request.nextUrl.clone();
-    setupUrl.pathname = "/setup";
+    const setupUrl = new URL('/setup', request.url);
     return NextResponse.redirect(setupUrl);
   }
 
@@ -71,9 +72,8 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/auth') &&
     request.nextUrl.pathname !== '/'
   ) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
+    const loginUrl = new URL('/login', request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
   return supabaseResponse;
