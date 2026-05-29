@@ -4,18 +4,16 @@
 -- ============================================================
 
 -- ============================================================
--- 1. PROPERTIES (Real ILH locations across India)
+-- 1. PROPERTIES (Single ILH locations across India)
 -- ============================================================
 INSERT INTO properties (name, location, total_beds) VALUES
-  ('ILH Tathawade',    'Tathawade, Pune, Maharashtra',            706),
-  ('ILH Kothrud',      'Kothrud, Pune, Maharashtra',              300),
-  ('ILH Vile Parle',   'Vile Parle, Mumbai, Maharashtra',         450),
-  ('ILH Andheri',      'Andheri, Mumbai, Maharashtra',            280),
-  ('ILH Kamla Nagar',  'Kamla Nagar, Delhi',                      350),
-  ('ILH Rajpur Road',  'Rajpur Road, Dehradun, Uttarakhand',      400),
+  ('ILH Pune',         'Tathawade, Pune, Maharashtra',            706),
+  ('ILH Mumbai',       'Vile Parle, Mumbai, Maharashtra',         450),
+  ('ILH Delhi',        'Kamla Nagar, Delhi',                      350),
+  ('ILH Dehradun',     'Rajpur Road, Dehradun, Uttarakhand',      400),
   ('ILH Durgapur',     'Durgapur, West Bengal',                   250),
-  ('ILH Koramangala',  'Koramangala, Bengaluru, Karnataka',       320),
-  ('ILH Gachibowli',   'Gachibowli, Hyderabad, Telangana',       280),
+  ('ILH Bengaluru',    'Koramangala, Bengaluru, Karnataka',       320),
+  ('ILH Hyderabad',    'Gachibowli, Hyderabad, Telangana',       280),
   ('ILH Vizag',        'Visakhapatnam, Andhra Pradesh',           200);
 
 -- ============================================================
