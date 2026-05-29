@@ -7,7 +7,32 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
--- 1. PROPERTIES TABLE
+-- 1. PROFILES TABLE
+-- Extends auth.users with app-specific fields
+-- ============================================================
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT NOT NULL DEFAULT '',
+  role TEXT NOT NULL DEFAULT 'auditor' CHECK (role IN ('admin', 'auditor')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Users can read all profiles (for auditor names in reports)
+CREATE POLICY "Authenticated users can view profiles"
+  ON profiles FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Users can update their own profile
+CREATE POLICY "Users can update own profile"
+  ON profiles FOR UPDATE
+  TO authenticated
+  USING (id = auth.uid());
+
+-- ============================================================
+-- 2. PROPERTIES TABLE
 -- Stores all ILH student housing properties
 -- ============================================================
 CREATE TABLE properties (
@@ -47,30 +72,6 @@ CREATE POLICY "Admins can update properties"
     )
   );
 
--- ============================================================
--- 2. PROFILES TABLE
--- Extends auth.users with app-specific fields
--- ============================================================
-CREATE TABLE profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  full_name TEXT NOT NULL DEFAULT '',
-  role TEXT NOT NULL DEFAULT 'auditor' CHECK (role IN ('admin', 'auditor')),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-
--- Users can read all profiles (for auditor names in reports)
-CREATE POLICY "Authenticated users can view profiles"
-  ON profiles FOR SELECT
-  TO authenticated
-  USING (true);
-
--- Users can update their own profile
-CREATE POLICY "Users can update own profile"
-  ON profiles FOR UPDATE
-  TO authenticated
-  USING (id = auth.uid());
 
 -- ============================================================
 -- 3. AUDIT TEMPLATES TABLE
