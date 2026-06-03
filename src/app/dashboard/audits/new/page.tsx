@@ -781,20 +781,20 @@ export default function NewAuditPage() {
     <div ref={topRef} className="max-w-6xl mx-auto space-y-6">
       
       {/* ── Page Header & Autosave status ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4">
         <div>
           <div className="flex items-center gap-2">
             <ClipboardCheck className="h-7 w-7 text-ilh-navy-500" />
-            <h1 className="text-3xl font-bold text-ilh-navy-700">New Audit</h1>
+            <h1 className="text-3xl font-bold text-slate-700">New Audit</h1>
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Conduct a property compliance and quality audit on site.
           </p>
         </div>
 
         {propertyId && (
           <div className="flex items-center gap-2 self-start sm:self-center">
-            <div className="flex items-center gap-1.5 text-xs text-ilh-green-600 font-bold bg-ilh-green-50 border border-ilh-green-200 px-3 py-1 rounded-full shadow-sm animate-pulse-glow">
+            <div className="flex items-center gap-1.5 text-xs text-ilh-green-600 font-bold bg-[#E0E5EC] px-3 py-1 rounded-full shadow-neo-raised-sm animate-pulse-glow">
               <span className="h-1.5 w-1.5 rounded-full bg-ilh-green-500" />
               Draft Autosaved
             </div>
@@ -813,7 +813,7 @@ export default function NewAuditPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         
         {/* Left Side Stepper Navigation (Desktop only, sticky) */}
-        <aside className="hidden lg:block lg:col-span-1 bg-white rounded-2xl border border-gray-100 p-5 space-y-3 sticky top-6 shadow-sm">
+        <aside className="hidden lg:block lg:col-span-1 bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-5 space-y-3 sticky top-6">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2 mb-2">
             Audit Checklist
           </h3>
@@ -822,10 +822,10 @@ export default function NewAuditPage() {
             {/* Step 0: Property Selection */}
             <button
               onClick={() => setCurrentStep(0)}
-              className={`flex items-center justify-between w-full text-left rounded-xl px-3.5 py-3 text-xs font-bold transition-all ${
+              className={`flex items-center justify-between w-full text-left rounded-xl px-3.5 py-3 text-xs font-bold transition-all duration-200 ${
                 currentStep === 0
-                  ? "bg-ilh-navy-500 text-white shadow-md shadow-ilh-navy-500/10"
-                  : "text-ilh-navy-400 hover:bg-slate-50 hover:text-ilh-navy-700"
+                  ? "bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-pressed"
+                  : "text-slate-500 hover:shadow-neo-raised-sm hover:text-slate-700"
               }`}
             >
               <span>1. Property Details</span>
@@ -847,22 +847,22 @@ export default function NewAuditPage() {
                   key={cat.id}
                   disabled={disabled}
                   onClick={() => setCurrentStep(stepIdx)}
-                  className={`flex items-center justify-between w-full text-left rounded-xl px-3.5 py-3 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                  className={`flex items-center justify-between w-full text-left rounded-xl px-3.5 py-3 text-xs font-bold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                     currentStep === stepIdx
-                      ? "bg-ilh-navy-500 text-white shadow-md shadow-ilh-navy-500/10"
-                      : "text-ilh-navy-400 hover:bg-slate-50 hover:text-ilh-navy-700"
+                      ? "bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-pressed"
+                      : "text-slate-500 hover:shadow-neo-raised-sm hover:text-slate-700"
                   }`}
                 >
                   <div className="flex flex-col gap-0.5">
                     <span>{idx + 2}. {cat.name}</span>
-                    <span className={`text-[9px] ${currentStep === stepIdx ? "text-white/70" : "text-slate-400"}`}>
+                    <span className={`text-[9px] ${currentStep === stepIdx ? "text-ilh-navy-400" : "text-slate-400"}`}>
                       {answeredCount}/{totalQCount} checkpoints
                     </span>
                   </div>
                   {completed ? (
-                    <CheckCircle2 className={`h-4 w-4 shrink-0 ${currentStep === stepIdx ? "text-white" : "text-ilh-green-500"}`} />
+                    <CheckCircle2 className={`h-4 w-4 shrink-0 ${currentStep === stepIdx ? "text-ilh-green-600" : "text-ilh-green-500"}`} />
                   ) : (
-                    <span className={`text-[10px] shrink-0 font-bold ${currentStep === stepIdx ? "text-white/60" : "text-slate-300"}`}>
+                    <span className={`text-[10px] shrink-0 font-bold ${currentStep === stepIdx ? "text-ilh-navy-400" : "text-slate-300"}`}>
                       {Math.round((answeredCount / totalQCount) * 100)}%
                     </span>
                   )}
@@ -874,10 +874,10 @@ export default function NewAuditPage() {
             <button
               disabled={!propertyId}
               onClick={() => setCurrentStep(totalSteps - 1)}
-              className={`flex items-center justify-between w-full text-left rounded-xl px-3.5 py-3 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+              className={`flex items-center justify-between w-full text-left rounded-xl px-3.5 py-3 text-xs font-bold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                 currentStep === totalSteps - 1
-                  ? "bg-ilh-navy-500 text-white shadow-md shadow-ilh-navy-500/10"
-                  : "text-ilh-navy-400 hover:bg-slate-50 hover:text-ilh-navy-700"
+                  ? "bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-pressed"
+                  : "text-slate-500 hover:shadow-neo-raised-sm hover:text-slate-700"
               }`}
             >
               <span>{totalSteps}. Review & Submit</span>
@@ -895,10 +895,10 @@ export default function NewAuditPage() {
               {/* Step 0: Property Selection */}
               <button
                 onClick={() => setCurrentStep(0)}
-                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all shadow-xs ${
+                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all duration-200 ${
                   currentStep === 0
-                    ? "bg-ilh-navy-500 text-white"
-                    : "bg-white text-ilh-navy-400 border border-slate-100 hover:bg-slate-50"
+                    ? "bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-pressed"
+                    : "bg-[#E0E5EC] text-slate-500 shadow-neo-raised-sm hover:shadow-neo-pressed"
                 }`}
               >
                 <span>1. Property</span>
@@ -916,10 +916,10 @@ export default function NewAuditPage() {
                     key={cat.id}
                     disabled={disabled}
                     onClick={() => setCurrentStep(stepIdx)}
-                    className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs ${
+                    className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                       currentStep === stepIdx
-                        ? "bg-ilh-navy-500 text-white"
-                        : "bg-white text-ilh-navy-400 border border-slate-100 hover:bg-slate-50"
+                        ? "bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-pressed"
+                        : "bg-[#E0E5EC] text-slate-500 shadow-neo-raised-sm hover:shadow-neo-pressed"
                     }`}
                   >
                     <span>{idx + 2}. {cat.name.replace("Mechanical, Electrical & ", "").replace("Chemical, Waste & ", "").replace("Emergency Preparedness & ", "")}</span>
@@ -932,10 +932,10 @@ export default function NewAuditPage() {
               <button
                 disabled={!propertyId}
                 onClick={() => setCurrentStep(totalSteps - 1)}
-                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs ${
+                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                   currentStep === totalSteps - 1
-                    ? "bg-ilh-navy-500 text-white"
-                    : "bg-white text-ilh-navy-400 border border-slate-100 hover:bg-slate-50"
+                    ? "bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-pressed"
+                    : "bg-[#E0E5EC] text-slate-500 shadow-neo-raised-sm hover:shadow-neo-pressed"
                 }`}
               >
                 <span>{totalSteps}. Review</span>
@@ -945,7 +945,7 @@ export default function NewAuditPage() {
 
           {/* Mobile indicator (stepper shown only on small viewports) */}
           {currentStep > 0 && (
-            <div className="block lg:hidden bg-white rounded-xl border border-slate-100 p-4 space-y-2">
+            <div className="block lg:hidden bg-[#E0E5EC] rounded-xl shadow-neo-raised-sm p-4 space-y-2">
               <div className="flex justify-between text-xs font-semibold text-slate-500">
                 <span>
                   Step {currentStep} of {totalSteps - 1} · {currentCategory ? currentCategory.name : "Review"}
@@ -962,16 +962,16 @@ export default function NewAuditPage() {
           {currentStep === 0 && (
             <div className="animate-fade-in space-y-6">
               {/* Card 1: Property Selection */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+              <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ilh-navy-500 text-white">
                     <Building2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-ilh-navy-700">
+                    <h2 className="text-lg font-bold text-slate-700">
                       Select Property
                     </h2>
-                    <p className="text-sm text-gray-400 mt-0.5">
+                    <p className="text-sm text-slate-400 mt-0.5">
                       Choose the property you want to inspect
                     </p>
                   </div>
@@ -998,9 +998,9 @@ export default function NewAuditPage() {
 
               {/* Card 2: Onboarding & Historical Insights (Only when property selected) */}
               {propertyId && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 animate-slide-up opacity-0" style={{ animationDelay: "100ms", animationFillMode: "forwards" }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6 sm:p-8 animate-slide-up opacity-0" style={{ animationDelay: "100ms", animationFillMode: "forwards" }}>
                   {/* Left Side: Audit Parameters */}
-                  <div className="space-y-4 pr-0 md:pr-6 md:border-r border-slate-100">
+                  <div className="space-y-4 pr-0 md:pr-6">
                     <h3 className="text-sm font-bold text-ilh-navy-700 border-b pb-2 flex items-center gap-2">
                       <User className="h-4 w-4 text-ilh-navy-500" />
                       Auditor Profile & Parameters
@@ -1083,7 +1083,7 @@ export default function NewAuditPage() {
 
               {/* Card 3: Pre-Audit SOP Verification Checklist (Only when property selected) */}
               {propertyId && (
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 animate-slide-up opacity-0" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
+                <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6 sm:p-8 animate-slide-up opacity-0" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
                   <h3 className="text-sm font-bold text-ilh-navy-700 border-b pb-3 mb-4 flex items-center gap-2">
                     <CheckCircle2 className="h-4.5 w-4.5 text-ilh-navy-500" />
                     Pre-Audit SOP Verification Checklist
@@ -1178,7 +1178,7 @@ export default function NewAuditPage() {
                   !guidelinesChecked.prevIssues
                 }
                 onClick={goNext}
-                className="w-full h-12 bg-ilh-green-500 hover:bg-ilh-green-600 text-white text-base font-bold rounded-xl shadow-lg shadow-ilh-green-500/10 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 bg-ilh-green-500 text-white text-base font-bold rounded-xl shadow-neo-raised transition-all duration-200 hover:shadow-neo-pressed active:shadow-neo-pressed disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Start Checklist
                 <ChevronRight className="h-5 w-5 ml-2" />
@@ -1192,8 +1192,8 @@ export default function NewAuditPage() {
           {currentCategory && (
             <div key={currentCategory.id} className="animate-fade-in space-y-5">
               {/* Category header */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-xl font-bold text-ilh-navy-700">
+              <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6">
+                <h2 className="text-xl font-bold text-slate-700">
                   {currentCategory.name}
                 </h2>
                 <p className="text-sm text-gray-400 mt-1.5">
@@ -1213,7 +1213,7 @@ export default function NewAuditPage() {
                 return (
                   <div
                     key={question.id}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-slide-up opacity-0"
+                    className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6 animate-slide-up opacity-0"
                     style={{
                       animationDelay: `${qIdx * 80}ms`,
                       animationFillMode: "forwards",
@@ -1248,16 +1248,16 @@ export default function NewAuditPage() {
                                 setResponse(question.id, { score })
                               }
                               className={`
-                                w-11 h-11 rounded-full border-2 flex items-center justify-center
+                                w-11 h-11 rounded-full flex items-center justify-center
                                 text-sm font-black transition-all duration-200 cursor-pointer
                                 ${
                                   isSelected
                                     ? score >= 4
-                                      ? "bg-ilh-green-500 border-ilh-green-500 text-white scale-110 shadow-lg shadow-ilh-green-500/25"
+                                      ? "bg-[#E0E5EC] shadow-neo-pressed text-ilh-green-600"
                                       : score >= 3
-                                        ? "bg-amber-400 border-amber-400 text-white scale-110 shadow-lg shadow-amber-400/25"
-                                        : "bg-red-500 border-red-500 text-white scale-110 shadow-lg shadow-red-500/25"
-                                    : "border-slate-100 text-slate-400 hover:border-slate-300 hover:text-slate-600 bg-slate-50"
+                                        ? "bg-[#E0E5EC] shadow-neo-pressed text-amber-600"
+                                        : "bg-[#E0E5EC] shadow-neo-pressed text-red-600"
+                                    : "bg-[#E0E5EC] shadow-neo-raised-sm text-slate-400 hover:shadow-neo-pressed hover:text-slate-600"
                                 }
                               `}
                             >
@@ -1276,7 +1276,7 @@ export default function NewAuditPage() {
                         onChange={(e) =>
                           setResponse(question.id, { notes: e.target.value })
                         }
-                        className="resize-none text-sm rounded-xl border-slate-150 focus:border-ilh-navy-300 focus:ring-ilh-navy-100"
+                        className="resize-none text-sm rounded-xl"
                         rows={2}
                       />
                     </div>
@@ -1288,7 +1288,7 @@ export default function NewAuditPage() {
                           <img
                             src={resp.imageUrl}
                             alt="Audit evidence"
-                            className="h-20 w-20 rounded-xl object-cover border border-gray-200"
+                            className="h-20 w-20 rounded-xl object-cover shadow-neo-raised-sm"
                           />
                           <button
                             type="button"
@@ -1299,7 +1299,7 @@ export default function NewAuditPage() {
                           </button>
                         </div>
                       ) : (
-                        <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-gray-300 text-xs font-semibold text-gray-500 cursor-pointer hover:border-ilh-navy-300 hover:text-ilh-navy-500 transition-colors">
+                        <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E0E5EC] shadow-neo-raised-sm text-xs font-semibold text-slate-500 cursor-pointer hover:shadow-neo-pressed hover:text-ilh-navy-500 transition-all duration-200">
                           <Camera className="h-4 w-4 text-slate-400" />
                           <span>Attach photo evidence</span>
                           <input
@@ -1323,14 +1323,14 @@ export default function NewAuditPage() {
                 <Button
                   variant="outline"
                   onClick={goBack}
-                  className="flex-1 h-12 rounded-xl border-slate-200 hover:bg-slate-50 font-bold"
+                  className="flex-1 h-12 rounded-xl font-bold bg-[#E0E5EC] shadow-neo-raised hover:shadow-neo-pressed transition-all duration-200"
                 >
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Back
                 </Button>
                 <Button
                   onClick={goNext}
-                  className="flex-1 h-12 bg-ilh-green-500 hover:bg-ilh-green-600 text-white rounded-xl font-bold shadow-md shadow-ilh-green-500/10"
+                  className="flex-1 h-12 bg-ilh-green-500 text-white rounded-xl font-bold shadow-neo-raised hover:shadow-neo-pressed transition-all duration-200"
                 >
                   Continue
                   <ChevronRight className="h-4 w-4 ml-2" />
@@ -1349,7 +1349,7 @@ export default function NewAuditPage() {
                 const overall = getOverallScore();
                 return (
                   <div
-                    className={`bg-white rounded-2xl shadow-sm border p-8 text-center ${getScoreBg(overall)}`}
+                    className={`bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-8 text-center`}
                   >
                     <p className="text-sm font-semibold text-slate-500 mb-2 uppercase tracking-wider">
                       Overall Compliance Score
@@ -1367,8 +1367,8 @@ export default function NewAuditPage() {
               })()}
 
               {/* Category breakdown */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 className="text-lg font-bold text-ilh-navy-700 mb-4 border-b pb-2">
+              <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6">
+                <h3 className="text-lg font-bold text-slate-700 mb-4 pb-2">
                   Category Score Breakdown
                 </h3>
                 <div className="space-y-4">
@@ -1402,7 +1402,7 @@ export default function NewAuditPage() {
                 
                 if (unansweredCount > 0) {
                   return (
-                    <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3.5 text-xs font-semibold text-amber-800">
+                    <div className="flex items-start gap-3 rounded-xl bg-[#E0E5EC] shadow-neo-pressed px-4 py-3.5 text-xs font-semibold text-amber-800">
                       <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
                       <div>
                         <p className="font-bold">Unanswered Checkpoints Remaining ({unansweredCount})</p>
@@ -1421,7 +1421,7 @@ export default function NewAuditPage() {
                 <Button
                   variant="outline"
                   onClick={goBack}
-                  className="flex-1 h-12 rounded-xl font-bold"
+                  className="flex-1 h-12 rounded-xl font-bold bg-[#E0E5EC] shadow-neo-raised hover:shadow-neo-pressed transition-all duration-200"
                 >
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Back
@@ -1429,7 +1429,7 @@ export default function NewAuditPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex-1 h-12 bg-ilh-green-500 hover:bg-ilh-green-600 text-white rounded-xl text-base font-bold shadow-md shadow-ilh-green-500/10"
+                  className="flex-1 h-12 bg-ilh-green-500 text-white rounded-xl text-base font-bold shadow-neo-raised hover:shadow-neo-pressed transition-all duration-200"
                 >
                   {submitting ? (
                     <>

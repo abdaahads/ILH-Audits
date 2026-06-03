@@ -84,7 +84,7 @@ interface RecentAudit {
   conducted_at: string;
 }
 
-/* ── Stat Card Component ── */
+/* ── Stat Card Component (Neumorphic) ── */
 function StatCard({
   icon: Icon,
   label,
@@ -100,16 +100,16 @@ function StatCard({
 }) {
   return (
     <div
-      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow animate-slide-up opacity-0"
+      className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6 hover:shadow-neo-pressed transition-all duration-300 animate-slide-up opacity-0"
       style={{ animationDelay: `${delay}ms`, animationFillMode: "forwards" }}
     >
       <div className="flex items-center gap-4">
-        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${color}`}>
+        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${color} shadow-neo-raised-sm`}>
           <Icon className="h-6 w-6 text-white" />
         </div>
         <div>
-          <p className="text-sm font-medium text-gray-500">{label}</p>
-          <p className="text-2xl font-bold text-ilh-navy-700">{value}</p>
+          <p className="text-sm font-medium text-slate-500">{label}</p>
+          <p className="text-2xl font-bold text-slate-700">{value}</p>
         </div>
       </div>
     </div>
@@ -120,13 +120,13 @@ function StatCard({
 function ScoreBadge({ score }: { score: number }) {
   const color =
     score >= 80
-      ? "bg-ilh-green-50 text-ilh-green-700 border-ilh-green-200"
+      ? "bg-[#E0E5EC] text-ilh-green-700"
       : score >= 60
-        ? "bg-amber-50 text-amber-700 border-amber-200"
-        : "bg-red-50 text-red-700 border-red-200";
+        ? "bg-[#E0E5EC] text-amber-700"
+        : "bg-[#E0E5EC] text-red-700";
 
   return (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${color}`}>
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-neo-raised-sm ${color}`}>
       {score.toFixed(1)}%
     </span>
   );
@@ -143,7 +143,7 @@ function MedalIcon({ rank }: { rank: number }) {
   if (rank <= 3) {
     return (
       <span
-        className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${colors[rank]}`}
+        className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-neo-raised-sm ${colors[rank]}`}
       >
         {rank}
       </span>
@@ -151,21 +151,21 @@ function MedalIcon({ rank }: { rank: number }) {
   }
 
   return (
-    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-500 text-xs font-semibold">
+    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E0E5EC] text-slate-500 text-xs font-semibold shadow-neo-raised-sm">
       {rank}
     </span>
   );
 }
 
-/* ── Skeleton Loader ── */
+/* ── Skeleton Loader (Neumorphic) ── */
 function SkeletonCard() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6">
       <div className="flex items-center gap-4">
-        <div className="h-12 w-12 rounded-xl bg-gray-100 animate-pulse" />
+        <div className="h-12 w-12 rounded-xl bg-[#E0E5EC] shadow-neo-pressed-sm animate-pulse" />
         <div className="space-y-2">
-          <div className="h-3 w-20 bg-gray-100 rounded animate-pulse" />
-          <div className="h-6 w-16 bg-gray-100 rounded animate-pulse" />
+          <div className="h-3 w-20 bg-[#E0E5EC] rounded shadow-neo-pressed-sm animate-pulse" />
+          <div className="h-6 w-16 bg-[#E0E5EC] rounded shadow-neo-pressed-sm animate-pulse" />
         </div>
       </div>
     </div>
@@ -293,21 +293,21 @@ export default function DashboardPage() {
     <div className="space-y-8">
       {/* ── Page Header ── */}
       <div>
-        <h1 className="text-3xl font-bold text-ilh-navy-700">Dashboard</h1>
-        <p className="mt-1 text-gray-500">
+        <h1 className="text-3xl font-bold text-slate-700">Dashboard</h1>
+        <p className="mt-1 text-slate-500">
           Welcome back. Here&apos;s your audit overview.
         </p>
       </div>
 
       {/* ── Stat Cards ── */}
       {loading ? (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
           <StatCard
             icon={Building2}
             label="Total Properties"
@@ -341,14 +341,14 @@ export default function DashboardPage() {
 
       {/* ── Visual Analytics Section (Founder Overview) ── */}
       {!loading && leaderboard.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-slide-up opacity-0"
+        <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-8 animate-slide-up opacity-0"
           style={{ animationDelay: "350ms", animationFillMode: "forwards" }}>
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp className="h-5 w-5 text-ilh-navy-500" />
-            <h2 className="text-lg font-bold text-ilh-navy-700">Portfolio Compliance Performance Chart</h2>
+            <h2 className="text-lg font-bold text-slate-700">Portfolio Compliance Performance Chart</h2>
           </div>
           <div className="space-y-4">
-            <div className="flex items-end justify-between h-48 gap-3 pt-6 px-4 border-b border-slate-100 overflow-x-auto">
+            <div className="flex items-end justify-between h-48 gap-3 pt-6 px-4 overflow-x-auto">
               {leaderboard.map((prop) => {
                 const heightPercent = `${Math.max(10, prop.avg_score)}%`;
                 const color = prop.avg_score >= 80 
@@ -361,16 +361,16 @@ export default function DashboardPage() {
                   <div key={prop.id} className="flex flex-col items-center flex-1 min-w-[50px] group cursor-pointer justify-end">
                     <div className="relative w-full flex justify-center items-end h-32 mb-2">
                       {/* Bar tooltip */}
-                      <span className="absolute -top-7 scale-0 group-hover:scale-100 transition-all bg-ilh-navy-700 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-md z-10 font-mono">
+                      <span className="absolute -top-7 scale-0 group-hover:scale-100 transition-all bg-slate-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-neo-raised-sm z-10 font-mono">
                         {prop.avg_score.toFixed(1)}%
                       </span>
                       {/* Bar */}
                       <div 
                         style={{ height: heightPercent }}
-                        className={`w-8 sm:w-10 rounded-t-lg transition-all duration-500 shadow-sm ${color}`}
+                        className={`w-8 sm:w-10 rounded-t-lg transition-all duration-500 ${color}`}
                       />
                     </div>
-                    <span className="text-[10px] font-bold text-slate-400 truncate max-w-full mt-2 text-center select-none group-hover:text-ilh-navy-700">
+                    <span className="text-[10px] font-bold text-slate-400 truncate max-w-full mt-2 text-center select-none group-hover:text-slate-700">
                       {prop.name.replace("ILH ", "")}
                     </span>
                   </div>
@@ -387,13 +387,13 @@ export default function DashboardPage() {
       )}
 
       {/* ── Leaderboard + Recent Audits ── */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         {/* Leaderboard */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-slide-up opacity-0"
+        <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-8 animate-slide-up opacity-0"
           style={{ animationDelay: "400ms", animationFillMode: "forwards" }}>
           <div className="flex items-center gap-2 mb-6">
             <Trophy className="h-5 w-5 text-amber-500" />
-            <h2 className="text-lg font-bold text-ilh-navy-700">
+            <h2 className="text-lg font-bold text-slate-700">
               Property Leaderboard
             </h2>
           </div>
@@ -402,16 +402,16 @@ export default function DashboardPage() {
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-full bg-gray-100 animate-pulse" />
+                  <div className="h-7 w-7 rounded-full bg-[#E0E5EC] shadow-neo-pressed-sm animate-pulse" />
                   <div className="flex-1 space-y-1">
-                    <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
-                    <div className="h-3 w-24 bg-gray-50 rounded animate-pulse" />
+                    <div className="h-4 w-32 bg-[#E0E5EC] rounded shadow-neo-pressed-sm animate-pulse" />
+                    <div className="h-3 w-24 bg-[#E0E5EC] rounded shadow-neo-pressed-sm animate-pulse" />
                   </div>
                 </div>
               ))}
             </div>
           ) : leaderboard.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-8">
+            <p className="text-sm text-slate-400 text-center py-8">
               No audit data yet. Complete an audit to see rankings.
             </p>
           ) : (
@@ -419,14 +419,14 @@ export default function DashboardPage() {
               {leaderboard.map((entry, idx) => (
                 <div
                   key={entry.id}
-                  className="flex items-center gap-3 rounded-xl p-3 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 rounded-xl p-3 hover:shadow-neo-pressed-sm transition-all duration-200"
                 >
                   <MedalIcon rank={idx + 1} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-ilh-navy-700 truncate">
+                    <p className="text-sm font-semibold text-slate-700 truncate">
                       {entry.name}
                     </p>
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <div className="flex items-center gap-1 text-xs text-slate-400">
                       <MapPin className="h-3 w-3" />
                       <span className="truncate">{entry.location}</span>
                     </div>
@@ -450,11 +450,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Audits */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-slide-up opacity-0"
+        <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-8 animate-slide-up opacity-0"
           style={{ animationDelay: "500ms", animationFillMode: "forwards" }}>
           <div className="flex items-center gap-2 mb-6">
-            <Clock className="h-5 w-5 text-ilh-navy-400" />
-            <h2 className="text-lg font-bold text-ilh-navy-700">
+            <Clock className="h-5 w-5 text-slate-500" />
+            <h2 className="text-lg font-bold text-slate-700">
               Recent Audits
             </h2>
           </div>
@@ -462,15 +462,15 @@ export default function DashboardPage() {
           {loading ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-50 rounded animate-pulse" />
+                <div key={i} className="h-10 bg-[#E0E5EC] rounded shadow-neo-pressed-sm animate-pulse" />
               ))}
             </div>
           ) : recentAudits.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-8">
+            <p className="text-sm text-slate-400 text-center py-8">
               No audits completed yet. Start your first audit!
             </p>
           ) : (
-            <div className="overflow-x-auto -mx-6 px-6">
+            <div className="overflow-x-auto -mx-8 px-8">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -484,22 +484,22 @@ export default function DashboardPage() {
                   {recentAudits.map((audit) => (
                     <TableRow 
                       key={audit.id} 
-                      className="hover:bg-gray-50 cursor-pointer transition-colors"
+                      className="hover:shadow-neo-pressed-sm cursor-pointer transition-all duration-200"
                       onClick={() => {
                         setSelectedAuditId(audit.id);
                         setIsDetailOpen(true);
                       }}
                     >
-                      <TableCell className="text-sm font-medium text-ilh-navy-700">
+                      <TableCell className="text-sm font-medium text-slate-700">
                         {audit.property_name}
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">
+                      <TableCell className="text-sm text-slate-500">
                         {audit.auditor_name}
                       </TableCell>
                       <TableCell>
                         <ScoreBadge score={audit.total_score} />
                       </TableCell>
-                      <TableCell className="text-xs text-gray-400">
+                      <TableCell className="text-xs text-slate-400">
                         {formatDate(audit.conducted_at)}
                       </TableCell>
                     </TableRow>

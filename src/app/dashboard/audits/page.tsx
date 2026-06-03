@@ -75,13 +75,13 @@ interface PropertyOption {
 function ScoreBadge({ score }: { score: number }) {
   const style =
     score >= 80
-      ? "bg-ilh-green-50 text-ilh-green-700 border-ilh-green-200"
+      ? "bg-[#E0E5EC] text-ilh-green-700"
       : score >= 60
-        ? "bg-amber-50 text-amber-700 border-amber-200"
-        : "bg-red-50 text-red-700 border-red-200";
+        ? "bg-[#E0E5EC] text-amber-700"
+        : "bg-[#E0E5EC] text-red-700";
 
   return (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${style}`}>
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-neo-raised-sm ${style}`}>
       {score.toFixed(1)}%
     </span>
   );
@@ -91,13 +91,13 @@ function ScoreBadge({ score }: { score: number }) {
 function StatusBadge({ status }: { status: string }) {
   const style =
     status === "completed"
-      ? "bg-ilh-green-50 text-ilh-green-700 border-ilh-green-200"
-      : "bg-amber-50 text-amber-700 border-amber-200";
+      ? "bg-[#E0E5EC] text-ilh-green-700"
+      : "bg-[#E0E5EC] text-amber-700";
 
   const label = status === "completed" ? "Completed" : "In Progress";
 
   return (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${style}`}>
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-neo-raised-sm ${style}`}>
       {label}
     </span>
   );
@@ -204,19 +204,19 @@ export default function AuditHistoryPage() {
       <div>
         <div className="flex items-center gap-2">
           <ClipboardCheck className="h-7 w-7 text-ilh-navy-500" />
-          <h1 className="text-3xl font-bold text-ilh-navy-700">
+          <h1 className="text-3xl font-bold text-slate-700">
             Audit History
           </h1>
         </div>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-slate-500">
           View all completed and in-progress audits
         </p>
       </div>
 
       {/* ── Filter Bar ── */}
-      <div className="flex flex-wrap items-center gap-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-        <Filter className="h-4 w-4 text-gray-400" />
-        <span className="text-sm font-medium text-gray-500">Filters:</span>
+      <div className="flex flex-wrap items-center gap-3 bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-4">
+        <Filter className="h-4 w-4 text-slate-400" />
+        <span className="text-sm font-medium text-slate-500">Filters:</span>
 
         <Select value={propertyFilter} onValueChange={(val) => { if (val) setPropertyFilter(val); }}>
           <SelectTrigger className="w-[200px] h-9 text-sm">
@@ -255,16 +255,16 @@ export default function AuditHistoryPage() {
       </div>
 
       {/* ── Table ── */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised overflow-hidden">
         {loading ? (
           <div className="p-6 space-y-3">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-10 bg-gray-50 rounded animate-pulse" />
+              <div key={i} className="h-10 bg-[#E0E5EC] rounded shadow-neo-pressed-sm animate-pulse" />
             ))}
           </div>
         ) : filteredAudits.length === 0 ? (
           <div className="py-16 text-center">
-            <ClipboardCheck className="h-12 w-12 text-gray-200 mx-auto mb-3" />
+            <ClipboardCheck className="h-12 w-12 text-slate-300 mx-auto mb-3" />
             <p className="text-gray-400 text-sm">No audits found</p>
             <p className="text-gray-300 text-xs mt-1">
               {audits.length > 0
@@ -288,16 +288,16 @@ export default function AuditHistoryPage() {
                 {filteredAudits.map((audit) => (
                   <TableRow 
                     key={audit.id} 
-                    className="hover:bg-gray-50 transition-colors cursor-pointer animate-fade-in"
+                    className="hover:shadow-neo-pressed-sm transition-all duration-200 cursor-pointer animate-fade-in"
                     onClick={() => {
                       setSelectedAuditId(audit.id);
                       setIsDetailOpen(true);
                     }}
                   >
-                    <TableCell className="font-medium text-ilh-navy-700">
+                    <TableCell className="font-medium text-slate-700">
                       {audit.property_name}
                     </TableCell>
-                    <TableCell className="text-gray-500">
+                    <TableCell className="text-slate-500">
                       {audit.auditor_name}
                     </TableCell>
                     <TableCell>
@@ -306,7 +306,7 @@ export default function AuditHistoryPage() {
                     <TableCell>
                       <StatusBadge status={audit.status} />
                     </TableCell>
-                    <TableCell className="text-sm text-gray-400">
+                    <TableCell className="text-sm text-slate-400">
                       {formatDate(audit.conducted_at)}
                     </TableCell>
                   </TableRow>

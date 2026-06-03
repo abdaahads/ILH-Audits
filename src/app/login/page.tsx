@@ -18,11 +18,10 @@ import { Mail, Lock, User, LogIn, UserPlus, AlertCircle, Loader2, Eye, EyeOff } 
  * personnel can access property compliance data.
  * 
  * DESIGN CONTEXT:
- * The UI is deliberately designed to feel "premium" and "modern"
- * (glassmorphism, CSS keyframe animated mesh background, blurred backdrops).
- * For a fast-growing startup like ILH pitching to investors, the login
- * screen is often the first impression. It must look enterprise-grade,
- * not like a generic bootstrap template.
+ * Neumorphism (Soft UI) — The entire page uses a unified #E0E5EC canvas
+ * with dual-drop-shadow depth illusion. The auth card is raised from the
+ * canvas, inputs are pressed in, and the submit button responds to touch
+ * with a physical pressed-in shadow transition.
  *
  * FOR DEVELOPERS:
  * - This is a Client Component because it handles form state and
@@ -113,94 +112,78 @@ export default function LoginPage() {
   /* ------------------------------------------------------------------ */
   return (
     <div
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#E0E5EC] px-4 py-12"
       style={{ fontFamily: "'PT Sans', sans-serif" }}
     >
       {/* ============================================================= */}
-      {/*  Animated gradient background                                  */}
+      {/*  Subtle neumorphic background texture                          */}
       {/* ============================================================= */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        {/* Base gradient — navy to near-black */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#003366] via-[#002244] to-[#001122]" />
-
-        {/* Animated orbs for subtle mesh effect */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[#E0E5EC]">
         <div
-          className="absolute -left-32 -top-32 h-[500px] w-[500px] rounded-full bg-[#003366]/40 blur-[120px]"
+          className="absolute left-1/4 top-1/4 h-[300px] w-[300px] rounded-full opacity-30"
           style={{
-            animation: 'drift 12s ease-in-out infinite alternate',
+            background: 'radial-gradient(circle, rgba(0,51,102,0.06) 0%, transparent 70%)',
           }}
         />
         <div
-          className="absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full bg-[#339966]/20 blur-[140px]"
+          className="absolute right-1/4 bottom-1/4 h-[250px] w-[250px] rounded-full opacity-30"
           style={{
-            animation: 'drift 14s ease-in-out infinite alternate-reverse',
-          }}
-        />
-        <div
-          className="absolute left-1/2 top-1/3 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-[#004488]/25 blur-[100px]"
-          style={{
-            animation: 'drift 10s ease-in-out infinite alternate',
+            background: 'radial-gradient(circle, rgba(51,153,102,0.05) 0%, transparent 70%)',
           }}
         />
       </div>
 
-      {/* Keyframe injection — only rendered once via a hidden <style> tag */}
-      <style>{`
-        @keyframes drift {
-          0%   { transform: translate(0, 0) scale(1); }
-          100% { transform: translate(40px, 30px) scale(1.08); }
-        }
-      `}</style>
-
       {/* ============================================================= */}
-      {/*  Glassmorphic card                                             */}
+      {/*  Neumorphic auth card                                          */}
       {/* ============================================================= */}
       <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
+        <div className="rounded-3xl bg-[#E0E5EC] p-8 shadow-neo-raised sm:p-10">
           {/* ------ Logo & Tagline ------ */}
           <div className="mb-8 flex flex-col items-center gap-3">
             <img
               src="https://ivyleaguehouse.com/wp-content/uploads/2024/05/ILH-Logo.png"
               alt="ILH — Ivy League House logo"
-              className="h-16 w-auto object-contain drop-shadow-lg"
+              className="h-16 w-auto object-contain drop-shadow-md"
             />
-            <p className="text-sm tracking-wide text-white/60">
+            <p className="text-sm tracking-wide text-slate-400">
               Property Audit Management System
             </p>
           </div>
 
-          {/* ------ Mode Toggle ------ */}
-          <div className="mb-6 flex rounded-lg border border-white/10 bg-white/5 p-1">
-            <button
-              type="button"
-              onClick={() => { setMode('signin'); setError(null); }}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-all ${
-                !isSignUp
-                  ? 'bg-white/15 text-white shadow-sm'
-                  : 'text-white/50 hover:text-white/70'
-              }`}
-            >
-              <LogIn size={16} />
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMode('signup'); setError(null); }}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-all ${
-                isSignUp
-                  ? 'bg-white/15 text-white shadow-sm'
-                  : 'text-white/50 hover:text-white/70'
-              }`}
-            >
-              <UserPlus size={16} />
-              Sign Up
-            </button>
+          {/* ------ Mode Toggle (Neumorphic segmented control) ------ */}
+          <div className="mb-6 rounded-xl bg-[#E0E5EC] p-1.5 shadow-neo-pressed">
+            <div className="flex gap-1">
+              <button
+                type="button"
+                onClick={() => { setMode('signin'); setError(null); }}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  !isSignUp
+                    ? 'bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-raised-sm'
+                    : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                <LogIn size={16} />
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => { setMode('signup'); setError(null); }}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  isSignUp
+                    ? 'bg-[#E0E5EC] text-ilh-navy-700 shadow-neo-raised-sm'
+                    : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                <UserPlus size={16} />
+                Sign Up
+              </button>
+            </div>
           </div>
 
           {/* ------ Error Alert ------ */}
           {error && (
-            <div className="mb-5 flex items-start gap-3 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200 backdrop-blur">
-              <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-400" />
+            <div className="mb-5 flex items-start gap-3 rounded-xl bg-[#E0E5EC] px-4 py-3 text-sm text-red-600 shadow-neo-pressed">
+              <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-500" />
               <span>{error}</span>
             </div>
           )}
@@ -212,14 +195,14 @@ export default function LoginPage() {
               <div className="group relative">
                 <label
                   htmlFor="fullName"
-                  className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-white/50"
+                  className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400"
                 >
                   Full Name
                 </label>
                 <div className="relative">
                   <User
                     size={18}
-                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40"
+                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                   />
                   <input
                     id="fullName"
@@ -228,7 +211,7 @@ export default function LoginPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Jane Doe"
-                    className="w-full rounded-lg border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/30 backdrop-blur transition-colors focus:border-[#339966]/60 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#339966]/25"
+                    className="w-full rounded-xl bg-[#E0E5EC] py-3 pl-11 pr-4 text-sm text-slate-700 shadow-neo-pressed transition-all duration-200 placeholder:text-slate-400 focus:text-ilh-navy-700 focus:shadow-[inset_6px_6px_10px_0_rgba(0,51,102,0.12),inset_-6px_-6px_10px_0_rgba(255,255,255,0.8)] focus:outline-none"
                   />
                 </div>
               </div>
@@ -238,14 +221,14 @@ export default function LoginPage() {
             <div className="group relative">
               <label
                 htmlFor="email"
-                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-white/50"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400"
               >
                 Email Address
               </label>
               <div className="relative">
                 <Mail
                   size={18}
-                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40"
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                 />
                 <input
                   id="email"
@@ -254,7 +237,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/30 backdrop-blur transition-colors focus:border-[#339966]/60 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#339966]/25"
+                  className="w-full rounded-xl bg-[#E0E5EC] py-3 pl-11 pr-4 text-sm text-slate-700 shadow-neo-pressed transition-all duration-200 placeholder:text-slate-400 focus:text-ilh-navy-700 focus:shadow-[inset_6px_6px_10px_0_rgba(0,51,102,0.12),inset_-6px_-6px_10px_0_rgba(255,255,255,0.8)] focus:outline-none"
                 />
               </div>
             </div>
@@ -263,14 +246,14 @@ export default function LoginPage() {
             <div className="group relative">
               <label
                 htmlFor="password"
-                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-white/50"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400"
               >
                 Password
               </label>
               <div className="relative">
                 <Lock
                   size={18}
-                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40"
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                 />
                 <input
                   id="password"
@@ -280,23 +263,23 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 py-3 pl-11 pr-12 text-sm text-white placeholder:text-white/30 backdrop-blur transition-colors focus:border-[#339966]/60 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#339966]/25"
+                  className="w-full rounded-xl bg-[#E0E5EC] py-3 pl-11 pr-12 text-sm text-slate-700 shadow-neo-pressed transition-all duration-200 placeholder:text-slate-400 focus:text-ilh-navy-700 focus:shadow-[inset_6px_6px_10px_0_rgba(0,51,102,0.12),inset_-6px_-6px_10px_0_rgba(255,255,255,0.8)] focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors cursor-pointer"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit Button — Neumorphic with brand accent */}
             <button
               type="submit"
               disabled={loading}
-              className="mt-1 flex w-full items-center justify-center gap-2 rounded-lg bg-[#339966] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#339966]/20 transition-all hover:bg-[#2d8559] hover:shadow-xl hover:shadow-[#339966]/30 focus:outline-none focus:ring-2 focus:ring-[#339966]/50 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-ilh-green-500 px-6 py-3 text-sm font-semibold text-white shadow-neo-raised transition-all duration-200 hover:shadow-neo-pressed active:shadow-neo-pressed focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <Loader2 size={18} className="animate-spin" />
@@ -314,12 +297,12 @@ export default function LoginPage() {
           </form>
 
           {/* ------ Footer Toggle ------ */}
-          <p className="mt-6 text-center text-sm text-white/40">
+          <p className="mt-6 text-center text-sm text-slate-400">
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
             <button
               type="button"
               onClick={toggleMode}
-              className="font-semibold text-[#339966] transition-colors hover:text-[#3db876] hover:underline"
+              className="font-semibold text-ilh-green-600 transition-colors hover:text-ilh-green-700 hover:underline"
             >
               {isSignUp ? 'Sign in' : 'Sign up'}
             </button>
@@ -327,7 +310,7 @@ export default function LoginPage() {
         </div>
 
         {/* ------ Bottom Attribution ------ */}
-        <p className="mt-6 text-center text-xs text-white/25">
+        <p className="mt-6 text-center text-xs text-slate-400">
           © {new Date().getFullYear()} Ivy League House. All rights reserved.
         </p>
       </div>
