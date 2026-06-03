@@ -1,6 +1,32 @@
 -- ============================================================
--- ILH Audits — Database Schema
--- Supabase PostgreSQL with Row Level Security (RLS)
+-- ILH AUDITS — CORE DATABASE SCHEMA
+-- PostgreSQL (Supabase) with Row Level Security (RLS)
+-- ============================================================
+--
+-- BUSINESS DATA MODEL OVERVIEW:
+-- 
+-- 1. ENTITIES (The "Who" and "Where")
+--    - `profiles`: ILH Staff (Auditors & Admins). Links to Supabase Auth.
+--    - `properties`: The physical student housing locations (e.g., ILH Pune).
+--
+-- 2. THE FRAMEWORK (The "What we check")
+--    - `audit_templates`: The overarching framework (e.g., "Standard Audit").
+--    - `audit_categories`: Logical groupings (e.g., "Fire Safety", "Food Quality").
+--                          Includes weighting (e.g., Fire Safety is 25% of total score).
+--    - `audit_questions`: The specific checkpoints the auditor evaluates.
+--
+-- 3. THE INSPECTION (The "Execution")
+--    - `audits`: A single inspection event linking an Auditor to a Property using a Template.
+--    - `audit_responses`: The auditor's answers/scores/photos for each question.
+--
+-- 4. REMEDIATION (Closing the loop)
+--    - `corrective_actions`: Automatically generated when a question scores 2 or less.
+--                            Requires the Ops team to resolve the issue.
+--
+-- SECURITY ARCHITECTURE (RLS):
+-- - Auditors can only create audits and view their own data.
+-- - Admins can view and manage all data.
+-- - Multi-tenant isolation ensures data integrity across properties.
 -- ============================================================
 
 -- Enable UUID generation

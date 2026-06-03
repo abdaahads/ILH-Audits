@@ -1,9 +1,31 @@
 /**
- * Browser-side Supabase client
+ * BROWSER-SIDE SUPABASE CLIENT — src/lib/supabase/client.ts
+ * ============================================================
  *
- * Import this in Client Components ("use client") to interact with
- * Supabase from the browser. The client automatically handles cookie-
- * based auth token management via @supabase/ssr.
+ * WHAT THIS FILE DOES:
+ * This file creates the Supabase client used in Client Components
+ * (files with "use client" at the top). It automatically manages
+ * authentication tokens in the browser and handles API requests
+ * to the Supabase backend.
+ *
+ * WHY IT MATTERS FOR ILH (THE PROXY PATTERN):
+ * The CTO requested that this repository be made public. To ensure
+ * the app can be evaluated without exposing production credentials,
+ * this file implements a "Mock Fallback" system.
+ * 
+ * If the environment variables are missing (e.g., when a recruiter
+ * or reviewer clones the repo), it detects this and wraps the client
+ * in a JavaScript `Proxy`. This proxy intercepts all database calls
+ * and redirects them to the `mockClient.ts` (LocalStorage), allowing
+ * the app to function perfectly as a sandbox demo without a real backend.
+ *
+ * FOR DEVELOPERS:
+ * - This uses `@supabase/ssr` which securely manages session cookies
+ *   under the hood.
+ * - The Proxy pattern intercepts `.from()`, `.auth`, and `.storage`.
+ *   If the credentials are valid, the Proxy is skipped, and it connects
+ *   to the real ILH production database.
+ * ============================================================
  */
 
 import { createBrowserClient } from '@supabase/ssr';

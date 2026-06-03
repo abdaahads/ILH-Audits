@@ -1,3 +1,35 @@
+/**
+ * CORRECTIVE ACTION PLAN (CAP) BOARD — src/app/dashboard/issues/page.tsx
+ * ============================================================
+ *
+ * WHAT THIS FILE DOES:
+ * This is the operational nerve center for ILH. When an auditor scores
+ * a compliance checkpoint as 2 or lower (out of 5), the system automatically
+ * generates a Corrective Action Plan (CAP) ticket. This page displays those
+ * tickets, allowing the Operations Team to track them from 'Open' to 'Resolved'.
+ *
+ * WHY IT MATTERS FOR ILH:
+ * Audits are useless if issues aren't fixed. This page closes the loop.
+ * For the Founder/CEO, a high number of 'Open' CAPs indicates that the
+ * operations team is failing to execute on the auditor's findings.
+ * 
+ * BUSINESS WORKFLOW:
+ *   1. Auto-Generation: Auditor submits failing score -> CAP created automatically.
+ *   2. Assignment/Action: Ops Manager sees the issue here, dispatches vendor/staff.
+ *   3. Update: Ops Manager updates status to 'In Progress' and adds notes.
+ *   4. Resolution: Once fixed, status is changed to 'Resolved'.
+ *
+ * FOR DEVELOPERS:
+ * - Data Mapping: CAPs in the DB only store UUIDs. This component fetches the
+ *   related Properties, Questions, and Auditor Profiles to map those UUIDs
+ *   into human-readable names for the UI (`CombinedActionItem`).
+ * - State Management: Editing state is tracked locally (`editingStatuses`,
+ *   `editingNotes`) to allow users to modify dropdowns/textareas before
+ *   hitting "Save Changes". The Save button is disabled unless a change
+ *   is detected.
+ * ============================================================
+ */
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";

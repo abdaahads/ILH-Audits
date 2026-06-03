@@ -5,14 +5,35 @@ import { createClient } from '@/lib/supabase/client';
 import { Mail, Lock, User, LogIn, UserPlus, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
 /**
- * LoginPage — Full-screen authentication page for the ILH Audits app.
+ * AUTHENTICATION PAGE — src/app/login/page.tsx
+ * ============================================================
  *
- * Features:
- *  • Animated gradient background using ILH brand navy (#003366)
- *  • Glassmorphic centered card with backdrop-blur
- *  • Toggle between Sign In and Sign Up modes
- *  • Supabase email/password authentication
- *  • Responsive, mobile-first layout
+ * WHAT THIS FILE DOES:
+ * This is the public-facing gateway to the ILH Audits platform. It handles
+ * both Sign In (for existing staff) and Sign Up (for new auditors). It
+ * communicates directly with the Supabase Auth API to verify credentials.
+ *
+ * WHY IT MATTERS FOR ILH:
+ * Security is paramount. This page ensures that only authorized ILH
+ * personnel can access property compliance data.
+ * 
+ * DESIGN CONTEXT:
+ * The UI is deliberately designed to feel "premium" and "modern"
+ * (glassmorphism, CSS keyframe animated mesh background, blurred backdrops).
+ * For a fast-growing startup like ILH pitching to investors, the login
+ * screen is often the first impression. It must look enterprise-grade,
+ * not like a generic bootstrap template.
+ *
+ * FOR DEVELOPERS:
+ * - This is a Client Component because it handles form state and
+ *   password visibility toggling.
+ * - The `supabase.auth.signInWithPassword()` call automatically sets
+ *   the secure HttpOnly cookies via the `@supabase/ssr` library, which
+ *   the `middleware.ts` will then verify on subsequent requests.
+ * - On successful login, `window.location.href = '/dashboard'` is used
+ *   instead of `router.push()` to force a full hard reload, ensuring
+ *   all Supabase auth listeners in the root layout initialize cleanly.
+ * ============================================================
  */
 
 /** Allowed authentication modes */

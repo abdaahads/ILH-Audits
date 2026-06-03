@@ -1,3 +1,39 @@
+/**
+ * DASHBOARD LAYOUT — src/app/dashboard/layout.tsx
+ * ============================================================
+ *
+ * WHAT THIS FILE DOES:
+ * This is the persistent shell for the entire authenticated portion of
+ * the application. It provides the responsive sidebar navigation, the
+ * mobile hamburger menu, and handles fetching the user's profile info
+ * to display in the bottom left corner.
+ *
+ * WHY IT MATTERS FOR ILH:
+ * Operations managers and field auditors use this system in varying
+ * environments — from a dual-monitor setup at the ILH Head Office
+ * to an iPad Mini in the basement of ILH Pune.
+ * 
+ *   - The sidebar collapses to 72px to give maximum screen real estate
+ *     to the complex CAP Board and Analytics charts on smaller laptops.
+ *   - On mobile (phones/tablets), it converts to a slide-out drawer
+ *     with a backdrop blur, ensuring the audit form remains the primary
+ *     focus.
+ *
+ * NAVIGATION HIERARCHY:
+ *   1. Dashboard (Analytics for the Founder/Ops Head)
+ *   2. Properties (Portfolio overview)
+ *   3. New Audit (The core data-entry workflow)
+ *   4. Audit History (Past reports and PDFs)
+ *   5. Issues / CAP (Corrective Action Planning for the maintenance team)
+ *
+ * FOR DEVELOPERS:
+ * - This is a Client Component ("use client") because it manages UI state
+ *   (sidebarOpen, collapsed) and fetches user profile data on mount.
+ * - Profile fetching is done here so it only happens once per session,
+ *   rather than on every page load.
+ * ============================================================
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";

@@ -1,11 +1,30 @@
 /**
- * Server-side Supabase client
+ * SERVER-SIDE SUPABASE CLIENT — src/lib/supabase/server.ts
+ * ============================================================
  *
- * Use this in Server Components, Server Actions, and Route Handlers.
- * The client reads/writes auth tokens via the Next.js cookie store.
+ * WHAT THIS FILE DOES:
+ * This creates the Supabase client used in Server Components, Server Actions,
+ * and Route Handlers. Unlike the browser client (which relies on the browser
+ * to manage session state), this client securely extracts the user's
+ * authentication token from the Next.js `cookies()` store.
  *
- * NOTE: This function is async because `cookies()` returns a Promise
- * in Next.js 15.
+ * WHY IT MATTERS FOR ILH:
+ * This enables Server-Side Rendering (SSR). For example, when an operations
+ * manager navigates to the CAP Board (Issues page), the server fetches their
+ * assigned issues directly from the database and renders the HTML *before*
+ * sending it to the device. This provides a much faster, flicker-free
+ * experience, especially for users on slow 4G networks at property sites.
+ *
+ * FOR DEVELOPERS:
+ * - Next.js 15 BREAKING CHANGE: The `cookies()` API is now async. Therefore,
+ *   this `createClient()` function must be `await`ed before use.
+ * - Read-Only Constraint: In Server Components, cookies cannot be modified
+ *   (e.g., if a token needs refreshing). The `try/catch` block ignores
+ *   the set error, deferring the token refresh to `middleware.ts`, which
+ *   *can* write cookies.
+ * - Like the browser client, this implements the Proxy pattern to fallback
+ *   to the `mockClient.ts` if environment variables are missing.
+ * ============================================================
  */
 
 import { createServerClient } from '@supabase/ssr';

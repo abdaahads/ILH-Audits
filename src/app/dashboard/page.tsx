@@ -1,3 +1,39 @@
+/**
+ * FOUNDER ANALYTICS DASHBOARD — src/app/dashboard/page.tsx
+ * ============================================================
+ *
+ * WHAT THIS FILE DOES:
+ * This is the landing page after authentication. It provides a high-level,
+ * data-driven overview of the entire ILH portfolio's compliance health.
+ *
+ * WHY IT MATTERS FOR ILH (THE EXECUTIVE VIEW):
+ * While field auditors care about individual questions and Operations
+ * Managers care about CAP tickets, the Founder and Executive Team care
+ * about MACRO trends. This dashboard answers their core questions:
+ *
+ *   1. "How are we doing overall?" (Top 4 Stat Cards: Avg Score, Total Audits)
+ *   2. "Which property is our flagship standard?" (Leaderboard #1)
+ *   3. "Which property is putting us at legal/safety risk?" (Portfolio Chart)
+ *
+ * THE COMPLIANCE PERFORMANCE CHART:
+ * The bar chart visually maps the health of all 9 properties. It intentionally
+ * uses a strict traffic-light color system:
+ *   - Green (≥80%): Excellent.
+ *   - Amber (60-79%): Warning.
+ *   - Red (<60%): Risk / CAP required immediately.
+ * A founder can glance at this chart and instantly know if they need to
+ * call the ILH Delhi manager to discuss a failing score.
+ *
+ * FOR DEVELOPERS:
+ * - Data fetching is heavily parallelized using `Promise.all` to ensure
+ *   the page loads quickly.
+ * - The leaderboard manually aggregates scores by fetching all audits
+ *   and computing the average per property in memory. (In a massive DB,
+ *   this would be moved to a Postgres materialized view, but for 9
+ *   properties, client-side aggregation is perfectly fast).
+ * ============================================================
+ */
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";

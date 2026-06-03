@@ -1,3 +1,37 @@
+/**
+ * AUDIT HISTORY PAGE — src/app/dashboard/audits/page.tsx
+ * ============================================================
+ *
+ * WHAT THIS FILE DOES:
+ * This page acts as the central ledger for all inspections. It displays
+ * a sortable, filterable list of all past and ongoing audits across the
+ * entire ILH portfolio. Clicking a row opens the detailed Audit Report modal.
+ *
+ * WHY IT MATTERS FOR ILH:
+ * This is the primary accountability tool for the Operations Head.
+ * By filtering by property and status, they can quickly answer questions like:
+ *   - "Did the site manager at ILH Pune complete their Q3 EHS audit?"
+ *   - "Which properties scored below 80% this month?"
+ * 
+ * SCORE THRESHOLDS (Visual Cues):
+ *   - Green (≥80%): Meets ILH Standards. Operations are healthy.
+ *   - Amber (60-79%): Warning. Sub-standard compliance, intervention needed.
+ *   - Red (<60%): Critical. Immediate escalation to founder required.
+ *
+ * STATUS DEFINITIONS:
+ *   - 'In Progress': The auditor has started the inspection but hasn't
+ *     submitted it. (Usually means they lost connection or are taking a break).
+ *   - 'Completed': The audit is locked in the database and immutable.
+ *
+ * FOR DEVELOPERS:
+ * - Data fetching happens client-side via `useEffect` using the Supabase
+ *   client.
+ * - The URL query parameter `?property=<id>` is parsed on mount to
+ *   auto-filter the list (e.g., when clicking a property card from the
+ *   Properties page).
+ * ============================================================
+ */
+
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";

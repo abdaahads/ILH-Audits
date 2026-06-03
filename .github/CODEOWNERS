@@ -1,0 +1,37 @@
+# ============================================================
+# ILH Audits — GitHub CODEOWNERS
+# ============================================================
+#
+# This file defines who must review and approve pull requests
+# that touch specific parts of the codebase. GitHub will
+# automatically request reviews from the listed owners when
+# a PR modifies files matching these patterns.
+#
+# WHY THIS MATTERS:
+# Since the repository is public, this prevents unauthorized
+# or unreviewed changes from reaching the main branch.
+# The CTO, founder, or designated lead must approve all changes.
+#
+# HOW IT WORKS:
+# - Each line specifies a file/directory pattern and the GitHub
+#   username(s) who own that code.
+# - The LAST matching pattern takes precedence.
+# - Requires "Require review from Code Owners" to be enabled
+#   in the branch protection rules (see branch-protection-guide.md).
+# ============================================================
+
+# ── Default owner for ALL files in the repository ──
+# Every pull request requires approval from the project lead.
+*                                   @abdaahads
+
+# ── Critical Infrastructure — Database & Auth ──
+# These files control data security, RLS policies, and
+# authentication flows. Changes here can expose student
+# data or break login. Extra scrutiny required.
+supabase/                           @abdaahads
+src/lib/supabase/                   @abdaahads
+src/middleware.ts                   @abdaahads
+
+# ── Environment & Secrets Configuration ──
+# Prevent accidental commits of API keys or secret values.
+.env*                               @abdaahads

@@ -1,3 +1,33 @@
+/**
+ * PROPERTY PORTFOLIO PAGE — src/app/dashboard/properties/page.tsx
+ * ============================================================
+ *
+ * WHAT THIS FILE DOES:
+ * Displays a grid of all ILH student housing properties across India.
+ * Each property card shows its bed capacity, physical location, and its
+ * MOST RECENT audit compliance score.
+ *
+ * WHY IT MATTERS FOR ILH:
+ * This is the geographic and structural view of the company. When an
+ * auditor is assigned to inspect a property (e.g., ILH Pune), they use
+ * this page to select the property before starting the 'New Audit' flow.
+ * 
+ * The `total_beds` metric is prominently displayed because compliance
+ * difficulty scales with capacity. An 80% score at a 700-bed facility
+ * (like Pune) represents significantly more operational effort than an
+ * 80% score at a 200-bed facility (like Vizag).
+ *
+ * FOR DEVELOPERS:
+ * - Complex Join Logic: Supabase doesn't easily support "fetch all properties
+ *   with ONLY their most recent audit" in a single REST call without custom
+ *   RPCs. Therefore, this component fetches ALL completed audits, sorts them
+ *   by date descending in memory, and maps the first one found to the
+ *   property card.
+ * - The 'View Audits' link passes `?property=<id>` to the Audit History
+ *   page, instantly applying the filter.
+ * ============================================================
+ */
+
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";

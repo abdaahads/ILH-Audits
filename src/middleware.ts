@@ -1,8 +1,27 @@
 /**
- * Next.js Middleware
+ * NEXT.JS ENTRY MIDDLEWARE — src/middleware.ts
+ * ============================================================
  *
- * Runs on every matched request to refresh the Supabase auth session
- * and enforce route-level authentication.
+ * WHAT THIS FILE DOES:
+ * This is the entry point for Next.js Edge Middleware. It intercepts
+ * incoming HTTP requests and delegates them to our Supabase auth helper.
+ *
+ * WHY IT MATTERS FOR ILH:
+ * The `try/catch` block provides Graceful Middleware Recovery.
+ * If Supabase experiences an outage, or if the Vercel Edge Runtime
+ * throws an unexpected networking error, this catches it and allows
+ * the request to proceed (`NextResponse.next()`). The user will then
+ * hit the application code which will handle the error gracefully
+ * (e.g., showing a friendly "Database Offline" UI) rather than
+ * crashing with a blank 500 error page.
+ *
+ * FOR DEVELOPERS:
+ * - The `config.matcher` array uses a complex Regex.
+ * - It explicitly IGNORES static files (`/_next/static`, images, fonts).
+ * - Why? Running middleware on a 50KB image request wastes Vercel Edge
+ *   compute units and slows down asset loading. The Regex ensures we
+ *   only run auth checks on actual HTML pages and API routes.
+ * ============================================================
  */
 
 import { NextResponse, type NextRequest } from 'next/server';

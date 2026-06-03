@@ -1,11 +1,32 @@
 /**
- * High-Fidelity Mock Supabase Client — v6.0
+ * HIGH-FIDELITY MOCK SUPABASE CLIENT — src/lib/supabase/mockClient.ts
+ * ============================================================
+ *
+ * WHAT THIS FILE DOES:
+ * This is a complete, in-browser mock of the Supabase PostgreSQL backend.
+ * It uses the browser's `localStorage` to simulate database tables,
+ * authentication sessions, and storage buckets. It intercepts queries
+ * from the app and responds exactly as the real Supabase API would.
+ *
+ * WHY IT MATTERS FOR ILH (THE "SHOWCASE" MODE):
+ * The founder needed to share this repository publicly with the CTO
+ * and potential investors without leaking sensitive compliance data
+ * (e.g., actual failed audits, photos of property damages, employee names).
  * 
- * Secure Architect Abstraction Layer:
- *  - ZERO hardcoded or sensitive Completed Audits / Remarks / Evidence in codebase (Confidentiality).
- *  - Dynamically constructs generic formulaic mock data in client LocalStorage at runtime.
- *  - Seeds 3 completed audits for ALL 9 properties to guarantee perfect visual trendline sparklines and full dashboards.
- *  - Pristine asynchronous Radix-style query builder chaining supporting select, update, insert, upsert, delete.
+ * This file guarantees:
+ *   1. Zero Confidential Data Leakage: All hardcoded data here is fictitious.
+ *   2. Perfect Demo Experience: It automatically seeds 3 completed audits
+ *      for all 9 ILH properties with realistic scores and failure patterns.
+ *      This ensures the charts, sparklines, and CAP boards look fully
+ *      populated and professional immediately upon cloning the repo.
+ *
+ * FOR DEVELOPERS:
+ * - Implements a custom `MockQueryBuilder` that mimics Supabase's Radix-style
+ *   chaining (e.g., `.select().eq().order().limit()`).
+ * - Includes automatic "Trigger" logic: If an auditor scores a question ≤ 2,
+ *   the mock client automatically generates a Corrective Action Plan (CAP)
+ *   row, exactly like the real PostgreSQL trigger does.
+ * ============================================================
  */
 
 import { toast } from "sonner";

@@ -437,27 +437,166 @@ export default function NewAuditPage() {
     return totalWeightedScore;
   };
 
-  /* ── Submit audit ── */
+  /* ── Submit audit ──
+   *
+   * BUSINESS CONTEXT:
+   * This is the most critical function in the entire application. When an auditor
+   * taps "Submit Final Audit", the following pipeline must execute without failure:
+   *
+   *   1. Verify the auditor is authenticated and has a valid profile in the database.
+   *   2. Insert the master audit record into `audits` with the weighted compliance score.
+   *   3. Insert every individual question response into `audit_responses` (scores, notes, photos).
+   *   4. Auto-detect any compliance failures (score ≤ 2) and generate Corrective Action Plan (CAP)
+   *      items in `corrective_actions` for the operations team to remediate.
+   *   5. Clear the local draft from Zustand/sessionStorage and redirect to audit history.
+   *
+   * KNOWN FAILURE MODES (fixed in this version):
+   *   - Missing `profiles` row for the auditor → FK violation on `auditor_id`
+   *   - Fallback template ID not present in the database → FK violation on `template_id`
+   *   - Silent early return when templateId state hasn't been set yet → no feedback to user
+   *   - Generic error toast hiding the actual Supabase error message → impossible to debug on-site
+   */
   const handleSubmit = async () => {
-    if (!propertyId || !templateId) return;
+    /* ── Guard: Validate required fields before proceeding ──
+     * Previously this returned silently (no loading state, no toast, nothing),
+     * leaving the auditor confused on-site. Now we show explicit feedback. */
+    if (!propertyId) {
+      toast.error("Please select a property before submitting.");
+      return;
+    }
+    if (!templateId) {
+      toast.error("Audit template not loaded. Please refresh the page and try again.");
+      return;
+    }
 
     setSubmitting(true);
     const supabase = createClient();
 
     try {
-      /* Get current user */
+      /* ── Step 1: Verify the auditor is authenticated ── */
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (!user) {
-        toast.error("You must be signed in");
+        toast.error("Your session has expired. Please sign in again.");
         return;
       }
 
+      /* ── Step 2: Self-healing profile check ──
+       * WHY THIS IS NEEDED:
+       * The `audits` table has a foreign key constraint:
+       *   `auditor_id UUID NOT NULL REFERENCES profiles(id)`
+       *
+       * If the database trigger `handle_new_user` didn't fire when this user
+       * signed up (e.g., the trigger was deployed after the user already existed),
+       * there will be NO row in `profiles` for this user. Attempting to insert
+       * an audit would cause a silent FK violation and the audit would be lost.
+       *
+       * This self-healing block checks for the profile and creates one if missing,
+       * ensuring the audit can always be saved regardless of trigger state. */
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (!existingProfile) {
+        console.warn("No profile found for user", user.id, "— auto-creating profile.");
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .insert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.email || "Auditor",
+            role: "auditor",
+          });
+
+        if (profileError) {
+          console.error("Failed to auto-create profile:", profileError);
+          toast.error(
+            `Unable to create your auditor profile: ${profileError.message}. Please contact IT support.`
+          );
+          return;
+        }
+        toast.info("Your auditor profile was created automatically.");
+      }
+
+      /* ── Step 3: Verify the audit template exists in the database ──
+       * WHY THIS IS NEEDED:
+       * When running in fallback mode (no template data in the DB), the templateId
+       * is set to a hardcoded UUID ("a0000000-..."). The `audits` table enforces:
+       *   `template_id UUID NOT NULL REFERENCES audit_templates(id) ON DELETE RESTRICT`
+       *
+       * If this UUID doesn't exist in the database, the audit insert will fail
+       * silently with an FK violation. This check attempts to seed the template
+       * if it's missing (for admin users) or warns the auditor. */
+      const { data: templateExists } = await supabase
+        .from("audit_templates")
+        .select("id")
+        .eq("id", templateId)
+        .maybeSingle();
+
+      if (!templateExists) {
+        console.warn("Template", templateId, "not found in DB — attempting to seed.");
+
+        const { error: seedError } = await supabase
+          .from("audit_templates")
+          .upsert({
+            id: templateId,
+            title: "Standard Property Audit",
+            description:
+              "Comprehensive quality audit covering all aspects of ILH property operations including housekeeping, food, maintenance, safety, and community standards.",
+            max_score: 100,
+          });
+
+        if (seedError) {
+          console.error("Failed to seed template:", seedError);
+          toast.error(
+            "The audit template is not configured in the database. Please ask an admin to run the database setup, or contact IT support."
+          );
+          return;
+        }
+
+        /* Also seed the categories and questions if they don't exist,
+         * since the responses reference question IDs via FK constraints. */
+        const categoriesToSeed = ILH_FALLBACK_FRAMEWORK.map(({ id, name, weight_percentage, sort_order }) => ({
+          id,
+          template_id: templateId,
+          name,
+          weight_percentage,
+          sort_order,
+        }));
+
+        await supabase.from("audit_categories").upsert(categoriesToSeed);
+
+        const questionsToSeed: { id: string; category_id: string; question_text: string; max_points: number; sort_order: number }[] = [];
+        ILH_FALLBACK_FRAMEWORK.forEach((cat) => {
+          cat.questions.forEach((q) => {
+            questionsToSeed.push({
+              id: q.id,
+              category_id: cat.id,
+              question_text: q.question_text,
+              max_points: q.max_points,
+              sort_order: q.sort_order,
+            });
+          });
+        });
+
+        await supabase.from("audit_questions").upsert(questionsToSeed);
+        toast.info("Audit framework was seeded into the database automatically.");
+      }
+
+      /* ── Step 4: Calculate the weighted compliance score ──
+       * The overall score is a weighted average across all categories.
+       * Each category contributes (category_percentage × category_weight) to the total.
+       * For example, if "PGHP & Core Operations" scores 80% and has a 25% weight,
+       * it contributes 80 × 0.25 = 20 points to the overall 100-point scale. */
       const totalScore = getOverallScore();
 
-      /* Insert audit record */
+      /* ── Step 5: Insert the master audit record ──
+       * This creates a single row in the `audits` table representing this
+       * inspection event. The RLS policy requires `auditor_id = auth.uid()`,
+       * which is satisfied because we use `user.id` from the authenticated session. */
       const { data: auditData, error: auditError } = await supabase
         .from("audits")
         .insert({
@@ -473,10 +612,13 @@ export default function NewAuditPage() {
         .single();
 
       if (auditError || !auditData) {
-        throw auditError || new Error("Failed to create audit");
+        throw auditError || new Error("Failed to create audit record — no data returned.");
       }
 
-      /* Insert all responses */
+      /* ── Step 6: Insert all individual question responses ──
+       * Each question the auditor scored gets a row in `audit_responses`.
+       * This includes the numeric score (0-5), any text notes/observations,
+       * and optional photo evidence URLs uploaded to the Supabase storage bucket. */
       const responsesToInsert = Object.values(responses)
         .filter((r) => r.questionId)
         .map((r) => ({
@@ -494,7 +636,26 @@ export default function NewAuditPage() {
 
         if (respError) throw respError;
 
-        /* Automatically create corrective actions for scores <= 2 */
+        /* ── Step 7: Auto-generate Corrective Action Plan (CAP) items ──
+         * BUSINESS RULE: Any question that scores ≤ 2 out of 5 is flagged as
+         * a compliance failure requiring immediate remediation by the property's
+         * operations team. The system automatically creates a `corrective_actions`
+         * record for each failed checkpoint, populating it with:
+         *   - The specific question that failed
+         *   - The auditor's notes/observations
+         *   - Status set to "open" (pending remediation)
+         *
+         * These items appear on the CAP Board (Issues page) where operations
+         * managers can assign work orders, track progress, and mark items as resolved.
+         *
+         * THRESHOLD RATIONALE (≤ 2 out of 5):
+         *   5 = Fully compliant, exceeds standards
+         *   4 = Compliant with minor observations
+         *   3 = Acceptable baseline, needs monitoring
+         *   2 = Non-compliant, requires corrective action  ← CAP trigger
+         *   1 = Critical failure, immediate risk            ← CAP trigger
+         *   0 = Not assessed or total failure               ← CAP trigger
+         */
         const failedResponses = Object.values(responses)
           .filter((r) => r.questionId && r.score <= 2);
 
@@ -522,20 +683,35 @@ export default function NewAuditPage() {
             .insert(actionsToInsert);
 
           if (capError) {
+            /* CAP creation failure should NOT block the audit submission.
+             * The audit itself is already saved. We log the error and notify
+             * the auditor so IT can investigate, but we don't roll back. */
             console.error("Failed to automatically generate corrective actions:", capError);
+            toast.warning(
+              `Audit saved, but ${failedResponses.length} corrective action item(s) could not be auto-generated. Please notify IT.`
+            );
           } else {
-            toast.info(`Logged ${failedResponses.length} compliance action items`);
+            toast.info(`Logged ${failedResponses.length} compliance action item(s) for the operations team.`);
           }
         }
       }
 
-      /* Clear store and redirect */
+      /* ── Step 8: Clean up and redirect ──
+       * Clear the Zustand sessionStorage draft to prevent stale data from
+       * contaminating the next audit. Then redirect to the Audit History page
+       * where the newly submitted audit will appear at the top of the list. */
       reset();
       toast.success("Audit submitted successfully!");
       router.push("/dashboard/audits");
-    } catch (error) {
+    } catch (error: unknown) {
+      /* ── Improved error reporting ──
+       * Previously this showed only "Failed to submit audit" with no details.
+       * On a mobile device during an on-site audit, the auditor had no way to
+       * diagnose the issue. Now we include the actual error message so they
+       * can report it to IT support for immediate resolution. */
       console.error("Submit error:", error);
-      toast.error("Failed to submit audit. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Audit submission failed: ${errorMessage}. Please screenshot this and contact IT.`);
     } finally {
       setSubmitting(false);
     }
