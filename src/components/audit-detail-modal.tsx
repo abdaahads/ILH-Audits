@@ -179,9 +179,9 @@ export default function AuditDetailModal({
 
   const overallScore = audit ? audit.totalScore : 0;
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-ilh-green-700";
-    if (score >= 60) return "text-amber-700";
-    return "text-red-700";
+    if (score >= 80) return "text-ilh-green-600 border-ilh-green-200 bg-ilh-green-50";
+    if (score >= 60) return "text-amber-600 border-amber-200 bg-amber-50";
+    return "text-red-600 border-red-200 bg-red-50";
   };
 
   const getPercentageColor = (pct: number) => {
@@ -212,23 +212,23 @@ export default function AuditDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-0 sm:p-4 print:relative print:p-0 print:z-0">
       {/* Background overlay */}
       <div 
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity print:hidden" 
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity print:hidden" 
         onClick={onClose}
       />
 
       {/* Modal Content */}
-      <div className="relative w-full h-full sm:h-[90vh] max-w-4xl bg-[#E0E5EC] sm:rounded-2xl shadow-neo-raised flex flex-col overflow-hidden animate-scale-in border-none print:shadow-none print:border-none print:h-auto print:overflow-visible print:rounded-none">
+      <div className="relative w-full h-full sm:h-[90vh] max-w-4xl bg-white sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-scale-in border border-slate-100 print:shadow-none print:border-none print:h-auto print:overflow-visible print:rounded-none">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#E0E5EC] text-slate-700 border-b border-[#d4d9e0] shrink-0 print:bg-white print:text-black print:border-b print:border-slate-200 print:px-0">
+        <div className="flex items-center justify-between px-6 py-4 bg-ilh-navy-700 text-white shrink-0 print:bg-white print:text-black print:border-b print:border-slate-200 print:px-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E0E5EC] shadow-neo-pressed text-ilh-navy-700 print:hidden">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white print:hidden">
               <ClipboardList className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-ilh-navy-700 print:text-2xl">Audit Report</h2>
+              <h2 className="text-xl font-bold tracking-tight print:text-2xl">Audit Report</h2>
               {audit && (
-                <p className="text-xs text-slate-500 mt-0.5 print:text-slate-500">
+                <p className="text-xs text-white/70 mt-0.5 print:text-slate-500">
                   ID: <span className="font-mono">{audit.id.slice(0, 8)}</span> · Conducted on {formatDate(audit.conductedAt)}
                 </p>
               )}
@@ -239,7 +239,7 @@ export default function AuditDetailModal({
             <Button
               variant="ghost"
               size="icon"
-              className="text-slate-500 hover:text-slate-700 hover:bg-[#E0E5EC] hover:shadow-neo-raised-sm h-9 w-9 transition-all duration-200"
+              className="text-white hover:bg-white/10 h-9 w-9"
               onClick={handlePrint}
               title="Print / Export PDF"
             >
@@ -247,7 +247,7 @@ export default function AuditDetailModal({
             </Button>
             <button
               onClick={onClose}
-              className="text-slate-500 hover:text-slate-700 rounded-lg p-1.5 hover:bg-[#E0E5EC] hover:shadow-neo-raised-sm transition-all duration-200"
+              className="text-white/80 hover:text-white rounded-lg p-1.5 hover:bg-white/10 transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -281,11 +281,11 @@ export default function AuditDetailModal({
               {/* High Level Stats Row */}
               <div className="grid gap-6 md:grid-cols-3 print:grid-cols-3">
                 {/* Property & Auditor Details */}
-                <div className="md:col-span-2 space-y-3 bg-[#E0E5EC] shadow-neo-pressed rounded-2xl p-5 print:bg-white print:border-none print:p-0">
+                <div className="md:col-span-2 space-y-3 bg-slate-50 rounded-xl p-5 border border-slate-100 print:bg-white print:border-none print:p-0">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
-                        <Building className="h-3.5 w-3.5 text-slate-400" />
+                        <Building className="h-3.5 w-3.5" />
                         Property
                       </div>
                       <p className="text-base font-bold text-ilh-navy-700">{audit.propertyName}</p>
@@ -293,21 +293,21 @@ export default function AuditDetailModal({
                     </div>
                     <div>
                       <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
-                        <User className="h-3.5 w-3.5 text-slate-400" />
+                        <User className="h-3.5 w-3.5" />
                         Auditor
                       </div>
                       <p className="text-base font-bold text-ilh-navy-700">{audit.auditorName}</p>
                       <p className="text-xs text-slate-500 mt-0.5">ILH Certified Inspector</p>
                     </div>
                   </div>
-                  <div className="border-t border-[#d4d9e0] pt-3 flex justify-between items-center text-xs text-slate-500 print:border-none print:pt-0">
-                    <span>Audit Status: <Badge className="bg-[#E0E5EC] text-ilh-green-700 shadow-neo-raised-sm border-none text-[10px] uppercase font-bold px-2 py-0.5 ml-1">{audit.status}</Badge></span>
+                  <div className="border-t border-slate-200/60 pt-3 flex justify-between items-center text-xs text-slate-500 print:border-none print:pt-0">
+                    <span>Audit Status: <Badge className="bg-ilh-green-500 text-white border-none text-[10px] uppercase font-bold px-2 py-0.5 ml-1">{audit.status}</Badge></span>
                     <span>Date: <span className="font-semibold text-slate-700">{formatDate(audit.conductedAt)}</span></span>
                   </div>
                 </div>
 
                 {/* Score Circular Metric */}
-                <div className="flex flex-col items-center justify-center bg-[#E0E5EC] shadow-neo-raised rounded-2xl p-5 print:bg-white print:border-none print:p-0">
+                <div className="flex flex-col items-center justify-center bg-slate-50 rounded-xl p-5 border border-slate-100 print:bg-white print:border-none print:p-0">
                   <div className="relative flex items-center justify-center">
                     {/* SVG Circular Progress */}
                     <svg className="w-24 h-24 transform -rotate-90">
@@ -315,7 +315,7 @@ export default function AuditDetailModal({
                         cx="48"
                         cy="48"
                         r="40"
-                        stroke="#d4d9e0"
+                        stroke="#e2e8f0"
                         strokeWidth="8"
                         fill="transparent"
                       />
@@ -348,7 +348,7 @@ export default function AuditDetailModal({
                       </span>
                     </div>
                   </div>
-                  <Badge className={`mt-3 bg-[#E0E5EC] shadow-neo-raised-sm border-none uppercase text-[10px] font-extrabold px-3 py-1 ${getScoreColor(overallScore)}`}>
+                  <Badge className={`mt-3 uppercase text-[10px] font-extrabold px-3 py-1 border ${getScoreColor(overallScore)}`}>
                     {overallScore >= 80 
                       ? "Excellent" 
                       : overallScore >= 60 
@@ -359,8 +359,8 @@ export default function AuditDetailModal({
               </div>
 
               {/* Categories Score Breakdown */}
-              <div className="bg-[#E0E5EC] shadow-neo-raised rounded-2xl p-5 space-y-4 print:border-none print:p-0 print:mt-6">
-                <h3 className="text-sm font-bold text-ilh-navy-700 uppercase tracking-wider border-b border-[#d4d9e0] pb-2 flex items-center gap-2">
+              <div className="bg-white rounded-xl border border-slate-100 p-5 space-y-4 print:border-none print:p-0 print:mt-6">
+                <h3 className="text-sm font-bold text-ilh-navy-700 uppercase tracking-wider border-b pb-2 flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-ilh-green-500" />
                   Category Score Breakdown
                 </h3>
@@ -369,7 +369,7 @@ export default function AuditDetailModal({
                     const { scored, max, percentage } = calculateCategoryScore(items);
                     const weight = items[0]?.categoryWeight || 0;
                     return (
-                      <div key={catName} className="space-y-1.5 p-3 rounded-xl bg-[#E0E5EC] shadow-neo-pressed print:bg-white print:border-none print:p-0 print:mb-4">
+                      <div key={catName} className="space-y-1.5 p-3 rounded-lg bg-slate-50 border border-slate-100/50 print:bg-white print:border-none print:p-0 print:mb-4">
                         <div className="flex justify-between items-center text-xs font-semibold text-ilh-navy-700">
                           <span>{catName}</span>
                           <span className="text-slate-500 font-mono">
@@ -388,7 +388,7 @@ export default function AuditDetailModal({
 
               {/* Question Checklist Details */}
               <div className="space-y-6 print:mt-8">
-                <h3 className="text-sm font-bold text-ilh-navy-700 uppercase tracking-wider border-b border-[#d4d9e0] pb-2 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-ilh-navy-700 uppercase tracking-wider border-b pb-2 flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-ilh-navy-500" />
                   Detailed Checkpoints & Responses
                 </h3>
@@ -396,17 +396,17 @@ export default function AuditDetailModal({
                 <div className="space-y-8 print:space-y-6">
                   {Array.from(categoriesMap.entries()).map(([catName, items]) => (
                     <div key={catName} className="space-y-3 print:break-inside-avoid">
-                      <h4 className="text-xs font-black text-ilh-navy-700 bg-[#E0E5EC] shadow-neo-raised-sm px-3 py-2 rounded-xl uppercase tracking-widest print:bg-slate-100 print:text-black">
+                      <h4 className="text-xs font-black text-[#003366] bg-[#003366]/5 px-3 py-1.5 rounded-md uppercase tracking-widest border border-[#003366]/10 print:bg-slate-100 print:text-black">
                         {catName}
                       </h4>
-                      <div className="divide-y divide-[#d4d9e0]">
+                      <div className="divide-y divide-slate-100">
                         {items.map((item, idx) => {
                           const isFailed = item.scoreAwarded <= 2;
                           return (
                             <div key={item.questionId} className="py-4 first:pt-1 last:pb-1 flex flex-col md:flex-row md:items-start gap-4">
                               <div className="flex-1 space-y-1.5">
                                 <div className="flex items-start gap-2.5">
-                                  <span className="text-xs font-bold text-slate-400 mt-0.5 w-5 shrink-0">
+                                  <span className="text-xs font-bold text-slate-300 mt-0.5 w-5 shrink-0">
                                     {idx + 1}.
                                   </span>
                                   <p className="text-sm font-semibold text-slate-700">
@@ -415,14 +415,14 @@ export default function AuditDetailModal({
                                 </div>
                                 
                                 {item.notes && (
-                                  <div className="ml-7 bg-[#E0E5EC] shadow-neo-pressed rounded-xl p-3 text-xs text-slate-600 italic">
+                                  <div className="ml-7 bg-slate-50 border border-slate-100 rounded-lg p-2.5 text-xs text-slate-600 italic">
                                     <strong>Auditor Note:</strong> &ldquo;{item.notes}&rdquo;
                                   </div>
                                 )}
 
                                 {isFailed && (
                                   <div className="ml-7 flex items-center gap-1.5 text-[10px] font-bold text-red-500 uppercase tracking-wider">
-                                    <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
+                                    <AlertTriangle className="h-3.5 w-3.5" />
                                     CAP Issue Logged Automatically (Score &le; 2)
                                   </div>
                                 )}
@@ -432,16 +432,16 @@ export default function AuditDetailModal({
                                 {/* Score Indicator */}
                                 <div className="flex items-center gap-2">
                                   <span className="text-xs text-slate-400 font-medium">Score:</span>
-                                  <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-neo-pressed-sm bg-[#E0E5EC] ${
+                                  <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
                                     item.scoreAwarded >= 4 
-                                      ? "text-ilh-green-700" 
+                                      ? "bg-ilh-green-500 text-white" 
                                       : item.scoreAwarded >= 3 
-                                        ? "text-amber-700" 
-                                        : "text-red-700"
+                                        ? "bg-amber-400 text-white" 
+                                        : "bg-red-500 text-white"
                                   }`}>
                                     {item.scoreAwarded}
                                   </span>
-                                  <span className="text-xs text-slate-400">/ {item.maxPoints}</span>
+                                  <span className="text-xs text-slate-300">/ {item.maxPoints}</span>
                                 </div>
 
                                 {/* Attachment Thumb */}
@@ -453,7 +453,7 @@ export default function AuditDetailModal({
                                     <img
                                       src={item.imageUrl}
                                       alt="Evidence"
-                                      className="h-10 w-10 rounded-lg object-cover shadow-neo-raised hover:shadow-neo-pressed transition-all duration-200"
+                                      className="h-10 w-10 rounded-lg object-cover border border-slate-200 group-hover:opacity-80 transition-opacity"
                                     />
                                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center text-white text-[8px] font-bold print:hidden">
                                       VIEW
@@ -486,7 +486,7 @@ export default function AuditDetailModal({
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 print:hidden">
           <button
             onClick={() => setSelectedImage(null)}
-            className="absolute top-4 right-4 text-white/70 hover:text-white rounded-full bg-white/10 p-2.5 transition-all duration-200"
+            className="absolute top-4 right-4 text-white/70 hover:text-white rounded-full bg-white/10 p-2.5 transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
@@ -523,7 +523,7 @@ export default function AuditDetailModal({
             visibility: visible;
           }
           /* Hide backdrop and lightbox */
-          .bg-slate-900\\/40, .z-\\[100\\] {
+          .bg-slate-900\\/60, .z-\\[100\\] {
             display: none !important;
           }
           /* Expand modal card */

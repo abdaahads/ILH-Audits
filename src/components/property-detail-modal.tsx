@@ -211,7 +211,7 @@ export default function PropertyDetailModal({
   const renderSparkline = () => {
     if (history.length < 2) {
       return (
-        <div className="flex flex-col items-center justify-center h-28 bg-[#E0E5EC] shadow-neo-pressed rounded-xl text-xs text-slate-400 font-semibold p-4">
+        <div className="flex flex-col items-center justify-center h-28 border border-slate-150 border-dashed rounded-xl bg-slate-50 text-xs text-slate-400 font-semibold p-4">
           <Activity className="h-6 w-6 text-slate-300 mb-1" />
           More audits required to compute trend sparkline.
         </div>
@@ -235,7 +235,7 @@ export default function PropertyDetailModal({
     }).join(" ");
 
     return (
-      <div className="bg-[#E0E5EC] shadow-neo-raised rounded-2xl p-5 space-y-3">
+      <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-3">
         <div className="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider">
           <span className="flex items-center gap-1">
             <TrendingUp className="h-4 w-4 text-ilh-green-500" />
@@ -251,7 +251,7 @@ export default function PropertyDetailModal({
               y1={height - padding - 0.8 * (height - 2 * padding)} 
               x2={width} 
               y2={height - padding - 0.8 * (height - 2 * padding)} 
-              stroke="#d4d9e0" 
+              stroke="#def2e6" 
               strokeWidth="1.5" 
               strokeDasharray="4,4" 
             />
@@ -261,7 +261,7 @@ export default function PropertyDetailModal({
               y1={height - padding - 0.6 * (height - 2 * padding)} 
               x2={width} 
               y2={height - padding - 0.6 * (height - 2 * padding)} 
-              stroke="#d4d9e0" 
+              stroke="#fef3c7" 
               strokeWidth="1.5" 
               strokeDasharray="4,4" 
             />
@@ -315,23 +315,23 @@ export default function PropertyDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-0 sm:p-4">
       {/* Background overlay */}
       <div 
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
         onClick={onClose}
       />
 
       {/* Modal Content */}
-      <div className="relative w-full h-full sm:h-[90vh] max-w-4xl bg-[#E0E5EC] sm:rounded-2xl shadow-neo-raised flex flex-col overflow-hidden animate-scale-in border-none">
+      <div className="relative w-full h-full sm:h-[90vh] max-w-4xl bg-white sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-scale-in border border-slate-100">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#E0E5EC] text-slate-700 border-b border-[#d4d9e0] shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 bg-ilh-navy-700 text-white shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E0E5EC] shadow-neo-pressed text-ilh-navy-700">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white">
               <Building className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-ilh-navy-700">{property?.name || "Property Profile"}</h2>
-              <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5 text-slate-400" />
+              <h2 className="text-xl font-bold tracking-tight">{property?.name || "Property Profile"}</h2>
+              <p className="text-xs text-white/70 mt-0.5 flex items-center gap-1">
+                <MapPin className="h-3.5 w-3.5" />
                 {property?.location}
               </p>
             </div>
@@ -339,7 +339,7 @@ export default function PropertyDetailModal({
           
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-700 rounded-lg p-1.5 hover:bg-[#E0E5EC] hover:shadow-neo-raised-sm transition-all duration-200"
+            className="text-white/80 hover:text-white rounded-lg p-1.5 hover:bg-white/10 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -355,16 +355,16 @@ export default function PropertyDetailModal({
           ) : property ? (
             <>
               {/* Quick Info & Beds */}
-              <div className="flex items-center gap-4 bg-[#E0E5EC] shadow-neo-pressed rounded-xl p-4 text-xs font-semibold text-slate-600">
+              <div className="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-xl p-4 text-xs font-semibold text-slate-600">
                 <span className="flex items-center gap-1">
                   <BedDouble className="h-4 w-4 text-slate-400" />
                   Capacity: <strong>{property.beds} Student Beds</strong>
                 </span>
-                <span className="h-3 w-px bg-[#d4d9e0]" />
+                <span className="h-3 w-px bg-slate-200" />
                 <span>
                   Inspection Logs: <strong>{history.length} Audits Completed</strong>
                 </span>
-                <span className="h-3 w-px bg-[#d4d9e0]" />
+                <span className="h-3 w-px bg-slate-200" />
                 <span>
                   Outstanding Issues: <strong>{openIssues.length} Pending Actions</strong>
                 </span>
@@ -376,8 +376,8 @@ export default function PropertyDetailModal({
                 {renderSparkline()}
 
                 {/* Categories Average breakdown */}
-                <div className="bg-[#E0E5EC] shadow-neo-raised rounded-2xl p-5 space-y-4">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-[#d4d9e0] pb-2 flex items-center gap-1.5">
+                <div className="bg-white rounded-2xl border border-slate-100 p-5 space-y-4 shadow-sm">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b pb-2 flex items-center gap-1.5">
                     <Activity className="h-4 w-4 text-ilh-navy-500" />
                     Operational Department Ratings
                   </h3>
@@ -404,14 +404,14 @@ export default function PropertyDetailModal({
               <div className="grid gap-6 md:grid-cols-2">
                 
                 {/* Outstanding CAP Issues */}
-                <div className="bg-[#E0E5EC] shadow-neo-raised rounded-2xl p-5 space-y-4">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-[#d4d9e0] pb-2 flex items-center gap-1.5">
+                <div className="bg-white rounded-2xl border border-slate-100 p-5 space-y-4 shadow-sm">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b pb-2 flex items-center gap-1.5">
                     <AlertTriangle className="h-4 w-4 text-red-500" />
                     Pending Action Items ({openIssues.length})
                   </h3>
 
                   {openIssues.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-8 text-center bg-[#E0E5EC] shadow-neo-pressed rounded-xl p-4">
+                    <div className="flex flex-col items-center justify-center py-8 text-center bg-slate-50/50 border border-dashed rounded-xl p-4">
                       <CheckCircle2 className="h-8 w-8 text-ilh-green-500 mb-1" />
                       <p className="text-xs font-bold text-slate-600">No Pending Actions</p>
                       <p className="text-[10px] text-slate-400 mt-0.5">Property is fully compliant and clear.</p>
@@ -419,9 +419,9 @@ export default function PropertyDetailModal({
                   ) : (
                     <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
                       {openIssues.map((issue) => (
-                        <div key={issue.id} className="p-3 bg-[#E0E5EC] shadow-neo-pressed rounded-xl space-y-1">
+                        <div key={issue.id} className="p-3 bg-red-50/50 border border-red-100/50 rounded-xl space-y-1">
                           <div className="flex justify-between items-center">
-                            <Badge className="bg-[#E0E5EC] text-red-700 shadow-neo-raised-sm border-none uppercase text-[8px] font-bold px-2">
+                            <Badge className="bg-red-100 text-red-700 border-none uppercase text-[8px] font-bold px-2">
                               {issue.status}
                             </Badge>
                             <span className="text-[9px] text-slate-400 font-semibold">{formatDate(issue.createdAt)}</span>
@@ -436,8 +436,8 @@ export default function PropertyDetailModal({
                 </div>
 
                 {/* Audit Logs */}
-                <div className="bg-[#E0E5EC] shadow-neo-raised rounded-2xl p-5 space-y-4">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-[#d4d9e0] pb-2 flex items-center gap-1.5">
+                <div className="bg-white rounded-2xl border border-slate-100 p-5 space-y-4 shadow-sm">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b pb-2 flex items-center gap-1.5">
                     <ClipboardCheck className="h-4 w-4 text-ilh-green-500" />
                     Audit Logs History
                   </h3>
@@ -453,7 +453,7 @@ export default function PropertyDetailModal({
                             setSelectedAuditId(audit.id);
                             setIsAuditDetailOpen(true);
                           }}
-                          className="flex items-center justify-between p-3 bg-[#E0E5EC] shadow-neo-raised-sm hover:shadow-neo-pressed rounded-xl cursor-pointer transition-all duration-200"
+                          className="flex items-center justify-between p-3 border border-slate-100 hover:border-slate-200 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors"
                         >
                           <div className="space-y-0.5">
                             <p className="text-xs font-bold text-ilh-navy-700">
@@ -465,12 +465,12 @@ export default function PropertyDetailModal({
                           </div>
                           
                           <div className="flex items-center gap-2">
-                            <span className={`inline-flex h-6 w-12 items-center justify-center rounded-full text-xs font-bold shadow-neo-pressed-sm bg-[#E0E5EC] ${
+                            <span className={`inline-flex h-6 w-12 items-center justify-center rounded-full text-xs font-bold ${
                               audit.totalScore >= 80 
-                                ? "text-ilh-green-700" 
+                                ? "bg-ilh-green-50 text-ilh-green-700 border-ilh-green-200 border" 
                                 : audit.totalScore >= 60 
-                                  ? "text-amber-700" 
-                                  : "text-red-700"
+                                  ? "bg-amber-50 text-amber-700 border-amber-200 border" 
+                                  : "bg-red-50 text-red-700 border-red-200 border"
                             }`}>
                               {audit.totalScore.toFixed(0)}%
                             </span>

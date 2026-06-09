@@ -30,7 +30,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Building2, MapPin, BedDouble, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -64,16 +64,17 @@ function scorePercentage(
 }
 
 /**
- * Return Tailwind classes for a score badge (Neumorphic).
+ * Return Tailwind classes for a score badge based on thresholds:
+ *   ≥ 80 → green, ≥ 60 → amber, < 60 → red, no data → gray
  */
 function scoreBadgeClasses(pct: number | null): string {
   if (pct === null)
-    return "bg-[#E0E5EC] text-slate-500 shadow-neo-raised-sm";
+    return "bg-gray-100 text-gray-500";
   if (pct >= 80)
-    return "bg-[#E0E5EC] text-ilh-green-700 shadow-neo-raised-sm";
+    return "bg-ilh-green-50 text-ilh-green-700";
   if (pct >= 60)
-    return "bg-[#E0E5EC] text-amber-700 shadow-neo-raised-sm";
-  return "bg-[#E0E5EC] text-red-700 shadow-neo-raised-sm";
+    return "bg-amber-50 text-amber-700";
+  return "bg-red-50 text-red-700";
 }
 
 /* ------------------------------------------------------------------ */
@@ -82,26 +83,26 @@ function scoreBadgeClasses(pct: number | null): string {
 
 function PropertyCardSkeleton() {
   return (
-    <div className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6 animate-pulse">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-pulse">
       {/* Name */}
-      <div className="h-5 w-3/4 bg-[#E0E5EC] rounded shadow-neo-pressed-sm mb-4" />
+      <div className="h-5 w-3/4 bg-gray-200 rounded mb-4" />
 
       {/* Location */}
       <div className="flex items-center gap-2 mb-2">
-        <div className="h-4 w-4 rounded bg-[#E0E5EC] shadow-neo-pressed-sm" />
-        <div className="h-4 w-1/2 bg-[#E0E5EC] rounded shadow-neo-pressed-sm" />
+        <div className="h-4 w-4 rounded bg-gray-200" />
+        <div className="h-4 w-1/2 bg-gray-200 rounded" />
       </div>
 
       {/* Beds */}
       <div className="flex items-center gap-2 mb-4">
-        <div className="h-4 w-4 rounded bg-[#E0E5EC] shadow-neo-pressed-sm" />
-        <div className="h-4 w-1/3 bg-[#E0E5EC] rounded shadow-neo-pressed-sm" />
+        <div className="h-4 w-4 rounded bg-gray-200" />
+        <div className="h-4 w-1/3 bg-gray-200 rounded" />
       </div>
 
       {/* Score badge */}
       <div className="flex items-center justify-between">
-        <div className="h-6 w-16 bg-[#E0E5EC] rounded-full shadow-neo-pressed-sm" />
-        <div className="h-4 w-24 bg-[#E0E5EC] rounded shadow-neo-pressed-sm" />
+        <div className="h-6 w-16 bg-gray-200 rounded-full" />
+        <div className="h-4 w-24 bg-gray-200 rounded" />
       </div>
     </div>
   );
@@ -185,8 +186,8 @@ export default function PropertiesPage() {
       <div>
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-slate-700">Properties</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-ilh-navy-700">Properties</h1>
+          <p className="mt-1 text-sm text-gray-500">
             All ILH student housing locations
           </p>
         </div>
@@ -206,18 +207,18 @@ export default function PropertiesPage() {
     return (
       <div>
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-slate-700">Properties</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-ilh-navy-700">Properties</h1>
+          <p className="mt-1 text-sm text-gray-500">
             All ILH student housing locations
           </p>
         </div>
 
-        <div className="flex flex-col items-center justify-center rounded-2xl bg-[#E0E5EC] shadow-neo-pressed py-16 px-6 text-center">
-          <Building2 className="h-12 w-12 text-slate-400 mb-4" />
-          <h2 className="text-lg font-semibold text-slate-600">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white py-16 px-6 text-center">
+          <Building2 className="h-12 w-12 text-gray-300 mb-4" />
+          <h2 className="text-lg font-semibold text-gray-700">
             No properties yet
           </h2>
-          <p className="mt-1 text-sm text-slate-500 max-w-sm">
+          <p className="mt-1 text-sm text-gray-500 max-w-sm">
             Properties will appear here once they&apos;ve been added to the
             system. Contact an administrator to get started.
           </p>
@@ -231,8 +232,8 @@ export default function PropertiesPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-700">Properties</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-ilh-navy-700">Properties</h1>
+        <p className="mt-1 text-sm text-gray-500">
           All ILH student housing locations
         </p>
       </div>
@@ -252,25 +253,25 @@ export default function PropertiesPage() {
                 setSelectedPropertyId(property.id);
                 setIsModalOpen(true);
               }}
-              className="bg-[#E0E5EC] rounded-2xl shadow-neo-raised p-6 hover:shadow-neo-pressed transition-all duration-300 cursor-pointer animate-scale-in"
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer hover:border-ilh-navy-100 animate-scale-in"
             >
               {/* Property Name */}
-              <h3 className="text-lg font-bold text-slate-700 mb-3">
+              <h3 className="text-lg font-bold text-ilh-navy-700 mb-3">
                 {property.name}
               </h3>
 
               {/* Location */}
               <div className="flex items-center gap-2 mb-1.5">
-                <MapPin className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                <span className="text-sm text-slate-500 truncate">
+                <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-500 truncate">
                   {property.location}
                 </span>
               </div>
 
               {/* Bed count */}
               <div className="flex items-center gap-2 mb-5">
-                <BedDouble className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                <span className="text-sm text-slate-500">
+                <BedDouble className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-500">
                   {property.total_beds} beds
                 </span>
               </div>
